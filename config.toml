@@ -1,0 +1,91 @@
+theme = "lihkstyle"
+baseURL = "http://www.lihongkun.com/"
+languageCode = "zh-CN"
+title = "泛泛之辈"
+
+[menu]
+
+    [[menu.main]]
+        identifier = "home"
+        name = "首页"
+        url = "/"
+        weight = 1
+
+    [[menu.main]]
+        identifier = "basic"
+        name = "基本功"
+        url = "/basic/"
+        weight = 2
+
+    [[menu.main]]
+        parent = "basic"
+        identifier = "concurrent"
+        name = "并发"
+        url = "/categories/concurrent/"
+        weight = 1
+
+    [[menu.main]]
+        parent = "basic"
+        identifier = "network"
+        name = "网络"
+        url = "/categories/network/"
+        weight = 2
+
+    [[menu.main]]
+        parent = "basic"
+        identifier = "security"
+        name = "Web安全"
+        url = "/categories/security/"
+        weight = 3
+
+    [[menu.main]]
+        parent = "basic"
+        identifier = "jvm"
+        name = "Java虚拟机"
+        url = "/categories/jvm/"
+        weight = 4
+
+    [[menu.main]]
+        identifier = "framework"
+        name = "编程框架"
+        url = "/framework/"
+        weight = 3
+
+    [[menu.main]]
+        parent = "framework"
+        identifier = "springframework"
+        name = "Spring"
+        url = "/categories/springframework/"
+        weight = 1
+
+    [[menu.main]]
+        parent = "framework"
+        identifier = "mybatis"
+        name = "Mybatis"
+        url = "/categories/mybatis/"
+        weight = 2  
+
+    [[menu.main]]
+        parent = "framework"
+        identifier = "springcloud"
+        name = "SpringCloud"
+        url = "/categories/springcloud/"
+        weight = 3  
+
+    [[menu.main]]
+        identifier = "troubleshooting"
+        name = "问题排查"
+        url = "/categories/troubleshooting/"
+        weight = 4
+    
+    [[menu.main]]
+        identifier = "design"
+        name = "设计思路"
+        url = "/categories/design/"
+        weight = 5
+
+    [[menu.main]]
+        identifier = "reading"
+        name = "读书笔记"
+        url = "/categories/reading/"
+        weight = 5

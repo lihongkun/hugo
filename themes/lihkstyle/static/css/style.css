@@ -1,0 +1,24 @@
+main{margin: 70px 0 30px 0;}
+.container{padding: 0 10px;}
+a{color: #00d1b2;}
+
+/* post */
+.post-meta {padding: 5px 0;font-size: 12px;color: #B2B2B2;line-height: 25px;padding-inline-start:0;margin: 0 0 10px 0;}
+.post-meta .post-time {margin-right: 20px;}
+
+
+/** archive */
+.archive {margin: 20px 0;}
+.archive .post-archive {margin: 0;padding: 0;list-style: none;font-size: 16px;font-weight: 300;}
+.archive .post-item {margin: 18px 0;}
+.archive .post-item:hover {color: #2fa4e7;margin-left: 8px;}
+.archive .post-date {color: #aaa;display: inline-block;margin-right: 85px;}
+.archive .post-title {color: #333;}
+.archive .post-item:hover .post-title {color: #2fa4e7;}
+.archive .post-item:hover .post-date {color: #2fa4e7;}
+.archive .collection-title .archive-month {margin: 18px 0;font-weight: 400;font-size: 29px;line-height: 34px;}
+
+/**paginator*/
+.page-nav {margin: 20px 0 0 0;}
+.page-nav .page-number , .page-nav .extend {border: 1px solid #CDD1D4;padding: 3px 8px;margin: 2px;color: #686868;display: inline-block;}
+.page-nav .page-number.current{background-color:#d8d8d8;color:#fff;}

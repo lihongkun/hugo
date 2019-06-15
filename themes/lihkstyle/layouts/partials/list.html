@@ -1,0 +1,16 @@
+<section class="posts">
+{{ range (.Paginator 5).Pages }}
+<article class="post box is-radiusless">
+    <div class="post-title">
+        <a class="post-title-link" href="{{ .RelPermalink }}"><h2 class="is-size-4 has-text-dark">{{.Title}}</h2></a>
+    </div>
+    <div class="post-meta">
+        <span class="post-time">日期 : {{ .Date.Format "2006-01-02" }}</span>
+    </div>
+    <div class="post-excerpt content">
+        {{.Summary}}
+    </div>
+    <a href="{{ .RelPermalink }}">阅读全文>></a>
+    </article>
+{{ end }}
+</section>
