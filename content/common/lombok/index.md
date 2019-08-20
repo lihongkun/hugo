@@ -2,7 +2,6 @@
 title: 使用Lombok简化代码
 date: 2019-07-14
 categories: ["common","java"]
-
 ---
 
 POJO等一系列的java bean最让人诟病的是他们有很多重复的工作存在。比如里面的属性要暴露出去需要写很多的Getter和Setter方法。完全是体力活。Lombok是一个开源库，能够改善这种现状。
