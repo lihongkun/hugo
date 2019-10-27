@@ -22,3 +22,5 @@ a{color: #00d1b2;}
 .page-nav {margin: 20px 0 0 0;}
 .page-nav .page-number , .page-nav .extend {border: 1px solid #CDD1D4;padding: 3px 8px;margin: 2px;color: #686868;display: inline-block;}
 .page-nav .page-number.current{background-color:#d8d8d8;color:#fff;}
+
+.utterances{max-width: none;}

@@ -96,9 +96,3 @@ title = "泛泛之辈"
         name = "读书笔记"
         url = "/categories/reading/"
         weight = 5
-
-[gitment]
-    id="bb30c3b314d32f6d04da"
-    secret="82ad5d99e9f0eea2d1e01ef9d9dc51538cc5fc84"
-    owner="lihongkun"
-    repo="lihongkun.github.io"
