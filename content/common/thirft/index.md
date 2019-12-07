@@ -1,7 +1,7 @@
 ---
 title: thrift序列化协议
 date: 2019-09-23
-categories: ["common","java"]
+categories: ["common","java","serialize"]
 ---
 
 Apache Thrift 脱胎于 Facebook ，是一种高效的、支持多种编程语言的远程服务调用的框架。它的序列化协议同样可用于通讯协议、数据存储等领域的语言无关、平台无关、可扩展的序列化结构数据格式。<!--more-->

@@ -1,7 +1,7 @@
 ---
 title: 常见JSON序列化库性能比较
 date: 2019-08-18
-categories: ["common","java"]
+categories: ["common","java","serialize"]
 ---
 
 JSON（JavaScript Object Notation，JavaScript对象表示法，读作/ˈdʒeɪsən/）是一种由道格拉斯·克罗克福特构想和设计、轻量级的数据交换语言，该语言以易于让人阅读的文字为基础，用来传输由属性值或者序列性的值组成的数据对象。很多接口协议中都默认以它为序列化协议，如SpringCloud里面都是以HTTP+JSON的方式来提供服务。
