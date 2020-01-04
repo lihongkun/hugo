@@ -1,5 +1,5 @@
 ---
-title: 序列化和反序列化
+title: 序列化库选型
 date: 2019-12-28
 categories: ["common","java","serialize"]
 ---
@@ -462,5 +462,11 @@ DemoResponse的data列表size从10~300进行递增并且进行一万次的序列
 DemoResponse的data列表size为300，并且进行GZip压缩后所占用的空间大小如下
 
 ![](space.jpg)
+
+### 总结
+
+在服务调用领域，Protobuf以其优越的性能活得到了很多开发者的青睐，如果需要语义性或者Web接入层 则一般选用JSON。在数据存储领域里面，Avro和Kryo以高压缩比例胜出。不需要兼容异构系统的化，Java的一些框架还能选择Hession.
+
+
 
 测试代码地址 https://github.com/lihongkun/serialize
