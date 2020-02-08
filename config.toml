@@ -1,5 +1,5 @@
 theme = "lihkstyle"
-baseURL = "https://www.lihongkun.com/"
+baseURL = "http://www.lihongkun.com/"
 languageCode = "zh-CN"
 title = "泛泛之辈"
 
