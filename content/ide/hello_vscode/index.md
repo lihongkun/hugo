@@ -10,7 +10,7 @@ Visual Studio Code (简称 VS Code) 是一款免费开源的现代化轻量级�
 
 ### 安装和使用
 
-官网（https://code.visualstudio.com/）提供了安装包的下载
+官网（[https://code.visualstudio.com/](https://code.visualstudio.com/)）提供了安装包的下载
 
 #### 用户界面
 
@@ -30,7 +30,7 @@ Visual Studio Code (简称 VS Code) 是一款免费开源的现代化轻量级�
 
 #### 快捷键
 
-vscode为了让使用者尽量在键盘上完成工作，设置了一些快捷键，并且可以定制。基础的快捷键表可以通过官方的表进行速查 https://code.visualstudio.com/shortcuts/keyboard-shortcuts-windows.pdf 。
+vscode为了让使用者尽量在键盘上完成工作，设置了一些快捷键，并且可以定制。基础的快捷键表可以通过官方的表进行速查 [https://code.visualstudio.com/shortcuts/keyboard-shortcuts-windows.pdf](https://code.visualstudio.com/shortcuts/keyboard-shortcuts-windows.pdf) 。
 
 ##### 自定义
 
