@@ -70,7 +70,7 @@ Frame buffer usage:    0.321%
   1220574844   26.07%      122  jshort_disjoint_arraycopy
   1170635197   25.00%      117  java.nio.HeapByteBuffer._get
    490290559   10.47%       49  java.util.Arrays.copyOf
-   490237824   10.47%       49  com.oppo.os.ads.recall.search.rank.CandidateSelect.selectAdvanceRankCandidatesFromRtAd
+   490237824   10.47%       49  (project package).search.rank.CandidateSelect.selectAdvanceRankCandidatesFromRtAd
 ```
 
 文件内容头部如上所述，CPU热点主要集中在selectAdvanceRankCandidatesFromRtAd 方法，其中最高的是jshort_disjoint_arraycopy的使用，引起它的主要是StringBuilder.append后需要扩容字符数组导致的array copy。于是找到对应的代码，果不其然，发现在未开启debug级别日志的情况下有很多debug相关的字符串拼接动作。修改后重新采样结果如下，问题解决。
