@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html><head>
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+
+    
+    <meta name="author"
+            content=""/>
+
+    
+    <meta name="description" content="AbstractQueuedSynchronizer是JDK并发包里面很多同步类的基础框架.在简单了解了自旋锁和CLH锁之后再来了解下JDK里面的实现.
+"/>
+    
+
+    
+
+    
+    <link rel="canonical" href="http://www.lihongkun.com/concurrent/abstract_queued_synchronizer/"/>
+
+    
+
+    
+    
+    
+        
+            
+        
+    
+        
+            
+                
+            
+                
+            
+                
+            
+                
+            
+        
+    
+        
+            
+                
+            
+                
+            
+                
+            
+                
+            
+        
+    
+        
+            
+        
+    
+        
+            
+        
+    
+        
+            
+        
+    
+    <title> AbstractQueuedSynchronizer | 泛泛之辈 </title>
+
+    <link rel="shortcut icon" href="http://www.lihongkun.com/favicon.jpg"/>
+    <link rel="stylesheet" href="http://www.lihongkun.com/css/bulma.min.css"/>
+    <link rel="stylesheet" href="http://www.lihongkun.com/css/style.css"/>
+</head><body><header>
+    <nav class="navbar is-fixed-top is-primary" role="navigation" aria-label="main navigation">
+        <div class="navbar-brand is-size-4">
+            <a class="navbar-item" href="http://www.lihongkun.com/">
+                    泛泛之辈
+            </a>
+            <a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false" data-target="navbar-menu">
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+            </a>
+        </div>
+        <div id="navbar-menu" class="navbar-menu">
+            <div class="navbar-end">
+                
+                    
+                        <a class="navbar-item" href="/">首页</a>
+                    
+                
+                    
+                        <div class="navbar-item has-dropdown is-hoverable">
+                            <a class="navbar-link">基本功</a>
+                            <div class="navbar-dropdown">
+                                
+                                <a class="navbar-item" href="/categories/concurrent/">并发</a>
+                                
+                                <a class="navbar-item" href="/categories/network/">网络</a>
+                                
+                                <a class="navbar-item" href="/categories/security/">Web安全</a>
+                                
+                                <a class="navbar-item" href="/categories/jvm/">Java虚拟机</a>
+                                
+                            </div>
+                        </div>
+                    
+                
+                    
+                        <div class="navbar-item has-dropdown is-hoverable">
+                            <a class="navbar-link">编程框架</a>
+                            <div class="navbar-dropdown">
+                                
+                                <a class="navbar-item" href="/categories/springframework/">Spring</a>
+                                
+                                <a class="navbar-item" href="/categories/mybatis/">Mybatis</a>
+                                
+                                <a class="navbar-item" href="/categories/springcloud/">SpringCloud</a>
+                                
+                                <a class="navbar-item" href="/categories/common/">常用框架</a>
+                                
+                            </div>
+                        </div>
+                    
+                
+                    
+                        <a class="navbar-item" href="/categories/troubleshooting/">问题排查</a>
+                    
+                
+                    
+                        <a class="navbar-item" href="/categories/design/">设计思路</a>
+                    
+                
+                    
+                        <a class="navbar-item" href="/categories/reading/">读书笔记</a>
+                    
+                
+            </div>
+            </div>
+    </nav>
+</header><main>
+            <div class="container">
+                <div class="columns">
+                <div class="column is-four-fifths">
+                    <article class="post box is-radiusless">
+                        <div class="post-title">
+                            <h2 class="is-size-4">AbstractQueuedSynchronizer</h2>
+                        </div>
+                            <div class="post-meta">
+                            <span class="post-time">日期&nbsp;:&nbsp;2018-09-10</span>
+                        </div>
+                        <div class="post-content content">
+                            <p>AbstractQueuedSynchronizer是JDK并发包里面很多同步类的基础框架.在简单了解了自旋锁和CLH锁之后再来了解下JDK里面的实现.</p>
+
+<h3 id="队列节点">队列节点</h3>
+
+<p>队列的节点定义代码如下</p>
+
+<pre><code class="language-java">static final class Node {
+    
+    static final Node SHARED = new Node();
+    static final Node EXCLUSIVE = null;
+
+    // 线程取消获取锁
+    static final int CANCELLED =  1;
+    // 后继节点需要被唤醒
+    static final int SIGNAL    = -1;
+    // 线程在条件队列中
+    static final int CONDITION = -2;
+    // 后续结点会传播唤醒的操作,共享模式下起作用
+    static final int PROPAGATE = -3;
+
+    //节点状态
+    volatile int waitStatus;
+
+    //同步队列前驱节点
+    volatile Node prev;
+    
+    //同步后继节点
+    volatile Node next;
+
+    // 条件队列后继节点
+    Node nextWaiter;
+}
+</code></pre>
+
+<p>包含了几个状态相关的常量和节点状态,以及指向其他节点的引用.整理成图比较好理解.</p>
+
+<p><img src="abstract_queued_synchronizer_node.jpg" alt="image" /></p>
+
+<p>AQS定义了两个队列,一个是普通的CLH锁实现的队列(Sync Queue),一个是条件队列(Condition Queue).</p>
+
+<pre><code>// 队列头部指针
+private transient volatile Node head;
+
+//队列尾部指针
+private transient volatile Node tail;
+
+//锁状态
+private volatile int state;
+
+</code></pre>
+
+<p>AQS 使用了2个成员变量一个指向队头,一个指向队尾.另外使用一个成员变量state来表示锁的当前状态.</p>
+
+<h3 id="同步队列">同步队列</h3>
+
+<p>如果线程获取锁失败则进入同步对列,acquire参数为state状态值</p>
+
+<pre><code>public final void acquire(int arg) {
+    if (!tryAcquire(arg) &amp;&amp;
+        acquireQueued(addWaiter(Node.EXCLUSIVE), arg))
+        selfInterrupt();
+}
+
+
+final boolean acquireQueued(final Node node, int arg) {
+    boolean failed = true;
+    try {
+        boolean interrupted = false;
+        //自旋
+        for (;;) {
+            //循环获取前驱节点
+            final Node p = node.predecessor();
+            
+            // 如果是队首节点 且获取锁成功则出队并返回
+            // 自旋只在队首节点尝试去获取锁
+            if (p == head &amp;&amp; tryAcquire(arg)) {
+                setHead(node);
+                p.next = null; // help GC
+                failed = false;
+                return interrupted;
+            }
+            // 此处会把队首节点设置为SINGAL
+            if (shouldParkAfterFailedAcquire(p, node) &amp;&amp;
+                parkAndCheckInterrupt())
+                interrupted = true;
+        }
+    } finally {
+        if (failed)
+            cancelAcquire(node);
+    }
+}
+
+// 创建队列节点并入队
+private Node addWaiter(Node mode) {
+    Node node = new Node(Thread.currentThread(), mode);
+    // Try the fast path of enq; backup to full enq on failure
+    Node pred = tail;
+    if (pred != null) {
+        node.prev = pred;
+        if (compareAndSetTail(pred, node)) {
+            pred.next = node;
+            return node;
+        }
+    }
+    enq(node);
+    return node;
+}
+
+//入队操作
+private Node enq(final Node node) {
+    for (;;) {
+        Node t = tail;
+        if (t == null) { // Must initialize
+            if (compareAndSetHead(new Node()))
+                tail = head;
+        } else {
+            node.prev = t;
+            if (compareAndSetTail(t, node)) {
+                t.next = node;
+                return t;
+            }
+        }
+    }
+}
+
+</code></pre>
+
+<p>一个完整的同步队列如下图所示,队首的节点会被标记为SINGAL状态.在出队的时候会重新检查其后继节点.</p>
+
+<p><img src="abstract_queued_synchronizer_list.jpg" alt="image" /></p>
+
+<h3 id="条件队列">条件队列</h3>
+
+<p>在使用ReentrantLock的时候有介绍到Condition,它的实现是AQS一个叫ConditionObject的对象.</p>
+
+<pre><code>public class ConditionObject implements Condition, java.io.Serializable {
+    private static final long serialVersionUID = 1173984872572414699L;
+    /** First node of condition queue. */
+    private transient Node firstWaiter;
+    /** Last node of condition queue. */
+    private transient Node lastWaiter;
+    ....
+}
+</code></pre>
+
+<p>其中的firstWaiter和lastWaiter定义了条件对列的队首引用和队尾引用.在使用的时候lock.newCondition()则创建了一个队列.其中的实现方式和同步队列也比较相似.</p>
+
+<p><img src="abstract_queued_synchronizer_condition.jpg" alt="image" /></p>
+                        </div>
+                        <div class="columns is-mobile post-meta">
+                            <div class="column is-half-desktop has-text-left is-paddingless"> 
+                                 
+                                更老一篇:<a href="http://www.lihongkun.com/concurrent/spin_lock/"> 自旋锁</a>
+                                
+                            </div>
+                            <div class="column is-half-desktop has-text-right is-paddingless">
+                                
+                                更新一篇:<a href="http://www.lihongkun.com/concurrent/semaphore_and_latch/"> 同步工具类 - 信号量和闭锁</a>
+                                
+                            </div>
+                            <div class="is-clearfix"></div>
+                        </div>
+                        <script src="https://utteranc.es/client.js"
+                                repo="lihongkun/lihongkun.github.io"
+                                issue-term="title"
+                                theme="github-light"
+                                crossorigin="anonymous"
+                                async>
+                        </script>
+                    </article>
+                </div>
+                <div class="column">    <aside>
+        <h2 class="is-size-4">关于我</h2>
+        <div class="content">
+            Working in advertising platform team. Backend on duty,full stack in my own time.
+        </div>
+        <h2 class="is-size-4">GitHub</h2>
+        <div class="content">
+            <a href="https://github.com/lihongkun" target="_blank">https://github.com/lihongkun</a>
+        </div>
+    </aside></div>
+                </div>
+            </div>
+         </main>    <footer class="footer">
+    
+        <div class="copyright has-text-centered">
+            <a href="https://bulma.io">
+                <img src="http://www.lihongkun.com/images/made-with-bulma.png" alt="Made with Bulma" width="128" height="24">
+            </a>
+            <p>© 泛泛之辈 Power by Hugo v0.55.6 - 闽ICP备15009606号</p>
+        </div>
+    </footer>
+    <script type="text/javascript">
+    document.addEventListener('DOMContentLoaded', () => {
+        
+        const $navbarBurgers = Array.prototype.slice.call(document.querySelectorAll('.navbar-burger'), 0);
+        
+        if ($navbarBurgers.length > 0) {
+            
+            $navbarBurgers.forEach( el => {
+                el.addEventListener('click', () => {
+                
+                const target = el.dataset.target;
+                const $target = document.getElementById(target);
+                
+                el.classList.toggle('is-active');
+                $target.classList.toggle('is-active');
+    
+                });
+            });
+        }
+    });
+    </script></body>
+</html>

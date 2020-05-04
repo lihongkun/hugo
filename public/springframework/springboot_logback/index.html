@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html><head>
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+
+    
+    <meta name="author"
+            content=""/>
+
+    
+    <meta name="description" content="尽管SpringBoot能够在application.properties来配置一些日志相关的内容,但是针对一个比较复杂,或者是有着自己运维体系的应用,这是远远不够用的.所以拓展自己的日志配置文件是必须的,官方推荐的是使用logback-spring.xml直接覆盖
+"/>
+    
+
+    
+
+    
+    <link rel="canonical" href="http://www.lihongkun.com/springframework/springboot_logback/"/>
+
+    
+
+    
+    
+    
+        
+            
+        
+    
+        
+            
+                
+            
+                
+            
+                
+            
+                
+            
+        
+    
+        
+            
+                
+            
+                
+            
+                
+            
+                
+            
+        
+    
+        
+            
+        
+    
+        
+            
+        
+    
+        
+            
+        
+    
+    <title> Springboot使用logback的坑点 | 泛泛之辈 </title>
+
+    <link rel="shortcut icon" href="http://www.lihongkun.com/favicon.jpg"/>
+    <link rel="stylesheet" href="http://www.lihongkun.com/css/bulma.min.css"/>
+    <link rel="stylesheet" href="http://www.lihongkun.com/css/style.css"/>
+</head><body><header>
+    <nav class="navbar is-fixed-top is-primary" role="navigation" aria-label="main navigation">
+        <div class="navbar-brand is-size-4">
+            <a class="navbar-item" href="http://www.lihongkun.com/">
+                    泛泛之辈
+            </a>
+            <a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false" data-target="navbar-menu">
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+            </a>
+        </div>
+        <div id="navbar-menu" class="navbar-menu">
+            <div class="navbar-end">
+                
+                    
+                        <a class="navbar-item" href="/">首页</a>
+                    
+                
+                    
+                        <div class="navbar-item has-dropdown is-hoverable">
+                            <a class="navbar-link">基本功</a>
+                            <div class="navbar-dropdown">
+                                
+                                <a class="navbar-item" href="/categories/concurrent/">并发</a>
+                                
+                                <a class="navbar-item" href="/categories/network/">网络</a>
+                                
+                                <a class="navbar-item" href="/categories/security/">Web安全</a>
+                                
+                                <a class="navbar-item" href="/categories/jvm/">Java虚拟机</a>
+                                
+                            </div>
+                        </div>
+                    
+                
+                    
+                        <div class="navbar-item has-dropdown is-hoverable">
+                            <a class="navbar-link">编程框架</a>
+                            <div class="navbar-dropdown">
+                                
+                                <a class="navbar-item" href="/categories/springframework/">Spring</a>
+                                
+                                <a class="navbar-item" href="/categories/mybatis/">Mybatis</a>
+                                
+                                <a class="navbar-item" href="/categories/springcloud/">SpringCloud</a>
+                                
+                                <a class="navbar-item" href="/categories/common/">常用框架</a>
+                                
+                            </div>
+                        </div>
+                    
+                
+                    
+                        <a class="navbar-item" href="/categories/troubleshooting/">问题排查</a>
+                    
+                
+                    
+                        <a class="navbar-item" href="/categories/design/">设计思路</a>
+                    
+                
+                    
+                        <a class="navbar-item" href="/categories/reading/">读书笔记</a>
+                    
+                
+            </div>
+            </div>
+    </nav>
+</header><main>
+            <div class="container">
+                <div class="columns">
+                <div class="column is-four-fifths">
+                    <article class="post box is-radiusless">
+                        <div class="post-title">
+                            <h2 class="is-size-4">Springboot使用logback的坑点</h2>
+                        </div>
+                            <div class="post-meta">
+                            <span class="post-time">日期&nbsp;:&nbsp;2018-03-01</span>
+                        </div>
+                        <div class="post-content content">
+                            <p>尽管SpringBoot能够在application.properties来配置一些日志相关的内容,但是针对一个比较复杂,或者是有着自己运维体系的应用,这是远远不够用的.所以拓展自己的日志配置文件是必须的,官方推荐的是使用logback-spring.xml直接覆盖</p>
+
+<p>,那么参照源码里面的TestCase可能配置内容如下.</p>
+
+<pre><code>&lt;configuration&gt;
+    &lt;include resource=&quot;org/springframework/boot/logging/logback/base.xml&quot; /&gt;
+
+    &lt;property name=&quot;LOG_PATH&quot; value=&quot;XXX&quot; /&gt;
+    &lt;property name=&quot;LOG_PATTEN&quot; value=&quot;[%-5level] %date [%thread] [%logger{36}:%line] &gt;&gt;&gt; %msg%n&quot; /&gt;
+
+    
+    &lt;appender name=&quot;FILE&quot; class=&quot;ch.qos.logback.core.rolling.RollingFileAppender&quot;&gt;
+        &lt;File&gt;xxx.log&lt;/File&gt;
+        &lt;rollingPolicy class=&quot;ch.qos.logback.core.rolling.TimeBasedRollingPolicy&quot;&gt;
+            &lt;FileNamePattern&gt;xxx.%d{yyyy-MM-dd}.log&lt;/FileNamePattern&gt;
+        &lt;/rollingPolicy&gt;
+        &lt;encoder charset=&quot;UTF-8&quot;&gt;
+            &lt;pattern&gt;${LOG_PATTEN}&lt;/pattern&gt;
+        &lt;/encoder&gt;
+    &lt;/appender&gt;
+    
+    &lt;appender name=&quot;ERROR&quot; class=&quot;xxx.basic.logger.appender.logback.HttpAppender&quot;&gt;
+        &lt;url&gt;http://xxx:8081/api/logSetting&lt;/url&gt;
+        &lt;filter class=&quot;ch.qos.logback.classic.filter.LevelFilter&quot;&gt;
+            &lt;level&gt;ERROR&lt;/level&gt;
+            &lt;OnMismatch&gt;DENY&lt;/OnMismatch&gt;
+            &lt;OnMatch&gt;ACCEPT&lt;/OnMatch&gt;
+        &lt;/filter&gt;
+    &lt;/appender&gt;
+
+    &lt;logger name=&quot;com.alibaba.druid&quot; level=&quot;ERROR&quot; /&gt;
+    ....
+
+    &lt;root&gt;
+        &lt;level value=&quot;INFO&quot; /&gt;
+        &lt;appender-ref ref=&quot;FILE&quot; /&gt;
+        &lt;appender-ref ref=&quot;ERROR&quot; /&gt;
+    &lt;/root&gt;
+&lt;/configuration&gt;
+</code></pre>
+
+<p>突然有一天线上磁盘告警,一般挂载到根目录下的磁盘是不会被业务直接使用的所以比较小.于是找到是tmp目录下有个很奇葩的spring.log.4接近30G .看日志内容是某个业务放量,打开了一个日志开关.于是对该应用日志配置文件进行排查.确定没有该日志文件的直接配置.于是转向了框架默认.</p>
+
+<p>查看了一下上面所述的配置文件所引用的内容.发现base.xml默认也是声明了一些log行为.</p>
+
+<pre><code>
+base.xml
+
+&lt;included&gt;
+    &lt;include resource=&quot;org/springframework/boot/logging/logback/defaults.xml&quot; /&gt;
+    &lt;property name=&quot;LOG_FILE&quot; value=&quot;${LOG_FILE:-${LOG_PATH:-${LOG_TEMP:-${java.io.tmpdir:-/tmp}}}/spring.log}&quot;/&gt;
+    &lt;include resource=&quot;org/springframework/boot/logging/logback/console-appender.xml&quot; /&gt;
+    &lt;include resource=&quot;org/springframework/boot/logging/logback/file-appender.xml&quot; /&gt;
+    &lt;root level=&quot;INFO&quot;&gt;
+        &lt;appender-ref ref=&quot;CONSOLE&quot; /&gt;
+        &lt;appender-ref ref=&quot;FILE&quot; /&gt;
+    &lt;/root&gt;
+&lt;/included&gt;
+
+file-appender.xml
+
+&lt;included&gt;
+    &lt;appender name=&quot;FILE&quot;
+        class=&quot;ch.qos.logback.core.rolling.RollingFileAppender&quot;&gt;
+        &lt;encoder&gt;
+            &lt;pattern&gt;${FILE_LOG_PATTERN}&lt;/pattern&gt;
+        &lt;/encoder&gt;
+        &lt;file&gt;${LOG_FILE}&lt;/file&gt;
+        &lt;rollingPolicy class=&quot;ch.qos.logback.core.rolling.FixedWindowRollingPolicy&quot;&gt;
+            &lt;fileNamePattern&gt;${LOG_FILE}.%i&lt;/fileNamePattern&gt;
+        &lt;/rollingPolicy&gt;
+        &lt;triggeringPolicy
+            class=&quot;ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy&quot;&gt;
+            &lt;MaxFileSize&gt;10MB&lt;/MaxFileSize&gt;
+        &lt;/triggeringPolicy&gt;
+    &lt;/appender&gt;
+&lt;/included&gt;
+
+</code></pre>
+
+<p>虽然我们include了上述的文件也通用声明了name为FILE的appender,但是没有被重新定义.于是只能去掉.但是没有这个base.xml关于SpringBoot的相关的启动信息和运行时的其他信息便不会输出.于是看下了base.xml 所包含的另一个文件.</p>
+
+<pre><code>&lt;!--
+Default logback configuration provided for import, equivalent to the programmatic
+initialization performed by Boot
+--&gt;
+
+&lt;included&gt;
+    &lt;conversionRule conversionWord=&quot;clr&quot; converterClass=&quot;org.springframework.boot.logging.logback.ColorConverter&quot; /&gt;
+    &lt;conversionRule conversionWord=&quot;wex&quot; converterClass=&quot;org.springframework.boot.logging.logback.WhitespaceThrowableProxyConverter&quot; /&gt;
+    &lt;conversionRule conversionWord=&quot;wEx&quot; converterClass=&quot;org.springframework.boot.logging.logback.ExtendedWhitespaceThrowableProxyConverter&quot; /&gt;
+    &lt;property name=&quot;CONSOLE_LOG_PATTERN&quot; value=&quot;${CONSOLE_LOG_PATTERN:-%clr(%d{yyyy-MM-dd HH:mm:ss.SSS}){faint} %clr(${LOG_LEVEL_PATTERN:-%5p}) %clr(${PID:- }){magenta} %clr(---){faint} %clr([%15.15t]){faint} %clr(%-40.40logger{39}){cyan} %clr(:){faint} %m%n${LOG_EXCEPTION_CONVERSION_WORD:-%wEx}}&quot;/&gt;
+    &lt;property name=&quot;FILE_LOG_PATTERN&quot; value=&quot;%d{yyyy-MM-dd HH:mm:ss.SSS} ${LOG_LEVEL_PATTERN:-%5p} ${PID:- } --- [%t] %-40.40logger{39} : %m%n${LOG_EXCEPTION_CONVERSION_WORD:-%wEx}&quot;/&gt;
+
+    &lt;appender name=&quot;DEBUG_LEVEL_REMAPPER&quot; class=&quot;org.springframework.boot.logging.logback.LevelRemappingAppender&quot;&gt;
+        &lt;destinationLogger&gt;org.springframework.boot&lt;/destinationLogger&gt;
+    &lt;/appender&gt;
+
+    &lt;logger name=&quot;org.apache.catalina.startup.DigesterFactory&quot; level=&quot;ERROR&quot;/&gt;
+    &lt;logger name=&quot;org.apache.catalina.util.LifecycleBase&quot; level=&quot;ERROR&quot;/&gt;
+    &lt;logger name=&quot;org.apache.coyote.http11.Http11NioProtocol&quot; level=&quot;WARN&quot;/&gt;
+    &lt;logger name=&quot;org.apache.sshd.common.util.SecurityUtils&quot; level=&quot;WARN&quot;/&gt;
+    &lt;logger name=&quot;org.apache.tomcat.util.net.NioSelectorPool&quot; level=&quot;WARN&quot;/&gt;
+    &lt;logger name=&quot;org.crsh.plugin&quot; level=&quot;WARN&quot;/&gt;
+    &lt;logger name=&quot;org.crsh.ssh&quot; level=&quot;WARN&quot;/&gt;
+    &lt;logger name=&quot;org.eclipse.jetty.util.component.AbstractLifeCycle&quot; level=&quot;ERROR&quot;/&gt;
+    &lt;logger name=&quot;org.hibernate.validator.internal.util.Version&quot; level=&quot;WARN&quot;/&gt;
+    &lt;logger name=&quot;org.springframework.boot.actuate.autoconfigure.CrshAutoConfiguration&quot; level=&quot;WARN&quot;/&gt;
+    &lt;logger name=&quot;org.springframework.boot.actuate.endpoint.jmx&quot; additivity=&quot;false&quot;&gt;
+        &lt;appender-ref ref=&quot;DEBUG_LEVEL_REMAPPER&quot;/&gt;
+    &lt;/logger&gt;
+    &lt;logger name=&quot;org.thymeleaf&quot; additivity=&quot;false&quot;&gt;
+        &lt;appender-ref ref=&quot;DEBUG_LEVEL_REMAPPER&quot;/&gt;
+    &lt;/logger&gt;
+&lt;/included&gt;
+</code></pre>
+
+<p>它定义的是SpringBoot的默认logger.于是文章开头的logback-spring.xml便修改为</p>
+
+<pre><code>&lt;configuration&gt;
+    &lt;include resource=&quot;org/springframework/boot/logging/logback/defaults.xml&quot; /&gt;
+    ....
+&lt;/configuration&gt;
+</code></pre>
+
+<p>/tmp/spring.log.*的文件便不会再有日志输出.使用命令 【 &gt;spring.log.4 】把文件内容置成空.然后再删除掉,问题解决.</p>
+                        </div>
+                        <div class="columns is-mobile post-meta">
+                            <div class="column is-half-desktop has-text-left is-paddingless"> 
+                                
+                                没有了，已经是最后文章
+                                
+                            </div>
+                            <div class="column is-half-desktop has-text-right is-paddingless">
+                                
+                                更新一篇:<a href="http://www.lihongkun.com/springframework/springboot_tomcat_directory/"> Springboot的embeded tomcat目录</a>
+                                
+                            </div>
+                            <div class="is-clearfix"></div>
+                        </div>
+                        <script src="https://utteranc.es/client.js"
+                                repo="lihongkun/lihongkun.github.io"
+                                issue-term="title"
+                                theme="github-light"
+                                crossorigin="anonymous"
+                                async>
+                        </script>
+                    </article>
+                </div>
+                <div class="column">    <aside>
+        <h2 class="is-size-4">关于我</h2>
+        <div class="content">
+            Working in advertising platform team. Backend on duty,full stack in my own time.
+        </div>
+        <h2 class="is-size-4">GitHub</h2>
+        <div class="content">
+            <a href="https://github.com/lihongkun" target="_blank">https://github.com/lihongkun</a>
+        </div>
+    </aside></div>
+                </div>
+            </div>
+         </main>    <footer class="footer">
+    
+        <div class="copyright has-text-centered">
+            <a href="https://bulma.io">
+                <img src="http://www.lihongkun.com/images/made-with-bulma.png" alt="Made with Bulma" width="128" height="24">
+            </a>
+            <p>© 泛泛之辈 Power by Hugo v0.55.6 - 闽ICP备15009606号</p>
+        </div>
+    </footer>
+    <script type="text/javascript">
+    document.addEventListener('DOMContentLoaded', () => {
+        
+        const $navbarBurgers = Array.prototype.slice.call(document.querySelectorAll('.navbar-burger'), 0);
+        
+        if ($navbarBurgers.length > 0) {
+            
+            $navbarBurgers.forEach( el => {
+                el.addEventListener('click', () => {
+                
+                const target = el.dataset.target;
+                const $target = document.getElementById(target);
+                
+                el.classList.toggle('is-active');
+                $target.classList.toggle('is-active');
+    
+                });
+            });
+        }
+    });
+    </script></body>
+</html>

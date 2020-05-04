@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html><head>
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+
+    
+    <meta name="author"
+            content=""/>
+
+    
+    <meta name="description" content="有1000个苹果10个盒子,要求把1000个苹果分装到10个盒子里.如果有人来买苹果随便说出一个数,直接拿这些盒子组装一下就可以给他,不用拆分盒子.请问这10个盒子应该分别装多少苹果.
+"/>
+    
+
+    
+
+    
+    <link rel="canonical" href="http://www.lihongkun.com/design/binary_system_thinking/"/>
+
+    
+
+    
+    
+    
+        
+            
+        
+    
+        
+            
+                
+            
+                
+            
+                
+            
+                
+            
+        
+    
+        
+            
+                
+            
+                
+            
+                
+            
+                
+            
+        
+    
+        
+            
+        
+    
+        
+            
+        
+    
+        
+            
+        
+    
+    <title> 二进制思维 | 泛泛之辈 </title>
+
+    <link rel="shortcut icon" href="http://www.lihongkun.com/favicon.jpg"/>
+    <link rel="stylesheet" href="http://www.lihongkun.com/css/bulma.min.css"/>
+    <link rel="stylesheet" href="http://www.lihongkun.com/css/style.css"/>
+</head><body><header>
+    <nav class="navbar is-fixed-top is-primary" role="navigation" aria-label="main navigation">
+        <div class="navbar-brand is-size-4">
+            <a class="navbar-item" href="http://www.lihongkun.com/">
+                    泛泛之辈
+            </a>
+            <a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false" data-target="navbar-menu">
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+            </a>
+        </div>
+        <div id="navbar-menu" class="navbar-menu">
+            <div class="navbar-end">
+                
+                    
+                        <a class="navbar-item" href="/">首页</a>
+                    
+                
+                    
+                        <div class="navbar-item has-dropdown is-hoverable">
+                            <a class="navbar-link">基本功</a>
+                            <div class="navbar-dropdown">
+                                
+                                <a class="navbar-item" href="/categories/concurrent/">并发</a>
+                                
+                                <a class="navbar-item" href="/categories/network/">网络</a>
+                                
+                                <a class="navbar-item" href="/categories/security/">Web安全</a>
+                                
+                                <a class="navbar-item" href="/categories/jvm/">Java虚拟机</a>
+                                
+                            </div>
+                        </div>
+                    
+                
+                    
+                        <div class="navbar-item has-dropdown is-hoverable">
+                            <a class="navbar-link">编程框架</a>
+                            <div class="navbar-dropdown">
+                                
+                                <a class="navbar-item" href="/categories/springframework/">Spring</a>
+                                
+                                <a class="navbar-item" href="/categories/mybatis/">Mybatis</a>
+                                
+                                <a class="navbar-item" href="/categories/springcloud/">SpringCloud</a>
+                                
+                                <a class="navbar-item" href="/categories/common/">常用框架</a>
+                                
+                            </div>
+                        </div>
+                    
+                
+                    
+                        <a class="navbar-item" href="/categories/troubleshooting/">问题排查</a>
+                    
+                
+                    
+                        <a class="navbar-item" href="/categories/design/">设计思路</a>
+                    
+                
+                    
+                        <a class="navbar-item" href="/categories/reading/">读书笔记</a>
+                    
+                
+            </div>
+            </div>
+    </nav>
+</header><main>
+            <div class="container">
+                <div class="columns">
+                <div class="column is-four-fifths">
+                    <article class="post box is-radiusless">
+                        <div class="post-title">
+                            <h2 class="is-size-4">二进制思维</h2>
+                        </div>
+                            <div class="post-meta">
+                            <span class="post-time">日期&nbsp;:&nbsp;2018-08-27</span>
+                        </div>
+                        <div class="post-content content">
+                            <p>有1000个苹果10个盒子,要求把1000个苹果分装到10个盒子里.如果有人来买苹果随便说出一个数,直接拿这些盒子组装一下就可以给他,不用拆分盒子.请问这10个盒子应该分别装多少苹果.</p>
+
+<h3 id="存储">存储</h3>
+
+<p>有时候面试这种问题,并不是智力题或者是算法题.而是计算机基础考察题.想想计算机是如何存储数据的?</p>
+
+<p>我们经常记的数值的范围,比如int 是 32 bit的二进制位来表示 ,如果是无符号的话,它能表示0 ~ 2^32之间的任何数值.类比一下10个盒子是bit位的话能表示的是0 ~ 2^10的任何数值,也就是0 ~1024.如下图</p>
+
+<p><img src="storage.jpg" alt="image" /></p>
+
+<p>说出其中一个数值就是选择该数值转换成二进制后,哪一位是1的盒子.例如拿出75个苹果,75转二进制是 0001001011 拿出其中的一,二,四,七这4个盒子</p>
+
+<h3 id="传输">传输</h3>
+
+<p>举个场景,如果你在socket直接使用二进制传输一段文本.在文本的头部加上一段bit位来表示文本的长度.这一段如何设计.</p>
+
+<p>同样使用字符串?例如&rdquo;5000&rdquo;,如果用字符串来表示的话,那么是4 bytes = 32 bit .如果这个数值变成20000000 那么他需要 8 bytes = 64 bit.表示下来比直接使用数值存储的方式传输大小差距很大.而且还有一个很不好的地方就是头部的长度不固定.接收方根本不知道头部的长度,无所适从.</p>
+
+<p>正常的做法就是头部使用二进制来传输正常的数值而不是使用字符串表示数值.</p>
+
+<p>int 使用 4 bytes 表示,转二进制就是一个byte[4]的数组,那么就是一个字节一个字节转换</p>
+
+<pre><code>//byte 数组与 int 的相互转换
+public static int byteArrayToInt(byte[] b) {
+    return   b[3] &amp; 0xFF |
+            (b[2] &amp; 0xFF) &lt;&lt; 8 |
+            (b[1] &amp; 0xFF) &lt;&lt; 16 |
+            (b[0] &amp; 0xFF) &lt;&lt; 24;
+}
+
+public static byte[] intToByteArray(int a) {
+    return new byte[] {
+        (byte) ((a &gt;&gt; 24) &amp; 0xFF),
+        (byte) ((a &gt;&gt; 16) &amp; 0xFF),   
+        (byte) ((a &gt;&gt; 8) &amp; 0xFF),   
+        (byte) (a &amp; 0xFF)
+    };
+}
+</code></pre>
+
+<h3 id="状态位设计">状态位设计</h3>
+
+<p>看个场景,假设用户投放广告,建立推广计划进行广告的投放和消耗,一般会进行限额,时段等等的限制.那么推广计划的暂停状态有很多种情况,每一种情况对应着一个状态.如账户余额不足,到达账户日预算,到达计划日限额,用户暂停.</p>
+
+<p><strong>状态位通用设计</strong></p>
+
+<p>很多人喜欢用连续的数值来表示状态,如 0:启动、1:用户暂停、2:账户余额不足、3:到达账户日预算、4:到达计划日限额.</p>
+
+<p>一个计划从用户暂停需要修改为启动的话,就需要通过调用其他子系统来判断它自己是属于什么状态.增加了业务代码的复杂度.</p>
+
+<p><img src="ad_status_transforms.jpg" alt="image" /></p>
+
+<p><strong>二进制状态位</strong></p>
+
+<p>上述4个会导致推广计划暂停的状态我使用4个二级制位来表示.如果是到达异常条件则对应的位置设置成1.那么如果是状态位是0的话则表示推广计划是启动中.</p>
+
+<p>这样对应的异常状态只由自己的条件满足和不满足的到达的时候来进行修改而不是每一次变更去判断所有的条件十分满足.</p>
+
+<p><img src="ad_status.jpg" alt="" /></p>
+
+<p>如上图,一个状态条件的变更只是改变自己状态位的变化.这样无需某个状态的条件变更还需要去判断其他状态.大大解耦了系统.在一个复杂的大型系统里面状态的流转设计可能是这个例子的好几倍.</p>
+
+<p>通用的设计里面同时只能存在一种状态,二进制能满足状态共存的需求.</p>
+
+<p><strong>小结</strong></p>
+
+<p>二进制思维在平时编码中善用能解决很多问题.合适的场景用到设计上能解耦系统,降低复杂度.</p>
+                        </div>
+                        <div class="columns is-mobile post-meta">
+                            <div class="column is-half-desktop has-text-left is-paddingless"> 
+                                 
+                                更老一篇:<a href="http://www.lihongkun.com/design/web_page_content_monitoring/"> 前端页面内容监控</a>
+                                
+                            </div>
+                            <div class="column is-half-desktop has-text-right is-paddingless">
+                                
+                                更新一篇:<a href="http://www.lihongkun.com/design/an_open_api_design_evolution/"> 一次开放API的设计演进思路</a>
+                                
+                            </div>
+                            <div class="is-clearfix"></div>
+                        </div>
+                        <script src="https://utteranc.es/client.js"
+                                repo="lihongkun/lihongkun.github.io"
+                                issue-term="title"
+                                theme="github-light"
+                                crossorigin="anonymous"
+                                async>
+                        </script>
+                    </article>
+                </div>
+                <div class="column">    <aside>
+        <h2 class="is-size-4">关于我</h2>
+        <div class="content">
+            Working in advertising platform team. Backend on duty,full stack in my own time.
+        </div>
+        <h2 class="is-size-4">GitHub</h2>
+        <div class="content">
+            <a href="https://github.com/lihongkun" target="_blank">https://github.com/lihongkun</a>
+        </div>
+    </aside></div>
+                </div>
+            </div>
+         </main>    <footer class="footer">
+    
+        <div class="copyright has-text-centered">
+            <a href="https://bulma.io">
+                <img src="http://www.lihongkun.com/images/made-with-bulma.png" alt="Made with Bulma" width="128" height="24">
+            </a>
+            <p>© 泛泛之辈 Power by Hugo v0.55.6 - 闽ICP备15009606号</p>
+        </div>
+    </footer>
+    <script type="text/javascript">
+    document.addEventListener('DOMContentLoaded', () => {
+        
+        const $navbarBurgers = Array.prototype.slice.call(document.querySelectorAll('.navbar-burger'), 0);
+        
+        if ($navbarBurgers.length > 0) {
+            
+            $navbarBurgers.forEach( el => {
+                el.addEventListener('click', () => {
+                
+                const target = el.dataset.target;
+                const $target = document.getElementById(target);
+                
+                el.classList.toggle('is-active');
+                $target.classList.toggle('is-active');
+    
+                });
+            });
+        }
+    });
+    </script></body>
+</html>

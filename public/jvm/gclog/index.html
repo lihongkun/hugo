@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html><head>
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+
+    
+    <meta name="author"
+            content=""/>
+
+    
+    <meta name="description" content="之前介绍的jstat和jmap只能使用输入命令的方式来进行GC和内存方面的监控.应用程序的GC情况可能是一个需要持续观察的过程,JVM提供了命令行选项来保存这些GC相关的日志.
+"/>
+    
+
+    
+
+    
+    <link rel="canonical" href="http://www.lihongkun.com/jvm/gclog/"/>
+
+    
+
+    
+    
+    
+        
+            
+        
+    
+        
+            
+                
+            
+                
+            
+                
+            
+                
+            
+        
+    
+        
+            
+                
+            
+                
+            
+                
+            
+                
+            
+        
+    
+        
+            
+        
+    
+        
+            
+        
+    
+        
+            
+        
+    
+    <title> Java虚拟机监控工具 - GC日志和GCViewer | 泛泛之辈 </title>
+
+    <link rel="shortcut icon" href="http://www.lihongkun.com/favicon.jpg"/>
+    <link rel="stylesheet" href="http://www.lihongkun.com/css/bulma.min.css"/>
+    <link rel="stylesheet" href="http://www.lihongkun.com/css/style.css"/>
+</head><body><header>
+    <nav class="navbar is-fixed-top is-primary" role="navigation" aria-label="main navigation">
+        <div class="navbar-brand is-size-4">
+            <a class="navbar-item" href="http://www.lihongkun.com/">
+                    泛泛之辈
+            </a>
+            <a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false" data-target="navbar-menu">
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+            </a>
+        </div>
+        <div id="navbar-menu" class="navbar-menu">
+            <div class="navbar-end">
+                
+                    
+                        <a class="navbar-item" href="/">首页</a>
+                    
+                
+                    
+                        <div class="navbar-item has-dropdown is-hoverable">
+                            <a class="navbar-link">基本功</a>
+                            <div class="navbar-dropdown">
+                                
+                                <a class="navbar-item" href="/categories/concurrent/">并发</a>
+                                
+                                <a class="navbar-item" href="/categories/network/">网络</a>
+                                
+                                <a class="navbar-item" href="/categories/security/">Web安全</a>
+                                
+                                <a class="navbar-item" href="/categories/jvm/">Java虚拟机</a>
+                                
+                            </div>
+                        </div>
+                    
+                
+                    
+                        <div class="navbar-item has-dropdown is-hoverable">
+                            <a class="navbar-link">编程框架</a>
+                            <div class="navbar-dropdown">
+                                
+                                <a class="navbar-item" href="/categories/springframework/">Spring</a>
+                                
+                                <a class="navbar-item" href="/categories/mybatis/">Mybatis</a>
+                                
+                                <a class="navbar-item" href="/categories/springcloud/">SpringCloud</a>
+                                
+                                <a class="navbar-item" href="/categories/common/">常用框架</a>
+                                
+                            </div>
+                        </div>
+                    
+                
+                    
+                        <a class="navbar-item" href="/categories/troubleshooting/">问题排查</a>
+                    
+                
+                    
+                        <a class="navbar-item" href="/categories/design/">设计思路</a>
+                    
+                
+                    
+                        <a class="navbar-item" href="/categories/reading/">读书笔记</a>
+                    
+                
+            </div>
+            </div>
+    </nav>
+</header><main>
+            <div class="container">
+                <div class="columns">
+                <div class="column is-four-fifths">
+                    <article class="post box is-radiusless">
+                        <div class="post-title">
+                            <h2 class="is-size-4">Java虚拟机监控工具 - GC日志和GCViewer</h2>
+                        </div>
+                            <div class="post-meta">
+                            <span class="post-time">日期&nbsp;:&nbsp;2018-06-07</span>
+                        </div>
+                        <div class="post-content content">
+                            <p>之前介绍的jstat和jmap只能使用输入命令的方式来进行GC和内存方面的监控.应用程序的GC情况可能是一个需要持续观察的过程,JVM提供了命令行选项来保存这些GC相关的日志.</p>
+
+<h4 id="gc日志命令行选项">GC日志命令行选项</h4>
+
+<pre><code>-XX:+PrintGCDetails 
+
+-XX:+PrintGCDateStamps 
+
+-XX:+UseGCLogFileRotation 
+
+-XX:NumberOfGClogFiles=1
+
+-XX:GCLogFileSize=1M
+
+-Xloggc:/tmp/gc-25041.log
+
+</code></pre>
+
+<p>从上到下的意义依次是打印GC详情、打印对应的时间戳、日志文件进行滚动、日志文件保留个数、日志文件大小、指定日志文件位置。</p>
+
+<p>保留这些日志的好处是备查，假如凌晨出现接口响应时间抖动的情况，需要排查下GC的情况，那么日志文件将保留GC相关完整的日志。当然有监控系统采集的是不需要这样来操作的。</p>
+
+<h4 id="如何看日志文件">如何看日志文件</h4>
+
+<p>首先日志文件会有头部三行，分别是JDK版本信息，物理内存情况，命令行选项。接着才是GC日志。</p>
+
+<pre><code>2018-06-06T07:09:49.504+0800: 1788068.264: [GC2018-06-06T07:09:49.504+0800: 1788068.265: [ParNew: 1814842K-&gt;128139K(1887488K), 0.0241460 secs] 2577729K-&gt;891505K(3984640K), 0.0252650 secs] [Times: user=0.47 sys=0.00, real=0.02 secs] 
+</code></pre>
+
+<p>第一段是时间，接着是年轻代和整个heap的情况，然后是消耗的时间。</p>
+
+<p><em>ParNew: 1814842K-&gt;128139K(1887488K), 0.0241460 secs</em></p>
+
+<p>表示年轻代使用ParNew收集算法，GC前是1814842K，GC后是128139K，年轻代总大小是1887488K，年轻代GC所消耗的时间是0.0241460s。即年轻代消耗24ms从1772MB的内存释放到125MB，也就是当前最Survivor保留了125MB的对象。</p>
+
+<p><em>2577729K-&gt;891505K(3984640K), 0.0252650 secs</em></p>
+
+<p>表示整个堆的使用情况从GC前的2577729KB变为GC后的891505KB，总大小是3984640KB，耗费的时间是0.0252650 s。即从2458MB的使用量释放到870MB。</p>
+
+<p>上述2段可以算出：</p>
+
+<p>GC前老年代使用量 = 2458-1772 = 686MB</p>
+
+<p>GC后老年代使用量 = 870-125 = 745MB</p>
+
+<p>本次晋升到老年代量 = 745-686 = 59MB</p>
+
+<p>计算的思路是很清晰的。每行日志都包含了GC前后的信息以及对应的时间。在应用程序预热一段时间以后，可以估算内存分代区域大小和GC停顿时间以及频率的正相关系数，辅助调优。</p>
+
+<h4 id="gc-view">GC View</h4>
+
+<p>GC日志都是逐行的日志，记录了每次GC的全貌，我们可以挑时间点或者一行一行地分析。但是有时候我们希望能够看到一个统计的情况。介绍个开源工具GCViewer，可以到Github上搜索一下。运行后可以直接选择打开某个GC日志文件</p>
+
+<h5 id="overview">overview</h5>
+
+<p><img src="gcviewer_overview.jpg" alt="image" /></p>
+
+<p>解析完成以后是主要是一个图表，很直观显示GC情况，横轴是时间，纵轴是内存使用量，下面的线是年轻代，上面的折线是整个堆。右边有一个summary是一些统计数值，图中total heap项，表示内存最大基本上只使用到79.6%，total time 总的统计时间是20天16小时。Number of gc pause GC停顿次数是 71306 ，GC performance 即GC效率，每秒能释放65322.4MB的内存。</p>
+
+<h5 id="event-detail">event detail</h5>
+
+<p><img src="gcviewer_event_details.jpg" alt="image" /></p>
+
+<p>详细记录了GC的停顿原因和停顿时间。如上图，大部分停顿都是在年轻代的垃圾收集。还有少量的CMS标记阶段。Concurrent GCs 还记录了并发垃圾收集器异步清理老年代的各个阶段和耗费的时间，这里面有的阶段是不造成业务线程停顿的。</p>
+
+<h5 id="memory-pause">memory &amp; pause</h5>
+
+<p><img src="gcviewer_memory.jpg" alt="image" /></p>
+
+<p><img src="gcviewer_pause.jpg" alt="image" /></p>
+
+<p>summary旁边2个选项卡统计了内存和GC停顿的相关情况和比例，调优的时候值得参考。</p>
+
+<h4 id="总结">总结</h4>
+
+<p>JVM提供了命令行选项，能够记录下每次GC事件的相关情况。我们可以对日志文件进行分析，统计数值使用GCViewer查看，能够直观看出一些规律性的问题。</p>
+                        </div>
+                        <div class="columns is-mobile post-meta">
+                            <div class="column is-half-desktop has-text-left is-paddingless"> 
+                                 
+                                更老一篇:<a href="http://www.lihongkun.com/jvm/jmap/"> Java虚拟机监控工具 - jmap</a>
+                                
+                            </div>
+                            <div class="column is-half-desktop has-text-right is-paddingless">
+                                
+                                更新一篇:<a href="http://www.lihongkun.com/jvm/garbage_collector/"> Java垃圾收集器概览</a>
+                                
+                            </div>
+                            <div class="is-clearfix"></div>
+                        </div>
+                        <script src="https://utteranc.es/client.js"
+                                repo="lihongkun/lihongkun.github.io"
+                                issue-term="title"
+                                theme="github-light"
+                                crossorigin="anonymous"
+                                async>
+                        </script>
+                    </article>
+                </div>
+                <div class="column">    <aside>
+        <h2 class="is-size-4">关于我</h2>
+        <div class="content">
+            Working in advertising platform team. Backend on duty,full stack in my own time.
+        </div>
+        <h2 class="is-size-4">GitHub</h2>
+        <div class="content">
+            <a href="https://github.com/lihongkun" target="_blank">https://github.com/lihongkun</a>
+        </div>
+    </aside></div>
+                </div>
+            </div>
+         </main>    <footer class="footer">
+    
+        <div class="copyright has-text-centered">
+            <a href="https://bulma.io">
+                <img src="http://www.lihongkun.com/images/made-with-bulma.png" alt="Made with Bulma" width="128" height="24">
+            </a>
+            <p>© 泛泛之辈 Power by Hugo v0.55.6 - 闽ICP备15009606号</p>
+        </div>
+    </footer>
+    <script type="text/javascript">
+    document.addEventListener('DOMContentLoaded', () => {
+        
+        const $navbarBurgers = Array.prototype.slice.call(document.querySelectorAll('.navbar-burger'), 0);
+        
+        if ($navbarBurgers.length > 0) {
+            
+            $navbarBurgers.forEach( el => {
+                el.addEventListener('click', () => {
+                
+                const target = el.dataset.target;
+                const $target = document.getElementById(target);
+                
+                el.classList.toggle('is-active');
+                $target.classList.toggle('is-active');
+    
+                });
+            });
+        }
+    });
+    </script></body>
+</html>

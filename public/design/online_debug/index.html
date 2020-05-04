@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html><head>
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+
+    
+    <meta name="author"
+            content=""/>
+
+    
+    <meta name="description" content="线上日志是工程师诊断业务问题的主要依据。在并发量比较小的情况下，关键日志都是全量打印。在QPS到达十万甚至百万量级的服务里面，打印全量业务日志是不现实的。那么在这种情况下，我们如何去跟踪和重现偶发性的业务问题 ？
+"/>
+    
+
+    
+
+    
+    <link rel="canonical" href="http://www.lihongkun.com/design/online_debug/"/>
+
+    
+
+    
+    
+    
+        
+            
+        
+    
+        
+            
+                
+            
+                
+            
+                
+            
+                
+            
+        
+    
+        
+            
+                
+            
+                
+            
+                
+            
+                
+            
+        
+    
+        
+            
+        
+    
+        
+            
+        
+    
+        
+            
+        
+    
+    <title> 高并发系统的在线诊断日志 | 泛泛之辈 </title>
+
+    <link rel="shortcut icon" href="http://www.lihongkun.com/favicon.jpg"/>
+    <link rel="stylesheet" href="http://www.lihongkun.com/css/bulma.min.css"/>
+    <link rel="stylesheet" href="http://www.lihongkun.com/css/style.css"/>
+</head><body><header>
+    <nav class="navbar is-fixed-top is-primary" role="navigation" aria-label="main navigation">
+        <div class="navbar-brand is-size-4">
+            <a class="navbar-item" href="http://www.lihongkun.com/">
+                    泛泛之辈
+            </a>
+            <a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false" data-target="navbar-menu">
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+            </a>
+        </div>
+        <div id="navbar-menu" class="navbar-menu">
+            <div class="navbar-end">
+                
+                    
+                        <a class="navbar-item" href="/">首页</a>
+                    
+                
+                    
+                        <div class="navbar-item has-dropdown is-hoverable">
+                            <a class="navbar-link">基本功</a>
+                            <div class="navbar-dropdown">
+                                
+                                <a class="navbar-item" href="/categories/concurrent/">并发</a>
+                                
+                                <a class="navbar-item" href="/categories/network/">网络</a>
+                                
+                                <a class="navbar-item" href="/categories/security/">Web安全</a>
+                                
+                                <a class="navbar-item" href="/categories/jvm/">Java虚拟机</a>
+                                
+                            </div>
+                        </div>
+                    
+                
+                    
+                        <div class="navbar-item has-dropdown is-hoverable">
+                            <a class="navbar-link">编程框架</a>
+                            <div class="navbar-dropdown">
+                                
+                                <a class="navbar-item" href="/categories/springframework/">Spring</a>
+                                
+                                <a class="navbar-item" href="/categories/mybatis/">Mybatis</a>
+                                
+                                <a class="navbar-item" href="/categories/springcloud/">SpringCloud</a>
+                                
+                                <a class="navbar-item" href="/categories/common/">常用框架</a>
+                                
+                            </div>
+                        </div>
+                    
+                
+                    
+                        <a class="navbar-item" href="/categories/troubleshooting/">问题排查</a>
+                    
+                
+                    
+                        <a class="navbar-item" href="/categories/design/">设计思路</a>
+                    
+                
+                    
+                        <a class="navbar-item" href="/categories/reading/">读书笔记</a>
+                    
+                
+            </div>
+            </div>
+    </nav>
+</header><main>
+            <div class="container">
+                <div class="columns">
+                <div class="column is-four-fifths">
+                    <article class="post box is-radiusless">
+                        <div class="post-title">
+                            <h2 class="is-size-4">高并发系统的在线诊断日志</h2>
+                        </div>
+                            <div class="post-meta">
+                            <span class="post-time">日期&nbsp;:&nbsp;2020-04-01</span>
+                        </div>
+                        <div class="post-content content">
+                            <p>线上日志是工程师诊断业务问题的主要依据。在并发量比较小的情况下，关键日志都是全量打印。在QPS到达十万甚至百万量级的服务里面，打印全量业务日志是不现实的。那么在这种情况下，我们如何去跟踪和重现偶发性的业务问题 ？</p>
+
+<p>首先全量打印日志已经被否定了，大量的写磁盘操作对应用本身是一种极大的压力，且存储成本也很高。很容易想到只打印部分日志 ， 维度则是某一次具体的调用。那么就需要一个能够简单进行配置答应某一次调用，且能够将这次调用的日志收集并查询的系统。思路如下图：</p>
+
+<p><img src="online-debug.jpg" alt="" /></p>
+
+<p>整个过程分为6个步骤</p>
+
+<ol>
+<li>通过运营管理平台配置要跟踪的用户的标识比如IMEI或者用户ID，依据系统特性而定。存储到临时存储当中。</li>
+<li>要调试的各个服务嵌入了在线调试的SDK，从临时存储从拉取对应的标识。</li>
+<li>如果配置的测试用户则进行主动调用。</li>
+<li>调用链路上的服务把各个服务所产生的业务日志，包含调用链的标识上报到数据收集服务。</li>
+<li>数据服务将日志聚合写入到临时存储</li>
+<li>开发或者运营人员通过运营管理平台查询调用链路上的信息。</li>
+</ol>
+
+<p>存储的选型使用Redis，因为可以设置过期时间。不用额外的工作去处理过期的策略。如果简化一点实现的化，那么上述的数据收集服务是可以直接忽略的。我们直接扩展Logback的Appender。</p>
+
+<pre><code>&lt;configuration&gt;
+    other config about 
+    &lt;appender name=&quot;REDIS&quot; class=&quot;com.cwbase.logback.RedisAppender&quot;&gt;
+        config about redis and log level filter
+    &lt;/appender&gt;
+    &lt;appender name=&quot;ASYNC&quot; class=&quot;ch.qos.logback.classic.AsyncAppender&quot;&gt;
+        &lt;appender-ref ref=&quot;LOGSTASH&quot; /&gt;
+    &lt;/appender&gt;
+    &lt;root level=&quot;INFO&quot;&gt;
+        &lt;appender-ref ref=&quot;ASYNC&quot; /&gt;
+    &lt;/root&gt;
+&lt;/configuration&gt;
+</code></pre>
+
+<p>整个系统需要依赖在调用链系统之上，每个环节通过调用链ID串连起来，同时可以知道每个环节的耗时。如果没有调用链系统，那么每个环节则需要透传从入口服务生成的请求标识。</p>
+                        </div>
+                        <div class="columns is-mobile post-meta">
+                            <div class="column is-half-desktop has-text-left is-paddingless"> 
+                                 
+                                更老一篇:<a href="http://www.lihongkun.com/design/weight_random/"> 加权随机算法</a>
+                                
+                            </div>
+                            <div class="column is-half-desktop has-text-right is-paddingless">
+                                
+                                更新一篇:<a href="http://www.lihongkun.com/design/mass_data_export/"> 后端大量数据导出场景的处理</a>
+                                
+                            </div>
+                            <div class="is-clearfix"></div>
+                        </div>
+                        <script src="https://utteranc.es/client.js"
+                                repo="lihongkun/lihongkun.github.io"
+                                issue-term="title"
+                                theme="github-light"
+                                crossorigin="anonymous"
+                                async>
+                        </script>
+                    </article>
+                </div>
+                <div class="column">    <aside>
+        <h2 class="is-size-4">关于我</h2>
+        <div class="content">
+            Working in advertising platform team. Backend on duty,full stack in my own time.
+        </div>
+        <h2 class="is-size-4">GitHub</h2>
+        <div class="content">
+            <a href="https://github.com/lihongkun" target="_blank">https://github.com/lihongkun</a>
+        </div>
+    </aside></div>
+                </div>
+            </div>
+         </main>    <footer class="footer">
+    
+        <div class="copyright has-text-centered">
+            <a href="https://bulma.io">
+                <img src="http://www.lihongkun.com/images/made-with-bulma.png" alt="Made with Bulma" width="128" height="24">
+            </a>
+            <p>© 泛泛之辈 Power by Hugo v0.55.6 - 闽ICP备15009606号</p>
+        </div>
+    </footer>
+    <script type="text/javascript">
+    document.addEventListener('DOMContentLoaded', () => {
+        
+        const $navbarBurgers = Array.prototype.slice.call(document.querySelectorAll('.navbar-burger'), 0);
+        
+        if ($navbarBurgers.length > 0) {
+            
+            $navbarBurgers.forEach( el => {
+                el.addEventListener('click', () => {
+                
+                const target = el.dataset.target;
+                const $target = document.getElementById(target);
+                
+                el.classList.toggle('is-active');
+                $target.classList.toggle('is-active');
+    
+                });
+            });
+        }
+    });
+    </script></body>
+</html>

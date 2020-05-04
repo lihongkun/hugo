@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html><head>
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+
+    
+    <meta name="author"
+            content=""/>
+
+    
+    <meta name="description" content="线程通信模型大体可分为两种，共享变量和消息传递。虽然消息传递（Actor模型）是比较被推崇的，但是Java语言并不支持。所以在并发程序中我们必须要面对共享变量所带来的编程复杂度。
+"/>
+    
+
+    
+
+    
+    <link rel="canonical" href="http://www.lihongkun.com/concurrent/shared_variable_in_concurrent_env/"/>
+
+    
+
+    
+    
+    
+        
+            
+        
+    
+        
+            
+                
+            
+                
+            
+                
+            
+                
+            
+        
+    
+        
+            
+                
+            
+                
+            
+                
+            
+                
+            
+        
+    
+        
+            
+        
+    
+        
+            
+        
+    
+        
+            
+        
+    
+    <title> 共享变量的并发安全性 | 泛泛之辈 </title>
+
+    <link rel="shortcut icon" href="http://www.lihongkun.com/favicon.jpg"/>
+    <link rel="stylesheet" href="http://www.lihongkun.com/css/bulma.min.css"/>
+    <link rel="stylesheet" href="http://www.lihongkun.com/css/style.css"/>
+</head><body><header>
+    <nav class="navbar is-fixed-top is-primary" role="navigation" aria-label="main navigation">
+        <div class="navbar-brand is-size-4">
+            <a class="navbar-item" href="http://www.lihongkun.com/">
+                    泛泛之辈
+            </a>
+            <a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false" data-target="navbar-menu">
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+            </a>
+        </div>
+        <div id="navbar-menu" class="navbar-menu">
+            <div class="navbar-end">
+                
+                    
+                        <a class="navbar-item" href="/">首页</a>
+                    
+                
+                    
+                        <div class="navbar-item has-dropdown is-hoverable">
+                            <a class="navbar-link">基本功</a>
+                            <div class="navbar-dropdown">
+                                
+                                <a class="navbar-item" href="/categories/concurrent/">并发</a>
+                                
+                                <a class="navbar-item" href="/categories/network/">网络</a>
+                                
+                                <a class="navbar-item" href="/categories/security/">Web安全</a>
+                                
+                                <a class="navbar-item" href="/categories/jvm/">Java虚拟机</a>
+                                
+                            </div>
+                        </div>
+                    
+                
+                    
+                        <div class="navbar-item has-dropdown is-hoverable">
+                            <a class="navbar-link">编程框架</a>
+                            <div class="navbar-dropdown">
+                                
+                                <a class="navbar-item" href="/categories/springframework/">Spring</a>
+                                
+                                <a class="navbar-item" href="/categories/mybatis/">Mybatis</a>
+                                
+                                <a class="navbar-item" href="/categories/springcloud/">SpringCloud</a>
+                                
+                                <a class="navbar-item" href="/categories/common/">常用框架</a>
+                                
+                            </div>
+                        </div>
+                    
+                
+                    
+                        <a class="navbar-item" href="/categories/troubleshooting/">问题排查</a>
+                    
+                
+                    
+                        <a class="navbar-item" href="/categories/design/">设计思路</a>
+                    
+                
+                    
+                        <a class="navbar-item" href="/categories/reading/">读书笔记</a>
+                    
+                
+            </div>
+            </div>
+    </nav>
+</header><main>
+            <div class="container">
+                <div class="columns">
+                <div class="column is-four-fifths">
+                    <article class="post box is-radiusless">
+                        <div class="post-title">
+                            <h2 class="is-size-4">共享变量的并发安全性</h2>
+                        </div>
+                            <div class="post-meta">
+                            <span class="post-time">日期&nbsp;:&nbsp;2018-08-15</span>
+                        </div>
+                        <div class="post-content content">
+                            <p>线程通信模型大体可分为两种，共享变量和消息传递。虽然消息传递（Actor模型）是比较被推崇的，但是Java语言并不支持。所以在并发程序中我们必须要面对共享变量所带来的编程复杂度。</p>
+
+<p>所谓共享变量，即一个类的静态域或者实例域。先看一个线程不安全的例子。</p>
+
+<pre><code>public static void main(String[] args) {
+	
+	final Counter counter = new Counter();
+	
+	ExecutorService es = Executors.newFixedThreadPool(5);
+	for(int i=0;i&lt;5;i++){
+		es.execute(new Runnable() {
+			@Override
+			public void run() {
+				for(int i=0;i&lt;10000;i++)
+					counter.incr();
+			}
+		});
+	}
+	
+	es.shutdown();
+	while(true){
+		if(es.isTerminated())
+			break;
+	}
+	
+	System.out.println(&quot;final cnt : &quot; + counter.cnt);
+	
+}
+
+private static class Counter{
+	
+	public int cnt = 0;
+	
+	public void incr(){
+		cnt++;
+	}
+}
+</code></pre>
+
+<p>5个线程分别对一个变量进行自增操作1w次，结果并非是5w而是少了很多。原因可以看下Java线程的内存模型，每个线程都有自己的本地栈缓存了counter的副本，修改了以后需要刷新到堆中其他线程才能感知到变化。这过程并非是原子的。深入的原理可以参考下 &lt;&lt;深入理解Java内存模型&gt;&gt; <a href="http://ifeve.com/java-memory-model-0/">http://ifeve.com/java-memory-model-0/</a></p>
+
+<p>这边只对比下解决的方式</p>
+
+<h3 id="synchronized">synchronized</h3>
+
+<p>最简单粗暴的方式就是同步原语，早期的Java提供的一种同步方式，在方法上面加上synchronized关键字或者方法块加上synchronized，这样做的话方法或者代码块保证了原子性，只有一个线程能同时访问。</p>
+
+<pre><code>// 修改后的方式
+private static class Counter{
+		
+	private Object lock = new Object();
+	
+	public int cnt = 0;
+	
+	public void incr(){
+		synchronized (lock) {
+			cnt++;
+		}
+	}
+}
+</code></pre>
+
+<h3 id="reentrantlock">ReentrantLock</h3>
+
+<p>你也可以使用读写锁，当然这里只是很简单的用法。ReentrantLock可以使用在更高级的场景。在这个简单的自增例子中也是很简单粗暴，基本上体现不出它的优势。</p>
+
+<pre><code>private static class Counter{
+		
+	ReentrantLock lock = new ReentrantLock();
+	
+	public int cnt = 0;
+	
+	public void incr(){
+		lock.lock();
+		try{
+			cnt++;
+		}
+		catch (Exception ex) {
+			// TODO: handle exception
+		}
+		finally {
+			lock.unlock();
+		}
+	}
+}
+</code></pre>
+
+<h3 id="原子类型">原子类型</h3>
+
+<p>JDK 1.5 开始提供了 原子类型，可修改为</p>
+
+<pre><code>private static class Counter{
+		
+    public AtomicInteger cnt = new AtomicInteger(0);
+    
+    public void incr(){
+    	cnt.incrementAndGet();
+    }
+}
+</code></pre>
+
+<p>原子类型很适合使用来做自增，统计等操作。而且与前面二者不同，使用的是无锁算法。</p>
+
+<h3 id="volatile">volatile</h3>
+
+<p>volatile的语义是被它修饰的变量如果发生变更能立刻被其他线程所见。但是它并不适合自增的场景。</p>
+
+<pre><code>private static class Counter{
+	
+	public volatile int cnt = 0;
+	
+	public void incr(){
+		cnt++;
+	}
+}
+</code></pre>
+
+<p>上面的代码是无法避免问题的，原因是它只能保证可见性，但是自增操作并不是原子性的操作。cnt++是先读取cnt的值然后执行加一并赋值的操作。</p>
+
+<p>volatile的使用原则是可以被写入 volatile 变量的这些有效值独立于任何程序的状态，包括变量的当前状态。如下面shutdown方法并不依赖任何其他状态</p>
+
+<pre><code>volatile  boolean shutdownRequested;
+ 
+...
+ 
+public void shutdown() { shutdownRequested = true; }
+ 
+public void doWork() { 
+    while (!shutdownRequested) { 
+        // do something
+    }
+}
+</code></pre>
+
+<h4 id="小结">小结</h4>
+
+<p>Java的线程通信模型使用的是共享变量，处理共享变量的同步问题不一定都是需要使用synchronized这种开销比较大的，并发度比较低的方式，可以选的方式还有volatile，lock或者原子类型</p>
+                        </div>
+                        <div class="columns is-mobile post-meta">
+                            <div class="column is-half-desktop has-text-left is-paddingless"> 
+                                
+                                没有了，已经是最后文章
+                                
+                            </div>
+                            <div class="column is-half-desktop has-text-right is-paddingless">
+                                
+                                更新一篇:<a href="http://www.lihongkun.com/concurrent/using_reentrantlock/"> ReentrantLock使用</a>
+                                
+                            </div>
+                            <div class="is-clearfix"></div>
+                        </div>
+                        <script src="https://utteranc.es/client.js"
+                                repo="lihongkun/lihongkun.github.io"
+                                issue-term="title"
+                                theme="github-light"
+                                crossorigin="anonymous"
+                                async>
+                        </script>
+                    </article>
+                </div>
+                <div class="column">    <aside>
+        <h2 class="is-size-4">关于我</h2>
+        <div class="content">
+            Working in advertising platform team. Backend on duty,full stack in my own time.
+        </div>
+        <h2 class="is-size-4">GitHub</h2>
+        <div class="content">
+            <a href="https://github.com/lihongkun" target="_blank">https://github.com/lihongkun</a>
+        </div>
+    </aside></div>
+                </div>
+            </div>
+         </main>    <footer class="footer">
+    
+        <div class="copyright has-text-centered">
+            <a href="https://bulma.io">
+                <img src="http://www.lihongkun.com/images/made-with-bulma.png" alt="Made with Bulma" width="128" height="24">
+            </a>
+            <p>© 泛泛之辈 Power by Hugo v0.55.6 - 闽ICP备15009606号</p>
+        </div>
+    </footer>
+    <script type="text/javascript">
+    document.addEventListener('DOMContentLoaded', () => {
+        
+        const $navbarBurgers = Array.prototype.slice.call(document.querySelectorAll('.navbar-burger'), 0);
+        
+        if ($navbarBurgers.length > 0) {
+            
+            $navbarBurgers.forEach( el => {
+                el.addEventListener('click', () => {
+                
+                const target = el.dataset.target;
+                const $target = document.getElementById(target);
+                
+                el.classList.toggle('is-active');
+                $target.classList.toggle('is-active');
+    
+                });
+            });
+        }
+    });
+    </script></body>
+</html>

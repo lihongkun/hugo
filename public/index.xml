@@ -1,0 +1,626 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>泛泛之辈</title>
+    <link>http://www.lihongkun.com/</link>
+    <description>Recent content on 泛泛之辈</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-CN</language>
+    <lastBuildDate>Sat, 25 Apr 2020 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="http://www.lihongkun.com/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>大型项目的依赖包管理</title>
+      <link>http://www.lihongkun.com/design/bom/</link>
+      <pubDate>Sat, 25 Apr 2020 00:00:00 +0000</pubDate>
+      
+      <guid>http://www.lihongkun.com/design/bom/</guid>
+      <description>&lt;p&gt;Java的世界里，几乎所有项目的包管理都是使用了Maven，或者在其之上演进的组件。大型项目比如有成百上千个工程，依赖的包比较多，如果没有统一的版本管理，很容易就失控了。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>微基准测试框架JMH</title>
+      <link>http://www.lihongkun.com/common/jmh/</link>
+      <pubDate>Sun, 12 Apr 2020 00:00:00 +0000</pubDate>
+      
+      <guid>http://www.lihongkun.com/common/jmh/</guid>
+      <description>&lt;p&gt;JMH（Java Microbenchmark Harness），是一个针对Java或者JVM上语言的基准测试工具。它可以比较轻松地创建基准测试。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>后端大量数据导出场景的处理</title>
+      <link>http://www.lihongkun.com/design/mass_data_export/</link>
+      <pubDate>Sat, 04 Apr 2020 00:00:00 +0000</pubDate>
+      
+      <guid>http://www.lihongkun.com/design/mass_data_export/</guid>
+      <description>&lt;p&gt;统计类报表除了提供界面查询还提供导出的功能，一般量也不是很大，不容易遇到瓶颈。日志明细类的，比如一个全民APP的下载数据，可能一天的量就是百万级别的。在这种场景下，如果客户需要导出这类数据的明细那么就会遇到一些挑战。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>高并发系统的在线诊断日志</title>
+      <link>http://www.lihongkun.com/design/online_debug/</link>
+      <pubDate>Wed, 01 Apr 2020 00:00:00 +0000</pubDate>
+      
+      <guid>http://www.lihongkun.com/design/online_debug/</guid>
+      <description>&lt;p&gt;线上日志是工程师诊断业务问题的主要依据。在并发量比较小的情况下，关键日志都是全量打印。在QPS到达十万甚至百万量级的服务里面，打印全量业务日志是不现实的。那么在这种情况下，我们如何去跟踪和重现偶发性的业务问题 ？&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Logback日志框架</title>
+      <link>http://www.lihongkun.com/common/logback/</link>
+      <pubDate>Sat, 22 Feb 2020 00:00:00 +0000</pubDate>
+      
+      <guid>http://www.lihongkun.com/common/logback/</guid>
+      <description>&lt;p&gt;Logback是一个日志实现框架，它实现了SLF4J 。它们二者出自同一作者之手，也是时下比较普及的一个组合。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Java日志门面系统</title>
+      <link>http://www.lihongkun.com/common/slf4j/</link>
+      <pubDate>Sat, 08 Feb 2020 00:00:00 +0000</pubDate>
+      
+      <guid>http://www.lihongkun.com/common/slf4j/</guid>
+      <description>&lt;p&gt;一个线上程序的运行情况监测，日志扮演着极其重要的角色。Java发展了20年，日志系统也是百家争鸣，不同历史时期出现的开源组件往往有着不同的日志实现，应用的整合难度陡升。所幸Simple Logging Facade for Java（SLF4J）对各种日志框架进行了抽象。如其名字，它对开发者提供了统一的门面，允许开发者在部署时插入所需的日志框架。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>初见 VS Code</title>
+      <link>http://www.lihongkun.com/ide/hello_vscode/</link>
+      <pubDate>Sun, 02 Feb 2020 00:00:00 +0000</pubDate>
+      
+      <guid>http://www.lihongkun.com/ide/hello_vscode/</guid>
+      <description>&lt;p&gt;Visual Studio Code (简称 VS Code) 是一款免费开源的现代化轻量级代码编辑器，支持几乎所有主流的开发语言的语法高亮、智能代码补全、自定义热键、括号匹配、代码片段、代码对比 Diff、Git 等特性，支持插件扩展，并针对网页开发和云端应用开发做了优化。轻量、免费、开源和扩展机制为它赢得了很多用户，同时社区和官方对他的维护和扩展是非常活跃的。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>序列化库选型</title>
+      <link>http://www.lihongkun.com/common/serialization/</link>
+      <pubDate>Sat, 28 Dec 2019 00:00:00 +0000</pubDate>
+      
+      <guid>http://www.lihongkun.com/common/serialization/</guid>
+      <description>&lt;p&gt;序列化和反序列化在线上系统中是一个绕不开的话题，通常作为RPC框架中的一部分而被很多人所忽略。然而它经常成为系统设计或者性能影响因素的一个重要环节。业界有许许多多的序列化库，我们应该如何进行选型，下面我们来简单探讨一下&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Serializable和Hession</title>
+      <link>http://www.lihongkun.com/common/serializable_and_hession/</link>
+      <pubDate>Sat, 07 Dec 2019 00:00:00 +0000</pubDate>
+      
+      <guid>http://www.lihongkun.com/common/serializable_and_hession/</guid>
+      <description>&lt;p&gt;Serializable是Java提供的原生序列化方式，它提供了配套的ObjectOutputStream和ObjectIutputStream来处理Java对象的序列化读写，解析效率性能比较高，但是消耗的存储却捉襟见肘。很多框架中仅仅作为一个基础实现，但是基本无人使用。比如 Dubbo 框架中并不是使用它作为默认的序列化方式，而是使用hession。下面看看这两种序列化方式的优劣。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Kryo序列化器</title>
+      <link>http://www.lihongkun.com/common/kryo/</link>
+      <pubDate>Wed, 04 Dec 2019 00:00:00 +0000</pubDate>
+      
+      <guid>http://www.lihongkun.com/common/kryo/</guid>
+      <description>&lt;p&gt;Kryo是一个快速高效的java二进制对象图序列化框架。该项目的目标是高解析效率、高压缩率和易于使用的API。无论是文件、数据库还是网络上的对象，在需要持久化的场景中，该项目可以进入考虑的范围。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Avro序列化器</title>
+      <link>http://www.lihongkun.com/common/avro/</link>
+      <pubDate>Sun, 01 Dec 2019 00:00:00 +0000</pubDate>
+      
+      <guid>http://www.lihongkun.com/common/avro/</guid>
+      <description>&lt;p&gt;Apache Avro（以下简称 Avro）是一种与编程语言无关的序列化格式。Avro 数据通过与语言无关的 schema 来定义。schema 通过 JSON 来描述，数据被序列化成二进制文件或 JSON 文件，不过一般会使用二进制文件。在大数据体系下，比较注重存储的压缩率，反而对效率并没有要求得很苛刻。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>加权随机算法</title>
+      <link>http://www.lihongkun.com/design/weight_random/</link>
+      <pubDate>Sun, 17 Nov 2019 00:00:00 +0000</pubDate>
+      
+      <guid>http://www.lihongkun.com/design/weight_random/</guid>
+      <description>&lt;p&gt;加权重随机是一个比较常见的计算方式，比如 负载均衡算法中的一种、随机抽奖、广告系统流量分配等等。这种算法的实现方式比较成熟。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>thrift序列化协议</title>
+      <link>http://www.lihongkun.com/common/thirft/</link>
+      <pubDate>Mon, 23 Sep 2019 00:00:00 +0000</pubDate>
+      
+      <guid>http://www.lihongkun.com/common/thirft/</guid>
+      <description>&lt;p&gt;Apache Thrift 脱胎于 Facebook ，是一种高效的、支持多种编程语言的远程服务调用的框架。它的序列化协议同样可用于通讯协议、数据存储等领域的语言无关、平台无关、可扩展的序列化结构数据格式。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>protobuf序列化协议</title>
+      <link>http://www.lihongkun.com/common/protobuf_vs_json/</link>
+      <pubDate>Tue, 20 Aug 2019 00:00:00 +0000</pubDate>
+      
+      <guid>http://www.lihongkun.com/common/protobuf_vs_json/</guid>
+      <description>&lt;p&gt;Protocol Buffers 是一种轻便高效的结构化数据存储格式，可以用于结构化数据串行化，或者说序列化。它很适合做数据存储或 RPC 数据交换格式。可用于通讯协议、数据存储等领域的语言无关、平台无关、可扩展的序列化结构数据格式。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>常见JSON序列化库性能比较</title>
+      <link>http://www.lihongkun.com/common/json_compare/</link>
+      <pubDate>Sun, 18 Aug 2019 00:00:00 +0000</pubDate>
+      
+      <guid>http://www.lihongkun.com/common/json_compare/</guid>
+      <description>&lt;p&gt;JSON（JavaScript Object Notation，JavaScript对象表示法，读作/ˈdʒeɪsən/）是一种由道格拉斯·克罗克福特构想和设计、轻量级的数据交换语言，该语言以易于让人阅读的文字为基础，用来传输由属性值或者序列性的值组成的数据对象。很多接口协议中都默认以它为序列化协议，如SpringCloud里面都是以HTTP+JSON的方式来提供服务。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>async-profiler查找CPU热点</title>
+      <link>http://www.lihongkun.com/troubleshooting/async-profiler/</link>
+      <pubDate>Sat, 10 Aug 2019 00:00:00 +0000</pubDate>
+      
+      <guid>http://www.lihongkun.com/troubleshooting/async-profiler/</guid>
+      <description>&lt;p&gt;算法新上线的接口，平均耗时增加了20ms。使用jstack一类的脚本出来的堆栈基本上比较平均。很难定位到确切的位置。这种微小耗时监测场景。典型的方式是直接进行CPU热点采样，通常是linux的perf加上perf-map-agent来映射出java的堆栈。这个组合略复杂。我使用的是 async-profiler 。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>单点登录</title>
+      <link>http://www.lihongkun.com/security/sso/</link>
+      <pubDate>Mon, 15 Jul 2019 00:00:00 +0000</pubDate>
+      
+      <guid>http://www.lihongkun.com/security/sso/</guid>
+      <description>&lt;p&gt;&lt;a href=&#34;https://www.lihongkun.com/security/sign_in/&#34;&gt;分布式登录状态一致性&lt;/a&gt; 解决的是同一个域名下的状态，如果一个企业内部存储多个领域的系统，且他们具备不同的特性和域名，又必须提供统一的登录方式。那么这时候单点登录就派上用场了。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>使用Lombok简化代码</title>
+      <link>http://www.lihongkun.com/common/lombok/</link>
+      <pubDate>Sun, 14 Jul 2019 00:00:00 +0000</pubDate>
+      
+      <guid>http://www.lihongkun.com/common/lombok/</guid>
+      <description>&lt;p&gt;POJO等一系列的java bean最让人诟病的是他们有很多重复的工作存在。比如里面的属性要暴露出去需要写很多的Getter和Setter方法。完全是体力活。Lombok是一个开源库，能够改善这种现状。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>分布式登录状态一致性</title>
+      <link>http://www.lihongkun.com/security/sign_in/</link>
+      <pubDate>Mon, 08 Jul 2019 00:00:00 +0000</pubDate>
+      
+      <guid>http://www.lihongkun.com/security/sign_in/</guid>
+      <description>&lt;p&gt;无状态的HTTP协议如何来保持用户的信息？分布式环境下的登录态是如何存储和使用的？ 本文给你详细的答案。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>G1垃圾收集器</title>
+      <link>http://www.lihongkun.com/jvm/garbage_first_collector/</link>
+      <pubDate>Sat, 06 Jul 2019 00:00:00 +0000</pubDate>
+      
+      <guid>http://www.lihongkun.com/jvm/garbage_first_collector/</guid>
+      <description>&lt;p&gt;G1 (Garbage-First)是一款面向服务器的垃圾收集器,主要针对处理器并且使用大容量堆内存的应用。它尽可能满足GC停顿时间要求的同时，还具备高吞吐量性能特征。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>CMS垃圾收集器</title>
+      <link>http://www.lihongkun.com/jvm/cms_collector/</link>
+      <pubDate>Wed, 26 Jun 2019 00:00:00 +0000</pubDate>
+      
+      <guid>http://www.lihongkun.com/jvm/cms_collector/</guid>
+      <description>&lt;p&gt;并发标记清除垃圾收集器(简称CMS) , 是一款为低延迟而设计的垃圾收集器 , 在应用进程工作的时候利用机器多处理器资源在后台进行垃圾收集动作. 特别适用于有比较多的长期存活对象 , 且机器的处理器大于2.可以使用 -XX:+UseConcMarkSweepGC命令行选项来启用 .&lt;/p&gt;
+
+&lt;p&gt;CMS已经不推荐使用 , 业界推荐使用G1来替代它 . 虽然如此很多老的应用依旧运行着此垃圾收集器.&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Java垃圾收集器概览</title>
+      <link>http://www.lihongkun.com/jvm/garbage_collector/</link>
+      <pubDate>Tue, 18 Jun 2019 00:00:00 +0000</pubDate>
+      
+      <guid>http://www.lihongkun.com/jvm/garbage_collector/</guid>
+      <description>&lt;p&gt;经过多年的发展Java的垃圾收集器也在不断地进步 , 截止目前存在五种垃圾收集器, 分别适用在不同的场景 . 不同版本的JDK默认的垃圾收集器和所支持的垃圾收集器可能会不一致&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>正交性</title>
+      <link>http://www.lihongkun.com/reading/orthogonality/</link>
+      <pubDate>Sun, 21 Apr 2019 00:00:00 +0000</pubDate>
+      
+      <guid>http://www.lihongkun.com/reading/orthogonality/</guid>
+      <description>&lt;p&gt;如果你想要制作易于设计、构建、测试及扩展的系统，正交性就是一个十分关键的概念，但是正交性的概念很少被直接讲授，而常常是你学习的各种其他方法和技术的隐含特性。这是一个错误。一旦学会了直接应用正交性原则，你将发现，你制作的系统的质量就得到了提高。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>软件的熵</title>
+      <link>http://www.lihongkun.com/reading/entropy_of_software/</link>
+      <pubDate>Mon, 08 Apr 2019 00:00:00 +0000</pubDate>
+      
+      <guid>http://www.lihongkun.com/reading/entropy_of_software/</guid>
+      <description>&lt;p&gt;&amp;ldquo;熵&amp;rdquo;是一个物理学的定义,指的是某个系统中的&amp;rdquo;无序&amp;rdquo;的总量.热力学定律保证了宇宙中的熵倾向于最大化.当软件中的无序增长时,程序员们称之为&amp;rdquo;软件腐烂&amp;rdquo;&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Java NIO</title>
+      <link>http://www.lihongkun.com/network/java_nio/</link>
+      <pubDate>Mon, 11 Mar 2019 00:00:00 +0000</pubDate>
+      
+      <guid>http://www.lihongkun.com/network/java_nio/</guid>
+      <description>&lt;p&gt;Java NIO 是 IO复用模型在Java平台的实现 , 针对Java BIO在高并发情况下的缺点 1.4之后提供了NIO的实现. 还是以EchoServer为例子.&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Java BIO</title>
+      <link>http://www.lihongkun.com/network/java_bio/</link>
+      <pubDate>Mon, 04 Mar 2019 00:00:00 +0000</pubDate>
+      
+      <guid>http://www.lihongkun.com/network/java_bio/</guid>
+      <description>&lt;p&gt;在JDK1.4出来之前,建立网络连接的时候采用BIO模式,下面以EchoServer为例子聊聊Java的阻塞IO.&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>网络IO模型</title>
+      <link>http://www.lihongkun.com/network/network_io_model/</link>
+      <pubDate>Mon, 25 Feb 2019 00:00:00 +0000</pubDate>
+      
+      <guid>http://www.lihongkun.com/network/network_io_model/</guid>
+      <description>&lt;p&gt;一次网络IO 的调用涉及到用户进程和系统内核对象 , 以读为例.&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;等待网络上的数据分组到达,并复制到内核的缓冲区&lt;/li&gt;
+&lt;li&gt;内核缓冲区数据复制到用户进程中,也就是调用网络IO进程的缓冲区.&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;常见的IO模型有五种, 不同的IO模型在这两个阶段的处理上各不相同.&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>TCP三次握手和短连接优化</title>
+      <link>http://www.lihongkun.com/network/tcp_handshake_and_short_connection/</link>
+      <pubDate>Mon, 28 Jan 2019 00:00:00 +0000</pubDate>
+      
+      <guid>http://www.lihongkun.com/network/tcp_handshake_and_short_connection/</guid>
+      <description>&lt;p&gt;虽然高级语言或者网络库对于网络连接的细节进行了屏蔽, 但是在遇到瓶颈的时候难免要深入其中,才能对其进行调优. 那么连接建立和终止的时候发生了什么?&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>网卡容量</title>
+      <link>http://www.lihongkun.com/network/nic_capacity/</link>
+      <pubDate>Mon, 21 Jan 2019 00:00:00 +0000</pubDate>
+      
+      <guid>http://www.lihongkun.com/network/nic_capacity/</guid>
+      <description>&lt;p&gt;网卡是工作在链路层的网络组件,是局域网中连接计算机和传输介质的接口,不仅能实现与局域网传输介质之间的物理连接和电信号匹配,还涉及帧的发送与接收、帧的封装与拆封、介质访问控制、数据的编码与解码以及数据缓存的功能等.又称为通信适配器或网络适配器或网络接口卡(Network Interface Card)&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>网络延时</title>
+      <link>http://www.lihongkun.com/network/network_delay/</link>
+      <pubDate>Mon, 14 Jan 2019 00:00:00 +0000</pubDate>
+      
+      <guid>http://www.lihongkun.com/network/network_delay/</guid>
+      <description>&lt;p&gt;分布式系统中 , 网络是一个不稳定的存在.一些接口的调用通常存在不稳定或者是延时的问题.除了要做好监控外,这里介绍一下简单的快速定位命令.&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>原子变量</title>
+      <link>http://www.lihongkun.com/concurrent/atomic/</link>
+      <pubDate>Mon, 17 Dec 2018 00:00:00 +0000</pubDate>
+      
+      <guid>http://www.lihongkun.com/concurrent/atomic/</guid>
+      <description>&lt;p&gt;锁机制提供了独占的方法来访问变量,并且对变量的任何修改都会对随后获得这个锁的其他线程可见.但是如果一个线程在休眠或者自旋的时候持有一个锁,那么其他线程便无法执行下去.而非阻塞算法不会受到单个线程失败的影响.对于&lt;strong&gt;细粒度&lt;/strong&gt;的操作,非阻塞算法更高效.它需要借助冲突检查机制来判断更新过程中是否存在来自其他线程的干扰,如果存在则操作失败,并且重试.现代处理器都提供了这种读-改-写(Compare-And-Swap)的指令,来实现这种复杂的并发对象.&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>线程封闭与ThreadLocal</title>
+      <link>http://www.lihongkun.com/concurrent/threadlocal/</link>
+      <pubDate>Mon, 03 Dec 2018 00:00:00 +0000</pubDate>
+      
+      <guid>http://www.lihongkun.com/concurrent/threadlocal/</guid>
+      <description>&lt;p&gt;访问共享数据,通常需要使用同步来保证变量的并发安全性.避免同步的方式就是不共享数据,如果数据只有单线程访问则不需要同步.这叫做线程封闭.&lt;/p&gt;
+
+&lt;p&gt;线程封闭分为两种方式&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;栈封闭&lt;/strong&gt; 通常我们使用的局部变量,天然具备线程封闭性,它没有被其他地方访问,方法结束后即不可访问.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;ThreadLocal类&lt;/strong&gt; 它提供了get和set等方法,这些方法为每个使用变量的线程存储一份独立的副本.因此get总是返回由当前执行线程在调用set时设置的最新值.&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>线程池实现</title>
+      <link>http://www.lihongkun.com/concurrent/threadpool_implements/</link>
+      <pubDate>Mon, 26 Nov 2018 00:00:00 +0000</pubDate>
+      
+      <guid>http://www.lihongkun.com/concurrent/threadpool_implements/</guid>
+      <description>&lt;h3 id=&#34;线程池状态和数量&#34;&gt;线程池状态和数量&lt;/h3&gt;
+
+&lt;p&gt;ThreadPoolExecutor拥有如下状态 , 它控制着线程是否接收新任务以及当前在队列中或者执行中的任务如何结束.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;RUNNING&lt;/strong&gt;:  接收新的任务,新建或者放入任务队列&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;SHUTDOWN&lt;/strong&gt;: 不接收新的任务,但是会执行任务队列的中任务&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;STOP&lt;/strong&gt;:     不接收新的任务,不会执行任务队列中的任务,并且停止在执行中的任务&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;TIDYING&lt;/strong&gt;:  任务执行结束,workerCountOf返回 0 ,线程池状态设置为此状态,并执行钩子函数.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;TERMINATED&lt;/strong&gt;: terminated() 结束&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>任务执行与线程池</title>
+      <link>http://www.lihongkun.com/concurrent/threadpool/</link>
+      <pubDate>Mon, 19 Nov 2018 00:00:00 +0000</pubDate>
+      
+      <guid>http://www.lihongkun.com/concurrent/threadpool/</guid>
+      <description>&lt;p&gt;任务通常是一些抽象的离散的工作单元,我们把应用程序的工作分解到多个任务中,可以简化程序的组织结构,提供一种自然的事务边界来优化错误恢复过程,以及提供一种自然的并行工作结构来提升并发性.而并发执行任务在Java体系里面就是线程.&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>高效队列框架Disruptor</title>
+      <link>http://www.lihongkun.com/concurrent/disruptor/</link>
+      <pubDate>Tue, 13 Nov 2018 00:00:00 +0000</pubDate>
+      
+      <guid>http://www.lihongkun.com/concurrent/disruptor/</guid>
+      <description>&lt;p&gt;Disruptor是英国外汇交易公司LMAX开发的一个高性能队列，研发的初衷是解决内存队列的延迟问题.2010年在QCon演讲后,获得了业界关注. 2011年，Martin Fowler大神专门撰写长文对其进行介绍.由于熟悉程度问题,只能科普介绍一下,介绍之前可以先了解下ArrayBlockingQueue存在的一些问题.&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>阻塞队列</title>
+      <link>http://www.lihongkun.com/concurrent/blocking_queue/</link>
+      <pubDate>Mon, 05 Nov 2018 00:00:00 +0000</pubDate>
+      
+      <guid>http://www.lihongkun.com/concurrent/blocking_queue/</guid>
+      <description>&lt;p&gt;阻塞队列(BlockingQueue)提供了可阻塞的put和take方法,以及支持定时的offer和pull.如果队列已经满了,那么put方法将阻塞到有空间可用;如果队列为空那么take方法将阻塞到有元素可用.&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>同步容器和并发容器</title>
+      <link>http://www.lihongkun.com/concurrent/synchronized_container_and_concurrent_container/</link>
+      <pubDate>Tue, 23 Oct 2018 00:00:00 +0000</pubDate>
+      
+      <guid>http://www.lihongkun.com/concurrent/synchronized_container_and_concurrent_container/</guid>
+      <description>&lt;p&gt;一般的容器如ArrayList,HashSet和HashMap都不是线程安全的.容器在Java中的地位不言而喻,那么它必然也存在线程安全的版本.线程安全的容器从其并发特性上可以简单分为两类:同步容器和并发容器.&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>同步工具类 - 栅栏</title>
+      <link>http://www.lihongkun.com/concurrent/cyclic_barrier/</link>
+      <pubDate>Mon, 15 Oct 2018 00:00:00 +0000</pubDate>
+      
+      <guid>http://www.lihongkun.com/concurrent/cyclic_barrier/</guid>
+      <description>&lt;p&gt;栅栏类似闭锁,它能阻塞一组线程直到到达某个事件发生.栅栏与闭锁的关键区别在于,所有的线程必须同时到达栅栏位置,才能继续执行.闭锁用于等待事件,而栅栏用于等待其他线程.&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>同步工具类 - 信号量和闭锁</title>
+      <link>http://www.lihongkun.com/concurrent/semaphore_and_latch/</link>
+      <pubDate>Mon, 17 Sep 2018 00:00:00 +0000</pubDate>
+      
+      <guid>http://www.lihongkun.com/concurrent/semaphore_and_latch/</guid>
+      <description>&lt;p&gt;底层实现是AbstractQueuedSynchronizer的同步工具类有不少,先来聊聊信号量(Semaphore),闭锁(Latch)&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>一次开放API的设计演进思路</title>
+      <link>http://www.lihongkun.com/design/an_open_api_design_evolution/</link>
+      <pubDate>Wed, 12 Sep 2018 00:00:00 +0000</pubDate>
+      
+      <guid>http://www.lihongkun.com/design/an_open_api_design_evolution/</guid>
+      <description>&lt;p&gt;很多时候使用dubbo,gRPC等关注度主要在内部的服务化 , 反而容易忽略了用微服务的思想去设计对外的HTTP接口,导致HTTP接入业务层的边界服务重复且混乱不堪. 最近有一次比较大的重构 , 聊聊一些思路.&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>AbstractQueuedSynchronizer</title>
+      <link>http://www.lihongkun.com/concurrent/abstract_queued_synchronizer/</link>
+      <pubDate>Mon, 10 Sep 2018 00:00:00 +0000</pubDate>
+      
+      <guid>http://www.lihongkun.com/concurrent/abstract_queued_synchronizer/</guid>
+      <description>&lt;p&gt;AbstractQueuedSynchronizer是JDK并发包里面很多同步类的基础框架.在简单了解了自旋锁和CLH锁之后再来了解下JDK里面的实现.&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>自旋锁</title>
+      <link>http://www.lihongkun.com/concurrent/spin_lock/</link>
+      <pubDate>Tue, 04 Sep 2018 00:00:00 +0000</pubDate>
+      
+      <guid>http://www.lihongkun.com/concurrent/spin_lock/</guid>
+      <description>&lt;p&gt;自旋锁是指当一个线程尝试获取某个锁时,如果该锁已被其他线程占用,就一直循环检测锁是否被释放,而不是进入线程挂起或睡眠状态.它适用于锁保护的临界区很小的情况,临界区很小的话,锁占用的时间就很短.&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>二进制思维</title>
+      <link>http://www.lihongkun.com/design/binary_system_thinking/</link>
+      <pubDate>Mon, 27 Aug 2018 00:00:00 +0000</pubDate>
+      
+      <guid>http://www.lihongkun.com/design/binary_system_thinking/</guid>
+      <description>&lt;p&gt;有1000个苹果10个盒子,要求把1000个苹果分装到10个盒子里.如果有人来买苹果随便说出一个数,直接拿这些盒子组装一下就可以给他,不用拆分盒子.请问这10个盒子应该分别装多少苹果.&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>ReentrantLock使用</title>
+      <link>http://www.lihongkun.com/concurrent/using_reentrantlock/</link>
+      <pubDate>Thu, 23 Aug 2018 00:00:00 +0000</pubDate>
+      
+      <guid>http://www.lihongkun.com/concurrent/using_reentrantlock/</guid>
+      <description>&lt;p&gt;ReentrantLock能做到synchronized得功能，而且在JDK1.6以前性能比后者好很多。之后synchronized性能进行了改进，差距已经不是很大。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>共享变量的并发安全性</title>
+      <link>http://www.lihongkun.com/concurrent/shared_variable_in_concurrent_env/</link>
+      <pubDate>Wed, 15 Aug 2018 00:00:00 +0000</pubDate>
+      
+      <guid>http://www.lihongkun.com/concurrent/shared_variable_in_concurrent_env/</guid>
+      <description>&lt;p&gt;线程通信模型大体可分为两种，共享变量和消息传递。虽然消息传递（Actor模型）是比较被推崇的，但是Java语言并不支持。所以在并发程序中我们必须要面对共享变量所带来的编程复杂度。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>正则表达式灾难性回溯</title>
+      <link>http://www.lihongkun.com/troubleshooting/regulation_expression_backtracing/</link>
+      <pubDate>Thu, 02 Aug 2018 00:00:00 +0000</pubDate>
+      
+      <guid>http://www.lihongkun.com/troubleshooting/regulation_expression_backtracing/</guid>
+      <description>&lt;p&gt;运营反馈问题,日志排查中发现线上有个任务一直没有执行.工具脚本看出基本上CPU都消耗在正则表达式上面了.无疑是进入正则表达式的回溯陷阱.&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>随机数阻塞问题</title>
+      <link>http://www.lihongkun.com/troubleshooting/linux_random_dev_blocking/</link>
+      <pubDate>Wed, 25 Jul 2018 00:00:00 +0000</pubDate>
+      
+      <guid>http://www.lihongkun.com/troubleshooting/linux_random_dev_blocking/</guid>
+      <description>&lt;p&gt;有个使用了SpringBoot的API的项目拆分了不同业务的服务,一个jar包通过不同的命令行来启动不同的10个业务进程.所以发布版本的时候基本上是重启所有的进程. 偶然的一次线上发布看业务日志,发现进程启动的时候卡在tomcat embeded初始化的时候.而且基本上重启的进程都卡住了.&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>高效定位Java进程高CPU问题</title>
+      <link>http://www.lihongkun.com/troubleshooting/efficient_locate_high_cpu_program/</link>
+      <pubDate>Mon, 23 Jul 2018 00:00:00 +0000</pubDate>
+      
+      <guid>http://www.lihongkun.com/troubleshooting/efficient_locate_high_cpu_program/</guid>
+      <description>&lt;p&gt;线上环境某个业务无端卡住,死锁或者CPU使用率突然飙得很高.通常情况下是某些线程下的代码作祟.如何排查到指定线程和指定代码.&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Java执行shell避坑指南</title>
+      <link>http://www.lihongkun.com/troubleshooting/java_exec_shell/</link>
+      <pubDate>Mon, 16 Jul 2018 00:00:00 +0000</pubDate>
+      
+      <guid>http://www.lihongkun.com/troubleshooting/java_exec_shell/</guid>
+      <description>&lt;p&gt;后端一些任务场景中经常需要去执行shell,使用可能踩坑.&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>前端页面内容监控</title>
+      <link>http://www.lihongkun.com/design/web_page_content_monitoring/</link>
+      <pubDate>Wed, 04 Jul 2018 00:00:00 +0000</pubDate>
+      
+      <guid>http://www.lihongkun.com/design/web_page_content_monitoring/</guid>
+      <description>&lt;p&gt;最近有个事件抖音在搜狗的搜索引擎上面投放了侮辱先烈的广告，导致公司被相关部门约谈,还涉及了多家广告代理商。他们纷纷表示完善广告审查机制,将广告审查纳入总编辑负责制；切实落实公共信息巡查，应急处置等网络安全主体责任制度。&lt;/p&gt;
+
+&lt;p&gt;一般这种投放广告是推广一个落地页链接,广告主可以自己做这个页面,然后创建广告的时候落地链接填入到广告中。广告平台对其进行审核。到这个步骤是没有问题的，只要平台方严格执行。但是总是有那么一些状况。比如广告主在审核通过后对页面进行了修改没有重新提交审核。猪队友总是有的。求生欲望强一些总要做点什么来监控这种情况。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Java虚拟机监控工具 - GC日志和GCViewer</title>
+      <link>http://www.lihongkun.com/jvm/gclog/</link>
+      <pubDate>Thu, 07 Jun 2018 00:00:00 +0000</pubDate>
+      
+      <guid>http://www.lihongkun.com/jvm/gclog/</guid>
+      <description>&lt;p&gt;之前介绍的jstat和jmap只能使用输入命令的方式来进行GC和内存方面的监控.应用程序的GC情况可能是一个需要持续观察的过程,JVM提供了命令行选项来保存这些GC相关的日志.&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Java虚拟机监控工具 - jmap</title>
+      <link>http://www.lihongkun.com/jvm/jmap/</link>
+      <pubDate>Tue, 05 Jun 2018 00:00:00 +0000</pubDate>
+      
+      <guid>http://www.lihongkun.com/jvm/jmap/</guid>
+      <description>&lt;p&gt;jmap主要用于打印指定Java进程的共享对象内存映射或堆内存细节.&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Java虚拟机监控工具 - jps和jstat</title>
+      <link>http://www.lihongkun.com/jvm/jps_and_jstat/</link>
+      <pubDate>Mon, 28 May 2018 00:00:00 +0000</pubDate>
+      
+      <guid>http://www.lihongkun.com/jvm/jps_and_jstat/</guid>
+      <description>&lt;p&gt;简单介绍下两个JVM监控工具 , jps 和 jstat&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Java垃圾收集简介</title>
+      <link>http://www.lihongkun.com/jvm/garbage_collection/</link>
+      <pubDate>Mon, 14 May 2018 00:00:00 +0000</pubDate>
+      
+      <guid>http://www.lihongkun.com/jvm/garbage_collection/</guid>
+      <description>&lt;p&gt;对于程序员而言,Java最诱人的特性之一是不需要显式地管理对象的生命周期,我们可以在需要对象的时候创建对象,对象不再使用的时候由JVM在后台自动进行垃圾回收.&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Java虚拟机内存模型简介</title>
+      <link>http://www.lihongkun.com/jvm/jvm_memory_model/</link>
+      <pubDate>Mon, 07 May 2018 00:00:00 +0000</pubDate>
+      
+      <guid>http://www.lihongkun.com/jvm/jvm_memory_model/</guid>
+      <description>&lt;p&gt;Java虚拟机的内存区域 叫做 运行时数据区 , 这是一张比较典型的内存划分图&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Java字符串常量调优</title>
+      <link>http://www.lihongkun.com/jvm/java_intern/</link>
+      <pubDate>Mon, 26 Mar 2018 00:00:00 +0000</pubDate>
+      
+      <guid>http://www.lihongkun.com/jvm/java_intern/</guid>
+      <description>&lt;p&gt;Java中的常量池,实际上分为两种形态:静态常量池和运行时常量池.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;静态常量池&lt;/strong&gt;,即*.class文件中的常量池,class文件中的常量池不仅仅包含字符串(数字)字面量，还包含类、方法的信息，占用class文件绝大部分空间.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;运行时常量池&lt;/strong&gt;,则是jvm虚拟机在完成类装载操作后,将class文件中的常量池载入到内存中,并保存在方法区中,我们常说的常量池,就是指方法区中的运行时常量池.&lt;/p&gt;
+
+&lt;p&gt;运行时常量池相对于Class文件常量池的另外一个重要特征是具备动态性,Java语言并不要求常量一定只有编译期才能产生,也就是并非预置入Class文件中常量池的内容才能进入方法区运行时常量池,运行期间也可能将新的常量放入池中,这种特性被开发人员利用比较多的就是String类的intern()方法.&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>tomcat连接器调优</title>
+      <link>http://www.lihongkun.com/springframework/springboot_tomcat_connetor/</link>
+      <pubDate>Tue, 13 Mar 2018 00:00:00 +0000</pubDate>
+      
+      <guid>http://www.lihongkun.com/springframework/springboot_tomcat_connetor/</guid>
+      <description>&lt;p&gt;在并发不高的场景下是不需要在进行特殊的配置了,但是在并发量比较大的话springboot 对于默认的tomcat连接器参数可能会导致频频的连接拒绝现象.&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Springboot的embeded tomcat目录</title>
+      <link>http://www.lihongkun.com/springframework/springboot_tomcat_directory/</link>
+      <pubDate>Thu, 08 Mar 2018 00:00:00 +0000</pubDate>
+      
+      <guid>http://www.lihongkun.com/springframework/springboot_tomcat_directory/</guid>
+      <description>&lt;p&gt;Springboot官方使用web的配置内嵌了tomcat , 其目录在正式环境下存在着诸多问题.&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>SQL注入漏洞</title>
+      <link>http://www.lihongkun.com/security/sql_injection/</link>
+      <pubDate>Mon, 05 Mar 2018 00:00:00 +0000</pubDate>
+      
+      <guid>http://www.lihongkun.com/security/sql_injection/</guid>
+      <description>&lt;p&gt;SQL注入是最高危的漏洞之一,它和命令执行漏洞一样是直接危害应用本身,可能导致数据库内容直接泄露或者被删除等.&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Springboot使用logback的坑点</title>
+      <link>http://www.lihongkun.com/springframework/springboot_logback/</link>
+      <pubDate>Thu, 01 Mar 2018 00:00:00 +0000</pubDate>
+      
+      <guid>http://www.lihongkun.com/springframework/springboot_logback/</guid>
+      <description>&lt;p&gt;尽管SpringBoot能够在application.properties来配置一些日志相关的内容,但是针对一个比较复杂,或者是有着自己运维体系的应用,这是远远不够用的.所以拓展自己的日志配置文件是必须的,官方推荐的是使用logback-spring.xml直接覆盖&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>命令执行漏洞</title>
+      <link>http://www.lihongkun.com/security/cmd_exe/</link>
+      <pubDate>Mon, 26 Feb 2018 00:00:00 +0000</pubDate>
+      
+      <guid>http://www.lihongkun.com/security/cmd_exe/</guid>
+      <description>&lt;p&gt;命令执行漏洞是指攻击者可以随意执行系统命令。通常说的远程执行代码漏洞,都是此类型.&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>CSRF漏洞</title>
+      <link>http://www.lihongkun.com/security/csrf/</link>
+      <pubDate>Mon, 22 Jan 2018 00:00:00 +0000</pubDate>
+      
+      <guid>http://www.lihongkun.com/security/csrf/</guid>
+      <description>&lt;p&gt;CSRF（Cross-site request forgery）跨站请求伪造，也被称为“One Click Attack”或者Session Riding，通常缩写为CSRF或者XSRF，是一种对网站的恶意利用.&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>XSS漏洞</title>
+      <link>http://www.lihongkun.com/security/xss/</link>
+      <pubDate>Mon, 15 Jan 2018 00:00:00 +0000</pubDate>
+      
+      <guid>http://www.lihongkun.com/security/xss/</guid>
+      <description>&lt;p&gt;跨站脚本攻击,简称XSS(Cross Site Scripting) , 是最常见的Web应用程序安全漏洞.&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>长尾理论</title>
+      <link>http://www.lihongkun.com/reading/the_long_tail/</link>
+      <pubDate>Tue, 15 Mar 2016 23:10:27 +0000</pubDate>
+      
+      <guid>http://www.lihongkun.com/reading/the_long_tail/</guid>
+      <description>&lt;p&gt;虽然目前长尾主要是一种网络现象显现出来，但其起源要早于亚马逊和易趣，甚至比网络还要早，长尾是一系列商业创新的巅峰，这可以追溯到一个多世纪以前—这些创新主要体现在我们生产、供应、配送和销售商品的方法上，举例来说，让我们回想一下使亚马逊网上购物得以实现的所有非互联网要素：联邦快递、国际标准图书编号、信用卡、关系型数据库以及条形码。&lt;/p&gt;</description>
+    </item>
+    
+  </channel>
+</rss>

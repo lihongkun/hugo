@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html><head>
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+
+    
+    <meta name="author"
+            content=""/>
+
+    
+    <meta name="description" content="任务通常是一些抽象的离散的工作单元,我们把应用程序的工作分解到多个任务中,可以简化程序的组织结构,提供一种自然的事务边界来优化错误恢复过程,以及提供一种自然的并行工作结构来提升并发性.而并发执行任务在Java体系里面就是线程.
+"/>
+    
+
+    
+
+    
+    <link rel="canonical" href="http://www.lihongkun.com/concurrent/threadpool/"/>
+
+    
+
+    
+    
+    
+        
+            
+        
+    
+        
+            
+                
+            
+                
+            
+                
+            
+                
+            
+        
+    
+        
+            
+                
+            
+                
+            
+                
+            
+                
+            
+        
+    
+        
+            
+        
+    
+        
+            
+        
+    
+        
+            
+        
+    
+    <title> 任务执行与线程池 | 泛泛之辈 </title>
+
+    <link rel="shortcut icon" href="http://www.lihongkun.com/favicon.jpg"/>
+    <link rel="stylesheet" href="http://www.lihongkun.com/css/bulma.min.css"/>
+    <link rel="stylesheet" href="http://www.lihongkun.com/css/style.css"/>
+</head><body><header>
+    <nav class="navbar is-fixed-top is-primary" role="navigation" aria-label="main navigation">
+        <div class="navbar-brand is-size-4">
+            <a class="navbar-item" href="http://www.lihongkun.com/">
+                    泛泛之辈
+            </a>
+            <a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false" data-target="navbar-menu">
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+            </a>
+        </div>
+        <div id="navbar-menu" class="navbar-menu">
+            <div class="navbar-end">
+                
+                    
+                        <a class="navbar-item" href="/">首页</a>
+                    
+                
+                    
+                        <div class="navbar-item has-dropdown is-hoverable">
+                            <a class="navbar-link">基本功</a>
+                            <div class="navbar-dropdown">
+                                
+                                <a class="navbar-item" href="/categories/concurrent/">并发</a>
+                                
+                                <a class="navbar-item" href="/categories/network/">网络</a>
+                                
+                                <a class="navbar-item" href="/categories/security/">Web安全</a>
+                                
+                                <a class="navbar-item" href="/categories/jvm/">Java虚拟机</a>
+                                
+                            </div>
+                        </div>
+                    
+                
+                    
+                        <div class="navbar-item has-dropdown is-hoverable">
+                            <a class="navbar-link">编程框架</a>
+                            <div class="navbar-dropdown">
+                                
+                                <a class="navbar-item" href="/categories/springframework/">Spring</a>
+                                
+                                <a class="navbar-item" href="/categories/mybatis/">Mybatis</a>
+                                
+                                <a class="navbar-item" href="/categories/springcloud/">SpringCloud</a>
+                                
+                                <a class="navbar-item" href="/categories/common/">常用框架</a>
+                                
+                            </div>
+                        </div>
+                    
+                
+                    
+                        <a class="navbar-item" href="/categories/troubleshooting/">问题排查</a>
+                    
+                
+                    
+                        <a class="navbar-item" href="/categories/design/">设计思路</a>
+                    
+                
+                    
+                        <a class="navbar-item" href="/categories/reading/">读书笔记</a>
+                    
+                
+            </div>
+            </div>
+    </nav>
+</header><main>
+            <div class="container">
+                <div class="columns">
+                <div class="column is-four-fifths">
+                    <article class="post box is-radiusless">
+                        <div class="post-title">
+                            <h2 class="is-size-4">任务执行与线程池</h2>
+                        </div>
+                            <div class="post-meta">
+                            <span class="post-time">日期&nbsp;:&nbsp;2018-11-19</span>
+                        </div>
+                        <div class="post-content content">
+                            <p>任务通常是一些抽象的离散的工作单元,我们把应用程序的工作分解到多个任务中,可以简化程序的组织结构,提供一种自然的事务边界来优化错误恢复过程,以及提供一种自然的并行工作结构来提升并发性.而并发执行任务在Java体系里面就是线程.</p>
+
+<h3 id="线程的生命周期">线程的生命周期</h3>
+
+<p>从线程创建到线程销毁分为以下六种状态</p>
+
+<pre><code>public enum State
+    NEW,            // 初始
+    RUNNABLE,       // 可执行
+    BLOCKED,        // 阻塞
+    WAITING,        // 等待
+    TIMED_WAITING,  // 超时等待
+    TERMINATED;     // 终止
+}
+</code></pre>
+
+<p>它们之间的流转可以用一张图来表示</p>
+
+<p><img src="thread_state.jpg" alt="" /></p>
+
+<p>通常在问题排查的时候比较关心的是BLOCKED,WAITING,TIMED_WAITING状态.这些都是可以从线程栈工具中看出来的.</p>
+
+<h3 id="显式创建线程的不足">显式创建线程的不足</h3>
+
+<p>初学者通常喜欢创建一个Thread来显式的指定任务的执行,如</p>
+
+<pre><code>while(true) {
+    // received data and construct task
+    new Thread(task).start();
+}
+</code></pre>
+
+<p>这样做存在以下几点缺陷</p>
+
+<p><strong>线程生命周期开销</strong> : 线程的创建和销毁都需要一定的代价.每次执行一个任务都创建一个线程需要额外销毁计算资源还有线程栈内存的分配.</p>
+
+<p><strong>上下文切换开销</strong> : 虽然创建线程来执行任务可以提供系统的吞吐,但是过多的线程会程序花在调度和上下文切换的耗时更多.</p>
+
+<p><strong>稳定性</strong> : 在可创建的线程数量上存在一个限制.随着平台不同,JVM启动参数或者Thread的栈大小,操作系统句柄数限制等等.如果超出了限制,那么则可能抛出OutOfMemoryError.</p>
+
+<p>综上,创建适当数量的线程并发执行任务,可提高程序的执行速度.基本上在任何场景中并不提倡直接使用创建Thread的方式来创建线程并执行任务.</p>
+
+<h3 id="线程池使用">线程池使用</h3>
+
+<p>Executor是基于生产者-消费者模式,提供了一种标准的方法将任务的提交过程和执行过程解耦,并用Runnable来表示任务.通常我们指的线程池是 ThreadPoolExecutor</p>
+
+<pre><code>public ThreadPoolExecutor(int corePoolSize,
+                              int maximumPoolSize,
+                              long keepAliveTime,
+                              TimeUnit unit,
+                              BlockingQueue&lt;Runnable&gt; workQueue,
+                              ThreadFactory threadFactory,
+                              RejectedExecutionHandler handler)
+</code></pre>
+
+<p><strong>corePoolSize</strong> : 核心线程数,即使是空闲了也不会被回收.</p>
+
+<p><strong>maximumPoolSize</strong> : 最大线程数</p>
+
+<p><strong>keepAliveTime</strong> : 线程的最大空闲存活时间,超过该时间且大于corePoolSize就可能被回收.</p>
+
+<p><strong>unit</strong> : 存活时间单位</p>
+
+<p><strong>workQueue</strong> : 任务队列,提交后没有被执行的线程,缓存在此队列. 这个队列上可以做很多事情.如有界队列,无界队列,可以控制任务接收的数量.还有有限队列,可以控制等待中的任务提交的顺序.</p>
+
+<p><strong>threadFactory</strong> : 线程工厂类,用于线程池创建线程.使用者可以定制自己的线程创建工厂</p>
+
+<p><strong>handler</strong> : 拒绝策略.当线程池满了,且任务队列为有界队列也满了的时候执行.再提交任务则使用此策略.在有明确的响应拒绝行为的时候可以定制策略.如丢弃并记录日志或者告警等等</p>
+
+<pre><code>ThreadPoolExecutor executor = new ThreadPoolExecutor(2, 4, 2L, TimeUnit.SECONDS, new LinkedBlockingQueue&lt;Runnable&gt;(10));
+for(int i=0;i&lt;10;i++){
+    executor.submit(new Runnable() {
+        @Override
+        public void run() {
+            System.out.println(Thread.currentThread().getName());
+        }
+    });
+}
+executor.shutdown();
+</code></pre>
+
+<p>上述代码创建了一个线程池,简单执行了一下任务,然后使用shutdown关闭线程池.</p>
+
+<h4 id="线程池大小">线程池大小</h4>
+
+<p>线程池过大或者过小都影响执行效率 , 过大会导致线程调度消耗太多,过小则并发度不够.正确的设置需求区分任务的类型.</p>
+
+<p><strong>计算密集型任务</strong> :  线程数 = CPU数 + 1 , 通常能达到比较好的利用率</p>
+
+<p><strong>I/O密集型任务</strong> : 这种类型的任务,线程并不会一直执行,会出现等待的情况,因此可以设置大一些 .具体也可以使用一个公式来估算   线程数 = CPU数 * CPU利用率 * (1 +  等待时间/计算时间) .</p>
+
+<p>上述公式中CPU数 可以使用Runtime.getRuntime().avaliableProcessors()来获得. CPU利用率为单个CPU的值 在 0~1之间.等待事件和计算时间可以使用监控工具得出.实际使用中并不需要非常准确.</p>
+
+<p>某些场景下并发度也并不是越高越好,还需要尽量考虑到机器的其他方面负载,比如一个任务能占用5%的网卡流量.那么起太多线程来处理,可能导致网卡直接被打满,混合部署的情况,就会导致其他应用受到影响.</p>
+
+<h4 id="任务框架">任务框架</h4>
+
+<p>ThreadPoolExecutor的参数繁多,很多时候我们并不需要用到这么灵活的功能.Java类库中提供了静态工厂方法来创建场景的不同类型的线程池.</p>
+
+<p><strong>newFixedThreadPool</strong> : 创建一个固定长度的线程池,每当提交一个任务就创建一个线程,直到达到线程池的最大数量,线程池的规模将不再变化.</p>
+
+<p><strong>newCachedThreadPool :</strong> 创建一个可缓存的线程池,如果线程池的当前规模超过了要处理的需求则回收空闲的线程.反之,则创建新的线程.数量没有限制.</p>
+
+<p><strong>newSingleThreadPool</strong> : 创建当个只有一个线程的线程池.任务串行执行.</p>
+
+<p><strong>newScheduledThreadPool</strong> : 创建一个延迟任务的线程池,通常处理定时任务类的需求. (此方法创建的是ScheduledThreadPoolExecutor)</p>
+
+<h4 id="任务结果">任务结果</h4>
+
+<p>Runnable作为任务的形式有一定的局限性,它不能返回结果或者抛出异常.实现run如果没有对错误的情况进行处理,那么就有可能得不到任何的反馈和错误.</p>
+
+<p>如果需要在异步任务中拿到结果就需要使用Callable , 任务错误的时候它能够抛出异常,结束的时候能够返回结果.Future就是使用来获得其中的结果.</p>
+
+<pre><code>public static void main(String[] args) throws InterruptedException, ExecutionException {
+    //创建线程池
+    ExecutorService es = Executors.newFixedThreadPool(2);
+    int total = 0;
+    //任务数
+    int taskNum = 10;
+    //存储结果对象
+    List&lt;Future&lt;Integer&gt;&gt; futures = new ArrayList&lt;&gt;(taskNum);
+    
+    //提交任务
+    for(int i = 0; i &lt; taskNum ; i++){
+        futures.add(es.submit(new Task()));
+    }
+    
+    //获取任务结果
+    for(int i = 0; i &lt; taskNum ; i++){
+        total += futures.get(i).get();
+    }
+    
+    System.out.println(total);
+}
+
+//任务类
+public static final class Task implements Callable&lt;Integer&gt;{
+
+    @Override
+    public Integer call() throws Exception {
+        return new Random().nextInt(100);
+    }
+    
+}
+</code></pre>
+
+<p>上述例子中使用Callable来实现任务类,返回一个随机数.提交任务后使用future取的任务的结果.其中future.get将会阻塞主线程,等待任务执行的结果.实现原理和锁类似,使用中是需要注意的.</p>
+                        </div>
+                        <div class="columns is-mobile post-meta">
+                            <div class="column is-half-desktop has-text-left is-paddingless"> 
+                                 
+                                更老一篇:<a href="http://www.lihongkun.com/concurrent/disruptor/"> 高效队列框架Disruptor</a>
+                                
+                            </div>
+                            <div class="column is-half-desktop has-text-right is-paddingless">
+                                
+                                更新一篇:<a href="http://www.lihongkun.com/concurrent/threadpool_implements/"> 线程池实现</a>
+                                
+                            </div>
+                            <div class="is-clearfix"></div>
+                        </div>
+                        <script src="https://utteranc.es/client.js"
+                                repo="lihongkun/lihongkun.github.io"
+                                issue-term="title"
+                                theme="github-light"
+                                crossorigin="anonymous"
+                                async>
+                        </script>
+                    </article>
+                </div>
+                <div class="column">    <aside>
+        <h2 class="is-size-4">关于我</h2>
+        <div class="content">
+            Working in advertising platform team. Backend on duty,full stack in my own time.
+        </div>
+        <h2 class="is-size-4">GitHub</h2>
+        <div class="content">
+            <a href="https://github.com/lihongkun" target="_blank">https://github.com/lihongkun</a>
+        </div>
+    </aside></div>
+                </div>
+            </div>
+         </main>    <footer class="footer">
+    
+        <div class="copyright has-text-centered">
+            <a href="https://bulma.io">
+                <img src="http://www.lihongkun.com/images/made-with-bulma.png" alt="Made with Bulma" width="128" height="24">
+            </a>
+            <p>© 泛泛之辈 Power by Hugo v0.55.6 - 闽ICP备15009606号</p>
+        </div>
+    </footer>
+    <script type="text/javascript">
+    document.addEventListener('DOMContentLoaded', () => {
+        
+        const $navbarBurgers = Array.prototype.slice.call(document.querySelectorAll('.navbar-burger'), 0);
+        
+        if ($navbarBurgers.length > 0) {
+            
+            $navbarBurgers.forEach( el => {
+                el.addEventListener('click', () => {
+                
+                const target = el.dataset.target;
+                const $target = document.getElementById(target);
+                
+                el.classList.toggle('is-active');
+                $target.classList.toggle('is-active');
+    
+                });
+            });
+        }
+    });
+    </script></body>
+</html>

@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html><head>
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+
+    
+    <meta name="author"
+            content=""/>
+
+    
+    <meta name="description" content="Java NIO 是 IO复用模型在Java平台的实现 , 针对Java BIO在高并发情况下的缺点 1.4之后提供了NIO的实现. 还是以EchoServer为例子.
+"/>
+    
+
+    
+
+    
+    <link rel="canonical" href="http://www.lihongkun.com/network/java_nio/"/>
+
+    
+
+    
+    
+    
+        
+            
+        
+    
+        
+            
+                
+            
+                
+            
+                
+            
+                
+            
+        
+    
+        
+            
+                
+            
+                
+            
+                
+            
+                
+            
+        
+    
+        
+            
+        
+    
+        
+            
+        
+    
+        
+            
+        
+    
+    <title> Java NIO | 泛泛之辈 </title>
+
+    <link rel="shortcut icon" href="http://www.lihongkun.com/favicon.jpg"/>
+    <link rel="stylesheet" href="http://www.lihongkun.com/css/bulma.min.css"/>
+    <link rel="stylesheet" href="http://www.lihongkun.com/css/style.css"/>
+</head><body><header>
+    <nav class="navbar is-fixed-top is-primary" role="navigation" aria-label="main navigation">
+        <div class="navbar-brand is-size-4">
+            <a class="navbar-item" href="http://www.lihongkun.com/">
+                    泛泛之辈
+            </a>
+            <a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false" data-target="navbar-menu">
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+            </a>
+        </div>
+        <div id="navbar-menu" class="navbar-menu">
+            <div class="navbar-end">
+                
+                    
+                        <a class="navbar-item" href="/">首页</a>
+                    
+                
+                    
+                        <div class="navbar-item has-dropdown is-hoverable">
+                            <a class="navbar-link">基本功</a>
+                            <div class="navbar-dropdown">
+                                
+                                <a class="navbar-item" href="/categories/concurrent/">并发</a>
+                                
+                                <a class="navbar-item" href="/categories/network/">网络</a>
+                                
+                                <a class="navbar-item" href="/categories/security/">Web安全</a>
+                                
+                                <a class="navbar-item" href="/categories/jvm/">Java虚拟机</a>
+                                
+                            </div>
+                        </div>
+                    
+                
+                    
+                        <div class="navbar-item has-dropdown is-hoverable">
+                            <a class="navbar-link">编程框架</a>
+                            <div class="navbar-dropdown">
+                                
+                                <a class="navbar-item" href="/categories/springframework/">Spring</a>
+                                
+                                <a class="navbar-item" href="/categories/mybatis/">Mybatis</a>
+                                
+                                <a class="navbar-item" href="/categories/springcloud/">SpringCloud</a>
+                                
+                                <a class="navbar-item" href="/categories/common/">常用框架</a>
+                                
+                            </div>
+                        </div>
+                    
+                
+                    
+                        <a class="navbar-item" href="/categories/troubleshooting/">问题排查</a>
+                    
+                
+                    
+                        <a class="navbar-item" href="/categories/design/">设计思路</a>
+                    
+                
+                    
+                        <a class="navbar-item" href="/categories/reading/">读书笔记</a>
+                    
+                
+            </div>
+            </div>
+    </nav>
+</header><main>
+            <div class="container">
+                <div class="columns">
+                <div class="column is-four-fifths">
+                    <article class="post box is-radiusless">
+                        <div class="post-title">
+                            <h2 class="is-size-4">Java NIO</h2>
+                        </div>
+                            <div class="post-meta">
+                            <span class="post-time">日期&nbsp;:&nbsp;2019-03-11</span>
+                        </div>
+                        <div class="post-content content">
+                            <p>Java NIO 是 IO复用模型在Java平台的实现 , 针对Java BIO在高并发情况下的缺点 1.4之后提供了NIO的实现. 还是以EchoServer为例子.</p>
+
+<p>首选 , 需要创建一个 选择器Selector和一个ServerSocketChannel来侦听端口, 接受连接. 并使用register方法注册accept事件.</p>
+
+<pre><code>// 创建选择器
+selector = Selector.open();
+
+// 创建 Channel
+serverSocketChannel = ServerSocketChannel.open();
+serverSocketChannel.configureBlocking(false);
+serverSocketChannel.bind(new InetSocketAddress(&quot;127.0.0.1&quot;, port));
+
+// ServerSocketChannel 注册accept 事件
+serverSocketChannel.register(selector, SelectionKey.OP_ACCEPT);
+</code></pre>
+
+<p>其次 , 调用selector的select 等待事件就绪 , 并进行对应的处理 . 如果是accept事件则在接收的连接上注册读事件.这边使用了一个讨巧的方式, 每个连接attach了一个字符串, 用于缓存用户输入的一行数据.</p>
+
+<pre><code>while (true) {
+    try {
+        selector.select();
+        Set&lt;SelectionKey&gt; selectedKeys = selector.selectedKeys();
+        Iterator&lt;SelectionKey&gt; iterator = selectedKeys.iterator();
+        while (iterator.hasNext()) {
+            //
+            SelectionKey key = iterator.next();
+            if (key.isAcceptable()) {
+                // 连接就绪事件
+                // 接收连接产生的socketChannel
+                SocketChannel socketChannel = serverSocketChannel.accept();
+                socketChannel.configureBlocking(false);
+                socketChannel.register(selector, SelectionKey.OP_READ,new StringBuffer());
+            }
+            if (key.isReadable()) {
+                // 数据就绪事件 - accept时候注册在SocketChannel上面的
+                socketProcess(key);
+            }
+            iterator.remove();
+        }
+    } catch (Exception ex) {
+        ex.printStackTrace();
+    }
+}
+</code></pre>
+
+<p>注册好已接受的连接后 ,它便关心数据就绪事件. select 的时候 ,如果事件就绪则进行处理 . 以下是完整的EchoServer代码 , 接收到用户输入则进行回显.</p>
+
+<pre><code>public class NIOEchoServer {
+
+    private static final byte CR = (byte) '\r';
+
+    private static final byte LF = (byte) '\n';
+
+    private ServerSocketChannel serverSocketChannel;
+
+    private Selector selector;
+
+    public NIOEchoServer(int port) {
+        try {
+            selector = Selector.open();
+            serverSocketChannel = ServerSocketChannel.open();
+            serverSocketChannel.configureBlocking(false);
+            serverSocketChannel.bind(new InetSocketAddress(&quot;127.0.0.1&quot;, port));
+
+            serverSocketChannel.register(selector, SelectionKey.OP_ACCEPT);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    public void run() {
+        while (true) {
+            try {
+                selector.select();
+                Set&lt;SelectionKey&gt; selectedKeys = selector.selectedKeys();
+                Iterator&lt;SelectionKey&gt; iterator = selectedKeys.iterator();
+                while (iterator.hasNext()) {
+                    SelectionKey key = iterator.next();
+                    if (key.isAcceptable()) {
+                        SocketChannel socketChannel = serverSocketChannel.accept();
+                        socketChannel.configureBlocking(false);
+                        socketChannel.register(selector, SelectionKey.OP_READ, new StringBuffer());
+                    }
+                    if (key.isReadable()) {
+                        socketProcess(key);
+                    }
+                    iterator.remove();
+                }
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        }
+    }
+
+    private void socketProcess(SelectionKey selectionKey) {
+        try {
+            SocketChannel socketChannel = (SocketChannel) selectionKey.channel();
+            StringBuffer readBuffer = (StringBuffer) selectionKey.attachment();
+            ByteBuffer byteBuffer = ByteBuffer.allocate(1024);
+            while (socketChannel.read(byteBuffer) &gt; 0) {
+                byteBuffer.flip();
+                while (byteBuffer.hasRemaining()) {
+                    byte readByte = byteBuffer.get();
+                    readBuffer.append((char) readByte);
+                    if (CR == readByte || LF == readByte) {
+                        socketChannel.write(ByteBuffer.wrap(readBuffer.toString().getBytes()));
+                        readBuffer.delete(0, readBuffer.length());
+                    }
+
+                }
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+    
+    public static void main(String[] args) {
+        NIOEchoServer nioEchoServer = new NIOEchoServer(12345);
+        nioEchoServer.run();
+    }
+
+}
+</code></pre>
+
+<p>从示例中可以清楚看到 ,  接受连接和业务处理并不需要创建多个线程. 使用一个selector管理多个连接.</p>
+
+<p><img src="java_nio.jpg" alt="" /></p>
+
+<p>对比BIO,虽然它的ByteBuffer操作上增加了很大的复杂度 , 但是它使用了较少的线程便可以处理较多的连接, 因此减少了内存管理和线程上下文切换所带来的开销.</p>
+
+<p>然而 , 示例代码的模型也有着比较明显的缺点 , 纯粹使用单线程处理, 无法使用多核机器的优势. 通常使用NIO的时候使用Reactor模式来实现服务器的模型,把IO事件的处理和业务线程隔离开.</p>
+                        </div>
+                        <div class="columns is-mobile post-meta">
+                            <div class="column is-half-desktop has-text-left is-paddingless"> 
+                                 
+                                更老一篇:<a href="http://www.lihongkun.com/network/java_bio/"> Java BIO</a>
+                                
+                            </div>
+                            <div class="column is-half-desktop has-text-right is-paddingless">
+                                
+                                没有了，已经是最新文章
+                                
+                            </div>
+                            <div class="is-clearfix"></div>
+                        </div>
+                        <script src="https://utteranc.es/client.js"
+                                repo="lihongkun/lihongkun.github.io"
+                                issue-term="title"
+                                theme="github-light"
+                                crossorigin="anonymous"
+                                async>
+                        </script>
+                    </article>
+                </div>
+                <div class="column">    <aside>
+        <h2 class="is-size-4">关于我</h2>
+        <div class="content">
+            Working in advertising platform team. Backend on duty,full stack in my own time.
+        </div>
+        <h2 class="is-size-4">GitHub</h2>
+        <div class="content">
+            <a href="https://github.com/lihongkun" target="_blank">https://github.com/lihongkun</a>
+        </div>
+    </aside></div>
+                </div>
+            </div>
+         </main>    <footer class="footer">
+    
+        <div class="copyright has-text-centered">
+            <a href="https://bulma.io">
+                <img src="http://www.lihongkun.com/images/made-with-bulma.png" alt="Made with Bulma" width="128" height="24">
+            </a>
+            <p>© 泛泛之辈 Power by Hugo v0.55.6 - 闽ICP备15009606号</p>
+        </div>
+    </footer>
+    <script type="text/javascript">
+    document.addEventListener('DOMContentLoaded', () => {
+        
+        const $navbarBurgers = Array.prototype.slice.call(document.querySelectorAll('.navbar-burger'), 0);
+        
+        if ($navbarBurgers.length > 0) {
+            
+            $navbarBurgers.forEach( el => {
+                el.addEventListener('click', () => {
+                
+                const target = el.dataset.target;
+                const $target = document.getElementById(target);
+                
+                el.classList.toggle('is-active');
+                $target.classList.toggle('is-active');
+    
+                });
+            });
+        }
+    });
+    </script></body>
+</html>

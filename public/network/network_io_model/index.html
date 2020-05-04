@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html><head>
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+
+    
+    <meta name="author"
+            content=""/>
+
+    
+    <meta name="description" content="一次网络IO 的调用涉及到用户进程和系统内核对象 , 以读为例.
+ 等待网络上的数据分组到达,并复制到内核的缓冲区 内核缓冲区数据复制到用户进程中,也就是调用网络IO进程的缓冲区.  常见的IO模型有五种, 不同的IO模型在这两个阶段的处理上各不相同.
+"/>
+    
+
+    
+
+    
+    <link rel="canonical" href="http://www.lihongkun.com/network/network_io_model/"/>
+
+    
+
+    
+    
+    
+        
+            
+        
+    
+        
+            
+                
+            
+                
+            
+                
+            
+                
+            
+        
+    
+        
+            
+                
+            
+                
+            
+                
+            
+                
+            
+        
+    
+        
+            
+        
+    
+        
+            
+        
+    
+        
+            
+        
+    
+    <title> 网络IO模型 | 泛泛之辈 </title>
+
+    <link rel="shortcut icon" href="http://www.lihongkun.com/favicon.jpg"/>
+    <link rel="stylesheet" href="http://www.lihongkun.com/css/bulma.min.css"/>
+    <link rel="stylesheet" href="http://www.lihongkun.com/css/style.css"/>
+</head><body><header>
+    <nav class="navbar is-fixed-top is-primary" role="navigation" aria-label="main navigation">
+        <div class="navbar-brand is-size-4">
+            <a class="navbar-item" href="http://www.lihongkun.com/">
+                    泛泛之辈
+            </a>
+            <a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false" data-target="navbar-menu">
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+            </a>
+        </div>
+        <div id="navbar-menu" class="navbar-menu">
+            <div class="navbar-end">
+                
+                    
+                        <a class="navbar-item" href="/">首页</a>
+                    
+                
+                    
+                        <div class="navbar-item has-dropdown is-hoverable">
+                            <a class="navbar-link">基本功</a>
+                            <div class="navbar-dropdown">
+                                
+                                <a class="navbar-item" href="/categories/concurrent/">并发</a>
+                                
+                                <a class="navbar-item" href="/categories/network/">网络</a>
+                                
+                                <a class="navbar-item" href="/categories/security/">Web安全</a>
+                                
+                                <a class="navbar-item" href="/categories/jvm/">Java虚拟机</a>
+                                
+                            </div>
+                        </div>
+                    
+                
+                    
+                        <div class="navbar-item has-dropdown is-hoverable">
+                            <a class="navbar-link">编程框架</a>
+                            <div class="navbar-dropdown">
+                                
+                                <a class="navbar-item" href="/categories/springframework/">Spring</a>
+                                
+                                <a class="navbar-item" href="/categories/mybatis/">Mybatis</a>
+                                
+                                <a class="navbar-item" href="/categories/springcloud/">SpringCloud</a>
+                                
+                                <a class="navbar-item" href="/categories/common/">常用框架</a>
+                                
+                            </div>
+                        </div>
+                    
+                
+                    
+                        <a class="navbar-item" href="/categories/troubleshooting/">问题排查</a>
+                    
+                
+                    
+                        <a class="navbar-item" href="/categories/design/">设计思路</a>
+                    
+                
+                    
+                        <a class="navbar-item" href="/categories/reading/">读书笔记</a>
+                    
+                
+            </div>
+            </div>
+    </nav>
+</header><main>
+            <div class="container">
+                <div class="columns">
+                <div class="column is-four-fifths">
+                    <article class="post box is-radiusless">
+                        <div class="post-title">
+                            <h2 class="is-size-4">网络IO模型</h2>
+                        </div>
+                            <div class="post-meta">
+                            <span class="post-time">日期&nbsp;:&nbsp;2019-02-25</span>
+                        </div>
+                        <div class="post-content content">
+                            <p>一次网络IO 的调用涉及到用户进程和系统内核对象 , 以读为例.</p>
+
+<ol>
+<li>等待网络上的数据分组到达,并复制到内核的缓冲区</li>
+<li>内核缓冲区数据复制到用户进程中,也就是调用网络IO进程的缓冲区.</li>
+</ol>
+
+<p>常见的IO模型有五种, 不同的IO模型在这两个阶段的处理上各不相同.</p>
+
+<h3 id="阻塞式io模型">阻塞式IO模型</h3>
+
+<p>阻塞IO是一种比较常见的模型, 使用此模型,应用进程在IO执行的两个阶段中都将被阻塞.Java里面的ServerSocket默认默认就是此实现.这种模型在因为操作都是阻塞的,所以在处理每个连接的时候都需要独立启动一个线程来进行处理.</p>
+
+<p><img src="blocking_io.jpg" alt="" /></p>
+
+<h3 id="非阻塞式io模型">非阻塞式IO模型</h3>
+
+<p>非阻塞式IO模型采用的是轮询的机制,当用户进程发出read操作时,如果内核中的数据还没有准备好,那么它并不会阻塞用户进程,而是立刻返回一个error.</p>
+
+<p>从用户进程角度讲 ,它发起一个读操作后,并不需要等待,而是马上就得到了一个结果.用户进程判断结果是一个error时,它就知道数据还没有准备好,于是它可以再次发送读操作.一旦系统内核中的数据准备好了,并且又再次收到了用户进程的系统调用,那么它马上就将数据拷贝到了用户内存,然后返回.</p>
+
+<p>这一点上跟自旋锁的处理方式非常像 . 应用进程不断轮询系统内核 , 耗费了大量的CPU . 这种模型非常少见.</p>
+
+<p><img src="non_blocking_io.jpg" alt="" /></p>
+
+<h3 id="io复用模型">IO复用模型</h3>
+
+<p>IO复用即select,poll或者epoll系统调用 , 它们管理着多个网络连接 , 一次调用轮询它们所管理的所有连接,如果有至少一个连接数据就绪 , 则进行IO操作. 与阻塞IO模型对比的, 它多使用了一个系统调用select来等待数据 , 但是此调用能同时处理多个连接 , 本质上是两个阶段都是阻塞. 性能方面上如果需要处理大量网络连接的话此种模型优于阻塞式IO模型 , 但是处理少量连接的情况下阻塞式IO模型较优,因为它一次系统调用便能完成.</p>
+
+<p>此模型在Java语言中的实现是ServerSocketChannel和Selector . 在互联网的高并发和大规模服务中 , 通常使用IO复用模型结合多线程使用Reactor模式提高并发和性能.</p>
+
+<p><img src="io_multiplexing.jpg" alt="" /></p>
+
+<h3 id="信号驱动式io">信号驱动式IO</h3>
+
+<p>信号驱动式IO是指进程预先告知内核,使得当某个描述符上发生某事时,内核使用信号通知相关进程.它的第一阶段是异步的 , 第二阶段是依然是同步的.</p>
+
+<p><img src="singal_io.jpg" alt="" /></p>
+
+<h3 id="异步io">异步IO</h3>
+
+<p>它的工作机制是告知内核启动某个操作,并让内核完成后,通知自己.这个模型在两个阶段都是异步的.只存在理论中,目前还未有操作系统对其进行实现.</p>
+
+<p><img src="asynchronous_io.jpg" alt="" /></p>
+
+<h3 id="差异">差异</h3>
+
+<p>五种模型中 , 前四种的第一阶段各自有不同的实现,第二阶段都是阻塞在数据的读取. 而第五种是两个阶段都是异步的.因此前四种被称为同步IO模型,第五种被称为异步IO模型.</p>
+
+<p><img src="io_model_compare.jpg" alt="" /></p>
+
+<p>这些在实践中有什么用 ? 虽然大部分人做业务很少用到网络库去直接编码 , 但是很多基础的框架都是构建在这上面 , 调优的场景也建立在上面的 , 后面会继续总结如何使用 .</p>
+                        </div>
+                        <div class="columns is-mobile post-meta">
+                            <div class="column is-half-desktop has-text-left is-paddingless"> 
+                                 
+                                更老一篇:<a href="http://www.lihongkun.com/network/tcp_handshake_and_short_connection/"> TCP三次握手和短连接优化</a>
+                                
+                            </div>
+                            <div class="column is-half-desktop has-text-right is-paddingless">
+                                
+                                更新一篇:<a href="http://www.lihongkun.com/network/java_bio/"> Java BIO</a>
+                                
+                            </div>
+                            <div class="is-clearfix"></div>
+                        </div>
+                        <script src="https://utteranc.es/client.js"
+                                repo="lihongkun/lihongkun.github.io"
+                                issue-term="title"
+                                theme="github-light"
+                                crossorigin="anonymous"
+                                async>
+                        </script>
+                    </article>
+                </div>
+                <div class="column">    <aside>
+        <h2 class="is-size-4">关于我</h2>
+        <div class="content">
+            Working in advertising platform team. Backend on duty,full stack in my own time.
+        </div>
+        <h2 class="is-size-4">GitHub</h2>
+        <div class="content">
+            <a href="https://github.com/lihongkun" target="_blank">https://github.com/lihongkun</a>
+        </div>
+    </aside></div>
+                </div>
+            </div>
+         </main>    <footer class="footer">
+    
+        <div class="copyright has-text-centered">
+            <a href="https://bulma.io">
+                <img src="http://www.lihongkun.com/images/made-with-bulma.png" alt="Made with Bulma" width="128" height="24">
+            </a>
+            <p>© 泛泛之辈 Power by Hugo v0.55.6 - 闽ICP备15009606号</p>
+        </div>
+    </footer>
+    <script type="text/javascript">
+    document.addEventListener('DOMContentLoaded', () => {
+        
+        const $navbarBurgers = Array.prototype.slice.call(document.querySelectorAll('.navbar-burger'), 0);
+        
+        if ($navbarBurgers.length > 0) {
+            
+            $navbarBurgers.forEach( el => {
+                el.addEventListener('click', () => {
+                
+                const target = el.dataset.target;
+                const $target = document.getElementById(target);
+                
+                el.classList.toggle('is-active');
+                $target.classList.toggle('is-active');
+    
+                });
+            });
+        }
+    });
+    </script></body>
+</html>

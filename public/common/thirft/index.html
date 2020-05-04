@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html><head>
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+
+    
+    <meta name="author"
+            content=""/>
+
+    
+    <meta name="description" content="Apache Thrift 脱胎于 Facebook ，是一种高效的、支持多种编程语言的远程服务调用的框架。它的序列化协议同样可用于通讯协议、数据存储等领域的语言无关、平台无关、可扩展的序列化结构数据格式。
+"/>
+    
+
+    
+
+    
+    <link rel="canonical" href="http://www.lihongkun.com/common/thirft/"/>
+
+    
+
+    
+    
+    
+        
+            
+        
+    
+        
+            
+                
+            
+                
+            
+                
+            
+                
+            
+        
+    
+        
+            
+                
+            
+                
+            
+                
+            
+                
+            
+        
+    
+        
+            
+        
+    
+        
+            
+        
+    
+        
+            
+        
+    
+    <title> thrift序列化协议 | 泛泛之辈 </title>
+
+    <link rel="shortcut icon" href="http://www.lihongkun.com/favicon.jpg"/>
+    <link rel="stylesheet" href="http://www.lihongkun.com/css/bulma.min.css"/>
+    <link rel="stylesheet" href="http://www.lihongkun.com/css/style.css"/>
+</head><body><header>
+    <nav class="navbar is-fixed-top is-primary" role="navigation" aria-label="main navigation">
+        <div class="navbar-brand is-size-4">
+            <a class="navbar-item" href="http://www.lihongkun.com/">
+                    泛泛之辈
+            </a>
+            <a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false" data-target="navbar-menu">
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+            </a>
+        </div>
+        <div id="navbar-menu" class="navbar-menu">
+            <div class="navbar-end">
+                
+                    
+                        <a class="navbar-item" href="/">首页</a>
+                    
+                
+                    
+                        <div class="navbar-item has-dropdown is-hoverable">
+                            <a class="navbar-link">基本功</a>
+                            <div class="navbar-dropdown">
+                                
+                                <a class="navbar-item" href="/categories/concurrent/">并发</a>
+                                
+                                <a class="navbar-item" href="/categories/network/">网络</a>
+                                
+                                <a class="navbar-item" href="/categories/security/">Web安全</a>
+                                
+                                <a class="navbar-item" href="/categories/jvm/">Java虚拟机</a>
+                                
+                            </div>
+                        </div>
+                    
+                
+                    
+                        <div class="navbar-item has-dropdown is-hoverable">
+                            <a class="navbar-link">编程框架</a>
+                            <div class="navbar-dropdown">
+                                
+                                <a class="navbar-item" href="/categories/springframework/">Spring</a>
+                                
+                                <a class="navbar-item" href="/categories/mybatis/">Mybatis</a>
+                                
+                                <a class="navbar-item" href="/categories/springcloud/">SpringCloud</a>
+                                
+                                <a class="navbar-item" href="/categories/common/">常用框架</a>
+                                
+                            </div>
+                        </div>
+                    
+                
+                    
+                        <a class="navbar-item" href="/categories/troubleshooting/">问题排查</a>
+                    
+                
+                    
+                        <a class="navbar-item" href="/categories/design/">设计思路</a>
+                    
+                
+                    
+                        <a class="navbar-item" href="/categories/reading/">读书笔记</a>
+                    
+                
+            </div>
+            </div>
+    </nav>
+</header><main>
+            <div class="container">
+                <div class="columns">
+                <div class="column is-four-fifths">
+                    <article class="post box is-radiusless">
+                        <div class="post-title">
+                            <h2 class="is-size-4">thrift序列化协议</h2>
+                        </div>
+                            <div class="post-meta">
+                            <span class="post-time">日期&nbsp;:&nbsp;2019-09-23</span>
+                        </div>
+                        <div class="post-content content">
+                            <p>Apache Thrift 脱胎于 Facebook ，是一种高效的、支持多种编程语言的远程服务调用的框架。它的序列化协议同样可用于通讯协议、数据存储等领域的语言无关、平台无关、可扩展的序列化结构数据格式。</p>
+
+<h4 id="使用">使用</h4>
+
+<p>以Java为例子，首先需要引入对应的依赖。</p>
+
+<pre><code>&lt;dependency&gt;
+    &lt;groupId&gt;org.apache.thrift&lt;/groupId&gt;
+    &lt;artifactId&gt;libthrift&lt;/artifactId&gt;
+    &lt;version&gt;0.12.0&lt;/version&gt;
+&lt;/dependency&gt;
+</code></pre>
+
+<p>官方提供了从thirft文件生成对应的实体类，实际开发中荐使用maven插件来进行编译期的代码生成，但是thirft的的插件并不像protobuf那样提供对应的下载，而是需要自己去下载，并且指定位置。pom文件引入对应插件。</p>
+
+<pre><code>&lt;!-- thirft plugin --&gt;
+&lt;plugin&gt;
+    &lt;groupId&gt;org.apache.thrift.tools&lt;/groupId&gt;
+    &lt;artifactId&gt;maven-thrift-plugin&lt;/artifactId&gt;
+    &lt;version&gt;0.1.11&lt;/version&gt;
+    &lt;configuration&gt;
+        &lt;thriftExecutable&gt;./thrift-0.12.0.exe&lt;/thriftExecutable&gt;
+        &lt;generator&gt;java&lt;/generator&gt;
+    &lt;/configuration&gt;
+    &lt;executions&gt;
+        &lt;execution&gt;
+            &lt;id&gt;thrift-sources&lt;/id&gt;
+            &lt;phase&gt;generate-sources&lt;/phase&gt;
+            &lt;goals&gt;
+                &lt;goal&gt;compile&lt;/goal&gt;
+            &lt;/goals&gt;
+        &lt;/execution&gt;
+    &lt;/executions&gt;
+&lt;/plugin&gt;
+</code></pre>
+
+<p>下面我们定义一下要使用的类，与 <a href="https://www.lihongkun.com/common/json_compare/">常见JSON序列化库性能比较</a>  的例子一致。src/main/thirft 下创建一个*.thirft的文件来定义消息体</p>
+
+<pre><code>namespace java com.lihongkun.serialize
+
+struct ThriftEntity{
+    1:i64 id;
+    2:string name;
+    3:string category;
+    4:i64 price;
+    5:i64 appId;
+    6:i64 ctr;
+}
+
+struct ThriftResponse{
+    1:i32 code;
+    2:list&lt;ThriftEntity&gt; data;
+}
+</code></pre>
+
+<p>使用它编译后生成的类使用如下：</p>
+
+<pre><code>private static ThriftResponse initProtoResponse() {
+    List&lt;ThriftEntity&gt; data = new ArrayList&lt;&gt;();
+
+    for (long index = 0; index &lt; DATA_SIZE; index++) {
+        ThriftEntity thriftEntity = new ThriftEntity();
+        thriftEntity.setAppId(index);
+        thriftEntity.setCategory(String.valueOf(index));
+        thriftEntity.setCtr(index);
+        thriftEntity.setId((int) index);
+        thriftEntity.setName(String.valueOf(index));
+        thriftEntity.setPrice(index);
+        data.add(thriftEntity);
+    }
+
+    ThriftResponse  response = new ThriftResponse();
+    response.setCode((int) DATA_SIZE);
+    response.setData(data);
+
+    return response;
+}
+</code></pre>
+
+<p>对于序列化，它并不能直接转成二进制，而是需要thirft对应的辅助类TTransport和TBinaryProtocol来进行处理：</p>
+
+<pre><code>ByteArrayOutputStream out = new ByteArrayOutputStream();
+TTransport transport = new TIOStreamTransport(out);
+TBinaryProtocol protocol = new TBinaryProtocol(transport);
+
+long timeWatch = System.currentTimeMillis();
+for(int i=0;i&lt;LOOP_SIZE;i++){
+    response.write(protocol);
+}
+System.out.println(System.currentTimeMillis() - timeWatch);
+</code></pre>
+
+<h4 id="对比">对比</h4>
+
+<p>同样从<strong>效率</strong>和<strong>存储</strong>来进行对比</p>
+
+<h5 id="效率">效率</h5>
+
+<p>还是以数据大小递增，循环1万次的例子</p>
+
+<table>
+<thead>
+<tr>
+<th>DATA_SIZE</th>
+<th>jackson</th>
+<th>protobuf</th>
+<th>thirft</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td>10</td>
+<td>260 ms</td>
+<td>156 ms</td>
+<td>94ms</td>
+</tr>
+
+<tr>
+<td>50</td>
+<td>330 ms</td>
+<td>219 ms</td>
+<td>250ms</td>
+</tr>
+
+<tr>
+<td>100</td>
+<td>527 ms</td>
+<td>296 ms</td>
+<td>450ms</td>
+</tr>
+
+<tr>
+<td>200</td>
+<td>744 ms</td>
+<td>437 ms</td>
+<td>735ms</td>
+</tr>
+
+<tr>
+<td>300</td>
+<td>1109 ms</td>
+<td>562 ms</td>
+<td>937ms</td>
+</tr>
+</tbody>
+</table>
+
+<p>从上述数据可看出，随着数据量的增加thrift的效率其实跟json的差距在缩小。</p>
+
+<h5 id="存储">存储</h5>
+
+<pre><code>GZIPOutputStream gzipOutputStream = new GZIPOutputStream(new FileOutputStream(&quot;thrift.txt&quot;));
+TTransport gzTransport = new TIOStreamTransport(gzipOutputStream);
+TBinaryProtocol gzProtocol = new TBinaryProtocol(gzTransport);
+for(int i=0;i&lt;LOOP_SIZE;i++){
+    response.write(gzProtocol);
+}
+gzipOutputStream.flush();
+gzipOutputStream.close();
+</code></pre>
+
+<p>生成的文件是1966 KB，介于json 和 protobuf之间 ，json 是2737 KB ，protobuf 是405 KB。</p>
+
+<p><strong>综上</strong>，thirft的存储和序列化效率比json好，但是相比于protobuf还是有一定的差距。</p>
+                        </div>
+                        <div class="columns is-mobile post-meta">
+                            <div class="column is-half-desktop has-text-left is-paddingless"> 
+                                 
+                                更老一篇:<a href="http://www.lihongkun.com/common/protobuf_vs_json/"> protobuf序列化协议</a>
+                                
+                            </div>
+                            <div class="column is-half-desktop has-text-right is-paddingless">
+                                
+                                更新一篇:<a href="http://www.lihongkun.com/common/avro/"> Avro序列化器</a>
+                                
+                            </div>
+                            <div class="is-clearfix"></div>
+                        </div>
+                        <script src="https://utteranc.es/client.js"
+                                repo="lihongkun/lihongkun.github.io"
+                                issue-term="title"
+                                theme="github-light"
+                                crossorigin="anonymous"
+                                async>
+                        </script>
+                    </article>
+                </div>
+                <div class="column">    <aside>
+        <h2 class="is-size-4">关于我</h2>
+        <div class="content">
+            Working in advertising platform team. Backend on duty,full stack in my own time.
+        </div>
+        <h2 class="is-size-4">GitHub</h2>
+        <div class="content">
+            <a href="https://github.com/lihongkun" target="_blank">https://github.com/lihongkun</a>
+        </div>
+    </aside></div>
+                </div>
+            </div>
+         </main>    <footer class="footer">
+    
+        <div class="copyright has-text-centered">
+            <a href="https://bulma.io">
+                <img src="http://www.lihongkun.com/images/made-with-bulma.png" alt="Made with Bulma" width="128" height="24">
+            </a>
+            <p>© 泛泛之辈 Power by Hugo v0.55.6 - 闽ICP备15009606号</p>
+        </div>
+    </footer>
+    <script type="text/javascript">
+    document.addEventListener('DOMContentLoaded', () => {
+        
+        const $navbarBurgers = Array.prototype.slice.call(document.querySelectorAll('.navbar-burger'), 0);
+        
+        if ($navbarBurgers.length > 0) {
+            
+            $navbarBurgers.forEach( el => {
+                el.addEventListener('click', () => {
+                
+                const target = el.dataset.target;
+                const $target = document.getElementById(target);
+                
+                el.classList.toggle('is-active');
+                $target.classList.toggle('is-active');
+    
+                });
+            });
+        }
+    });
+    </script></body>
+</html>

@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html><head>
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+
+    
+    <meta name="author"
+            content=""/>
+
+    
+    <meta name="description" content="在JDK1.4出来之前,建立网络连接的时候采用BIO模式,下面以EchoServer为例子聊聊Java的阻塞IO.
+"/>
+    
+
+    
+
+    
+    <link rel="canonical" href="http://www.lihongkun.com/network/java_bio/"/>
+
+    
+
+    
+    
+    
+        
+            
+        
+    
+        
+            
+                
+            
+                
+            
+                
+            
+                
+            
+        
+    
+        
+            
+                
+            
+                
+            
+                
+            
+                
+            
+        
+    
+        
+            
+        
+    
+        
+            
+        
+    
+        
+            
+        
+    
+    <title> Java BIO | 泛泛之辈 </title>
+
+    <link rel="shortcut icon" href="http://www.lihongkun.com/favicon.jpg"/>
+    <link rel="stylesheet" href="http://www.lihongkun.com/css/bulma.min.css"/>
+    <link rel="stylesheet" href="http://www.lihongkun.com/css/style.css"/>
+</head><body><header>
+    <nav class="navbar is-fixed-top is-primary" role="navigation" aria-label="main navigation">
+        <div class="navbar-brand is-size-4">
+            <a class="navbar-item" href="http://www.lihongkun.com/">
+                    泛泛之辈
+            </a>
+            <a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false" data-target="navbar-menu">
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+            </a>
+        </div>
+        <div id="navbar-menu" class="navbar-menu">
+            <div class="navbar-end">
+                
+                    
+                        <a class="navbar-item" href="/">首页</a>
+                    
+                
+                    
+                        <div class="navbar-item has-dropdown is-hoverable">
+                            <a class="navbar-link">基本功</a>
+                            <div class="navbar-dropdown">
+                                
+                                <a class="navbar-item" href="/categories/concurrent/">并发</a>
+                                
+                                <a class="navbar-item" href="/categories/network/">网络</a>
+                                
+                                <a class="navbar-item" href="/categories/security/">Web安全</a>
+                                
+                                <a class="navbar-item" href="/categories/jvm/">Java虚拟机</a>
+                                
+                            </div>
+                        </div>
+                    
+                
+                    
+                        <div class="navbar-item has-dropdown is-hoverable">
+                            <a class="navbar-link">编程框架</a>
+                            <div class="navbar-dropdown">
+                                
+                                <a class="navbar-item" href="/categories/springframework/">Spring</a>
+                                
+                                <a class="navbar-item" href="/categories/mybatis/">Mybatis</a>
+                                
+                                <a class="navbar-item" href="/categories/springcloud/">SpringCloud</a>
+                                
+                                <a class="navbar-item" href="/categories/common/">常用框架</a>
+                                
+                            </div>
+                        </div>
+                    
+                
+                    
+                        <a class="navbar-item" href="/categories/troubleshooting/">问题排查</a>
+                    
+                
+                    
+                        <a class="navbar-item" href="/categories/design/">设计思路</a>
+                    
+                
+                    
+                        <a class="navbar-item" href="/categories/reading/">读书笔记</a>
+                    
+                
+            </div>
+            </div>
+    </nav>
+</header><main>
+            <div class="container">
+                <div class="columns">
+                <div class="column is-four-fifths">
+                    <article class="post box is-radiusless">
+                        <div class="post-title">
+                            <h2 class="is-size-4">Java BIO</h2>
+                        </div>
+                            <div class="post-meta">
+                            <span class="post-time">日期&nbsp;:&nbsp;2019-03-04</span>
+                        </div>
+                        <div class="post-content content">
+                            <p>在JDK1.4出来之前,建立网络连接的时候采用BIO模式,下面以EchoServer为例子聊聊Java的阻塞IO.</p>
+
+<h4 id="bio读写处理">BIO读写处理</h4>
+
+<p>先看一个BIO公共的处理类,用来处理已经建立好的客户端连接 , 接收exit,shutdown命令或者其他字符串.exit是断开当前客户端,shutdown是关闭当前服务,其他则进行回显.直接使用了socket连接的输入输出流.</p>
+
+<pre><code>/**
+ * 处理已经建立好的连接
+ */
+public class EchoSocketUtil {
+
+    public static boolean processSocket(Socket socket) throws IOException {
+        
+        // 获得socket的输入输出流
+        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+        BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
+
+        String request;
+        while ((request = bufferedReader.readLine()) != null) {
+            // 读取数据是阻塞的
+            if (&quot;exit&quot;.equals(request)) {
+                //输入是exit的时候关闭当前连接 ,提示主线程非关闭服务
+                socket.close();
+                return false;
+            } else if (&quot;shutdown&quot;.equals(request)) {
+                // 输入时shutdown的时候关闭当前连接 , 提示主线程关闭服务
+                socket.close();
+                return true;
+            } else {
+                // 其他则回显当前输入的字符串
+                bufferedWriter.write(request);
+                bufferedWriter.flush();
+            }
+        }
+        return false;
+    }
+}
+</code></pre>
+
+<h4 id="单连接服务器">单连接服务器</h4>
+
+<p>假设EchoServer的代码如下 , 创建一个ServerSocket,并调用accept接收连接. <strong>读取数据是阻塞的</strong> , 在连接未释放之前当前线程一直在处理该连接的IO事件 , 可以翻阅下阻塞式IO模型的图. 所以EchoServer只能同时接收一个客户端,在业务处理完成后才能接受其他客户端的连接.</p>
+
+<pre><code>public class EchoServer {
+
+    public static void main(String[] args) throws IOException {
+        //创建一个ServerSocket监听端口12345上的连接
+        ServerSocket serverSocket = new ServerSocket(12345);
+        boolean isShutdown = false;
+        while (!isShutdown){
+            try{
+                // 接收客户端的连接 , 如果没有连接建立则阻塞到连接建立
+                Socket socket = serverSocket.accept();
+                isShutdown = EchoSocketUtil.processSocket(socket);
+            }
+            catch (Exception ex){
+                ex.printStackTrace();
+            }
+        }
+    }
+}
+</code></pre>
+
+<h4 id="并发服务器">并发服务器</h4>
+
+<p>如果需要并发管理多个客户端 , 则需要对每个连接进行异步化处理.比如对每个连接都创建一个线程 . EchoServer代码修改为</p>
+
+<pre><code>public class EchoServer {
+
+    private volatile boolean isShutDown = false;
+
+    private ServerSocket serverSocket;
+
+    /**
+     * 创建服务 
+     * @param port 端口
+     */
+    public EchoServer(int port) {
+        try {
+            serverSocket = new ServerSocket(port);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    /**
+     * 关闭服务
+     */
+    private void shutdown() {
+        this.isShutDown = true;
+    }
+
+    /**
+     * 启动服务
+     */
+    public void run() {
+        while (!isShutDown) {
+            try {
+                Socket socket = serverSocket.accept();
+                // 每次接收一个连接, 创建一个线程进行处理
+                (new SocketProcessor(socket)).start();
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        }
+    }
+
+    /**
+     * socket处理线程
+     */
+    private class SocketProcessor extends Thread {
+
+        private Socket socket;
+
+        SocketThread(Socket socket) {
+            this.socket = socket;
+        }
+
+        @Override
+        public void run() {
+            try {
+                if (EchoSocketUtil.processSocket(socket)) {
+                    shutdown();
+                }
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        }
+    }
+}
+</code></pre>
+
+<p>服务器模型示意如图</p>
+
+<p><img src="java_bio.jpg" alt="image" /></p>
+
+<p>缺点也很显而易见 :</p>
+
+<ol>
+<li>很多时候, 处理的线程都是处于休眠状态,只是等待输入输出数据就绪.</li>
+<li>每个连接都需要创建一个线程来处理 , 需要分配线程栈 .消耗内存</li>
+<li>大量连接时,线程上下文切换</li>
+</ol>
+
+<p>这种服务器模型比较典型的有Tomcat的BIO Connector ,同样也是由于上述缺点在并发增大后性能急剧下降, 版本7.5以后以及改写为NIO</p>
+                        </div>
+                        <div class="columns is-mobile post-meta">
+                            <div class="column is-half-desktop has-text-left is-paddingless"> 
+                                 
+                                更老一篇:<a href="http://www.lihongkun.com/network/network_io_model/"> 网络IO模型</a>
+                                
+                            </div>
+                            <div class="column is-half-desktop has-text-right is-paddingless">
+                                
+                                更新一篇:<a href="http://www.lihongkun.com/network/java_nio/"> Java NIO</a>
+                                
+                            </div>
+                            <div class="is-clearfix"></div>
+                        </div>
+                        <script src="https://utteranc.es/client.js"
+                                repo="lihongkun/lihongkun.github.io"
+                                issue-term="title"
+                                theme="github-light"
+                                crossorigin="anonymous"
+                                async>
+                        </script>
+                    </article>
+                </div>
+                <div class="column">    <aside>
+        <h2 class="is-size-4">关于我</h2>
+        <div class="content">
+            Working in advertising platform team. Backend on duty,full stack in my own time.
+        </div>
+        <h2 class="is-size-4">GitHub</h2>
+        <div class="content">
+            <a href="https://github.com/lihongkun" target="_blank">https://github.com/lihongkun</a>
+        </div>
+    </aside></div>
+                </div>
+            </div>
+         </main>    <footer class="footer">
+    
+        <div class="copyright has-text-centered">
+            <a href="https://bulma.io">
+                <img src="http://www.lihongkun.com/images/made-with-bulma.png" alt="Made with Bulma" width="128" height="24">
+            </a>
+            <p>© 泛泛之辈 Power by Hugo v0.55.6 - 闽ICP备15009606号</p>
+        </div>
+    </footer>
+    <script type="text/javascript">
+    document.addEventListener('DOMContentLoaded', () => {
+        
+        const $navbarBurgers = Array.prototype.slice.call(document.querySelectorAll('.navbar-burger'), 0);
+        
+        if ($navbarBurgers.length > 0) {
+            
+            $navbarBurgers.forEach( el => {
+                el.addEventListener('click', () => {
+                
+                const target = el.dataset.target;
+                const $target = document.getElementById(target);
+                
+                el.classList.toggle('is-active');
+                $target.classList.toggle('is-active');
+    
+                });
+            });
+        }
+    });
+    </script></body>
+</html>

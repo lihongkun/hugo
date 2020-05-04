@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html><head>
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+
+    
+    <meta name="author"
+            content=""/>
+
+    
+    <meta name="description" content="Springboot官方使用web的配置内嵌了tomcat , 其目录在正式环境下存在着诸多问题.
+"/>
+    
+
+    
+
+    
+    <link rel="canonical" href="http://www.lihongkun.com/springframework/springboot_tomcat_directory/"/>
+
+    
+
+    
+    
+    
+        
+            
+        
+    
+        
+            
+                
+            
+                
+            
+                
+            
+                
+            
+        
+    
+        
+            
+                
+            
+                
+            
+                
+            
+                
+            
+        
+    
+        
+            
+        
+    
+        
+            
+        
+    
+        
+            
+        
+    
+    <title> Springboot的embeded tomcat目录 | 泛泛之辈 </title>
+
+    <link rel="shortcut icon" href="http://www.lihongkun.com/favicon.jpg"/>
+    <link rel="stylesheet" href="http://www.lihongkun.com/css/bulma.min.css"/>
+    <link rel="stylesheet" href="http://www.lihongkun.com/css/style.css"/>
+</head><body><header>
+    <nav class="navbar is-fixed-top is-primary" role="navigation" aria-label="main navigation">
+        <div class="navbar-brand is-size-4">
+            <a class="navbar-item" href="http://www.lihongkun.com/">
+                    泛泛之辈
+            </a>
+            <a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false" data-target="navbar-menu">
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+            </a>
+        </div>
+        <div id="navbar-menu" class="navbar-menu">
+            <div class="navbar-end">
+                
+                    
+                        <a class="navbar-item" href="/">首页</a>
+                    
+                
+                    
+                        <div class="navbar-item has-dropdown is-hoverable">
+                            <a class="navbar-link">基本功</a>
+                            <div class="navbar-dropdown">
+                                
+                                <a class="navbar-item" href="/categories/concurrent/">并发</a>
+                                
+                                <a class="navbar-item" href="/categories/network/">网络</a>
+                                
+                                <a class="navbar-item" href="/categories/security/">Web安全</a>
+                                
+                                <a class="navbar-item" href="/categories/jvm/">Java虚拟机</a>
+                                
+                            </div>
+                        </div>
+                    
+                
+                    
+                        <div class="navbar-item has-dropdown is-hoverable">
+                            <a class="navbar-link">编程框架</a>
+                            <div class="navbar-dropdown">
+                                
+                                <a class="navbar-item" href="/categories/springframework/">Spring</a>
+                                
+                                <a class="navbar-item" href="/categories/mybatis/">Mybatis</a>
+                                
+                                <a class="navbar-item" href="/categories/springcloud/">SpringCloud</a>
+                                
+                                <a class="navbar-item" href="/categories/common/">常用框架</a>
+                                
+                            </div>
+                        </div>
+                    
+                
+                    
+                        <a class="navbar-item" href="/categories/troubleshooting/">问题排查</a>
+                    
+                
+                    
+                        <a class="navbar-item" href="/categories/design/">设计思路</a>
+                    
+                
+                    
+                        <a class="navbar-item" href="/categories/reading/">读书笔记</a>
+                    
+                
+            </div>
+            </div>
+    </nav>
+</header><main>
+            <div class="container">
+                <div class="columns">
+                <div class="column is-four-fifths">
+                    <article class="post box is-radiusless">
+                        <div class="post-title">
+                            <h2 class="is-size-4">Springboot的embeded tomcat目录</h2>
+                        </div>
+                            <div class="post-meta">
+                            <span class="post-time">日期&nbsp;:&nbsp;2018-03-08</span>
+                        </div>
+                        <div class="post-content content">
+                            <p>Springboot官方使用web的配置内嵌了tomcat , 其目录在正式环境下存在着诸多问题.</p>
+
+<pre><code>
+// pom.xml
+ &lt;parent&gt;
+    &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+    &lt;artifactId&gt;spring-boot-starter-parent&lt;/artifactId&gt;
+    &lt;version&gt;1.5.10.RELEASE&lt;/version&gt;
+&lt;/parent&gt;
+
+&lt;!-- Add typical dependencies for a web application --&gt;
+&lt;dependencies&gt;
+    &lt;dependency&gt;
+        &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+        &lt;artifactId&gt;spring-boot-starter-web&lt;/artifactId&gt;
+    &lt;/dependency&gt;
+&lt;/dependencies&gt;
+
+// 主类
+
+package hello;
+
+import org.springframework.boot.*;
+import org.springframework.boot.autoconfigure.*;
+import org.springframework.stereotype.*;
+import org.springframework.web.bind.annotation.*;
+
+@Controller
+@EnableAutoConfiguration
+public class SampleController {
+
+    @RequestMapping(&quot;/&quot;)
+    @ResponseBody
+    String home() {
+        return &quot;Hello World!&quot;;
+    }
+
+    public static void main(String[] args) throws Exception {
+        SpringApplication.run(SampleController.class, args);
+    }
+}
+
+</code></pre>
+
+<p>极其简洁,无需部署到容器里面默认使用了内嵌型的tomcat8 ,相信很多人也是这么直接使用的.官方给的最佳实践有时候未必适合自己</p>
+
+<h3 id="问题描述">问题描述</h3>
+
+<p>按照官方例子,未进行修改启动后在/tmp目录下生成了 [tomcat-随机数-线程号] 和 [tomcat-docbase-随机数-线程号] 的文件夹. 随着线上的服务发布重启,不断新创建目录.然而目录却是空的 看着甚是碍眼.有一天线上有些上传文件的业务全部抛出找不到文件的异常.重启后恢复正常.</p>
+
+<p>于是复盘,发现临时文件被人删除.关注下这两个文件夹到底是做什么的.springboot使用的是embeded版本的tomcat 对比下独立版本的tomcat 少了一些配置目录还有 work 以及 webapp 目录. 其中</p>
+
+<ul>
+<li><p>work目录是运行时临时文件存储的地方,比如上传文件的临时目录,或者后端脚本编译缓存.</p></li>
+
+<li><p>webapp 即 静态文件或者后端脚本存储的地方. 由于我们是动静分离,其实webapp是没有用到的.</p></li>
+</ul>
+
+<p>那么这2个目录如果修改位置呢.官方只提供了work的配置.</p>
+
+<pre><code>// work 目录创建到 程序运行目录去
+// 在启动目录下生成一个work目录
+// [tomcat-随机数-线程号]
+
+server.baseDir=./
+
+</code></pre>
+
+<h3 id="探索">探索</h3>
+
+<p>既然没有暴露出配置,那么只能从源码里面找相关的线索</p>
+
+<pre><code>
+// TomcatEmbeddedServletContainerFactory.java
+
+public EmbeddedServletContainer getEmbeddedServletContainer(
+            ServletContextInitializer... initializers) {
+    Tomcat tomcat = new Tomcat();
+    File baseDir = (this.baseDirectory != null ? this.baseDirectory
+            : createTempDir(&quot;tomcat&quot;));
+    tomcat.setBaseDir(baseDir.getAbsolutePath());
+    Connector connector = new Connector(this.protocol);
+    tomcat.getService().addConnector(connector);
+    customizeConnector(connector);
+    tomcat.setConnector(connector);
+    tomcat.getHost().setAutoDeploy(false);
+    configureEngine(tomcat.getEngine());
+    for (Connector additionalConnector : this.additionalTomcatConnectors) {
+        tomcat.getService().addConnector(additionalConnector);
+    }
+    prepareContext(tomcat.getHost(), initializers);
+    return getTomcatEmbeddedServletContainer(tomcat);
+}
+
+protected void  prepareContext(Host host, ServletContextInitializer[] initializers) {
+    File docBase = getValidDocumentRoot();
+    docBase = (docBase != null ? docBase : createTempDir(&quot;tomcat-docbase&quot;));
+    TomcatEmbeddedContext context = new TomcatEmbeddedContext();
+    ....
+    context.setDocBase(docBase.getAbsolutePath());
+    ....
+}
+
+</code></pre>
+
+<p>上述代码中的 baseDir 就是暴露了配置的 tomcat work目录,而 prepareContext里面的getValidDocumentRoot 就是 tomcat-docbase 目录 ,这个方法在它的父类AbstractEmbeddedServletContainerFactory中实现</p>
+
+<pre><code>// AbstractEmbeddedServletContainerFactory.java
+
+private static final String[] COMMON_DOC_ROOTS = { &quot;src/main/webapp&quot;, &quot;public&quot;,
+            &quot;static&quot; };
+
+protected final File getValidDocumentRoot() {
+    File file = getDocumentRoot();
+    // If document root not explicitly set see if we are running from a war archive
+    file = file != null ? file : getWarFileDocumentRoot();
+    // If not a war archive maybe it is an exploded war
+    file = file != null ? file : getExplodedWarFileDocumentRoot();
+    // Or maybe there is a document root in a well-known location
+    file = file != null ? file : getCommonDocumentRoot();
+    ....
+    return file;
+}
+</code></pre>
+
+<p>我们关注下这个DocumentRoot 的顺序是 getDocumentRoot&gt;getWarFileDocumentRoot&gt;getExplodedWarFileDocumentRoot&gt;getCommonDocumentRoot.其中getDocumentRoot是TomcatEmbeddedServletContainerFactory setDocumentRoot设置进去的,也就是我们可以通过自己覆盖springboot的TomcatEmbeddedServletContainerFactory这个bean的实例化来实现</p>
+
+<h3 id="解决方案">解决方案</h3>
+
+<p>于是声明一个TomcatEmbeddedServletContainerFactory这个bean的实例化来实现来覆盖springboot默认的参数配置</p>
+
+<pre><code>@Bean
+public TomcatEmbeddedServletContainerFactory tomcatEmbeddedServletContainerFactory() {
+    TomcatEmbeddedServletContainerFactory tomcatFactory = new TomcatEmbeddedServletContainerFactory();
+
+    tomcatFactory.setBaseDirectory(baseDirectory);
+    tomcatFactory.setDocumentRoot(documentRoot);
+    
+    return tomcatFactory;
+}
+</code></pre>
+
+<p>至此目录问题完美解决</p>
+                        </div>
+                        <div class="columns is-mobile post-meta">
+                            <div class="column is-half-desktop has-text-left is-paddingless"> 
+                                 
+                                更老一篇:<a href="http://www.lihongkun.com/springframework/springboot_logback/"> Springboot使用logback的坑点</a>
+                                
+                            </div>
+                            <div class="column is-half-desktop has-text-right is-paddingless">
+                                
+                                更新一篇:<a href="http://www.lihongkun.com/springframework/springboot_tomcat_connetor/"> tomcat连接器调优</a>
+                                
+                            </div>
+                            <div class="is-clearfix"></div>
+                        </div>
+                        <script src="https://utteranc.es/client.js"
+                                repo="lihongkun/lihongkun.github.io"
+                                issue-term="title"
+                                theme="github-light"
+                                crossorigin="anonymous"
+                                async>
+                        </script>
+                    </article>
+                </div>
+                <div class="column">    <aside>
+        <h2 class="is-size-4">关于我</h2>
+        <div class="content">
+            Working in advertising platform team. Backend on duty,full stack in my own time.
+        </div>
+        <h2 class="is-size-4">GitHub</h2>
+        <div class="content">
+            <a href="https://github.com/lihongkun" target="_blank">https://github.com/lihongkun</a>
+        </div>
+    </aside></div>
+                </div>
+            </div>
+         </main>    <footer class="footer">
+    
+        <div class="copyright has-text-centered">
+            <a href="https://bulma.io">
+                <img src="http://www.lihongkun.com/images/made-with-bulma.png" alt="Made with Bulma" width="128" height="24">
+            </a>
+            <p>© 泛泛之辈 Power by Hugo v0.55.6 - 闽ICP备15009606号</p>
+        </div>
+    </footer>
+    <script type="text/javascript">
+    document.addEventListener('DOMContentLoaded', () => {
+        
+        const $navbarBurgers = Array.prototype.slice.call(document.querySelectorAll('.navbar-burger'), 0);
+        
+        if ($navbarBurgers.length > 0) {
+            
+            $navbarBurgers.forEach( el => {
+                el.addEventListener('click', () => {
+                
+                const target = el.dataset.target;
+                const $target = document.getElementById(target);
+                
+                el.classList.toggle('is-active');
+                $target.classList.toggle('is-active');
+    
+                });
+            });
+        }
+    });
+    </script></body>
+</html>

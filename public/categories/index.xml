@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Categories on 泛泛之辈</title>
+    <link>http://www.lihongkun.com/categories/</link>
+    <description>Recent content in Categories on 泛泛之辈</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-CN</language>
+    <lastBuildDate>Sat, 25 Apr 2020 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="http://www.lihongkun.com/categories/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>design</title>
+      <link>http://www.lihongkun.com/categories/design/</link>
+      <pubDate>Sat, 25 Apr 2020 00:00:00 +0000</pubDate>
+      
+      <guid>http://www.lihongkun.com/categories/design/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>common</title>
+      <link>http://www.lihongkun.com/categories/common/</link>
+      <pubDate>Sun, 12 Apr 2020 00:00:00 +0000</pubDate>
+      
+      <guid>http://www.lihongkun.com/categories/common/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>java</title>
+      <link>http://www.lihongkun.com/categories/java/</link>
+      <pubDate>Sun, 12 Apr 2020 00:00:00 +0000</pubDate>
+      
+      <guid>http://www.lihongkun.com/categories/java/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>log</title>
+      <link>http://www.lihongkun.com/categories/log/</link>
+      <pubDate>Sat, 22 Feb 2020 00:00:00 +0000</pubDate>
+      
+      <guid>http://www.lihongkun.com/categories/log/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>ide</title>
+      <link>http://www.lihongkun.com/categories/ide/</link>
+      <pubDate>Sun, 02 Feb 2020 00:00:00 +0000</pubDate>
+      
+      <guid>http://www.lihongkun.com/categories/ide/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>vscode</title>
+      <link>http://www.lihongkun.com/categories/vscode/</link>
+      <pubDate>Sun, 02 Feb 2020 00:00:00 +0000</pubDate>
+      
+      <guid>http://www.lihongkun.com/categories/vscode/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>serialize</title>
+      <link>http://www.lihongkun.com/categories/serialize/</link>
+      <pubDate>Sat, 28 Dec 2019 00:00:00 +0000</pubDate>
+      
+      <guid>http://www.lihongkun.com/categories/serialize/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>troubleshooting</title>
+      <link>http://www.lihongkun.com/categories/troubleshooting/</link>
+      <pubDate>Sat, 10 Aug 2019 00:00:00 +0000</pubDate>
+      
+      <guid>http://www.lihongkun.com/categories/troubleshooting/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>security</title>
+      <link>http://www.lihongkun.com/categories/security/</link>
+      <pubDate>Mon, 15 Jul 2019 00:00:00 +0000</pubDate>
+      
+      <guid>http://www.lihongkun.com/categories/security/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>jvm</title>
+      <link>http://www.lihongkun.com/categories/jvm/</link>
+      <pubDate>Sat, 06 Jul 2019 00:00:00 +0000</pubDate>
+      
+      <guid>http://www.lihongkun.com/categories/jvm/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>reading</title>
+      <link>http://www.lihongkun.com/categories/reading/</link>
+      <pubDate>Sun, 21 Apr 2019 00:00:00 +0000</pubDate>
+      
+      <guid>http://www.lihongkun.com/categories/reading/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>network</title>
+      <link>http://www.lihongkun.com/categories/network/</link>
+      <pubDate>Mon, 11 Mar 2019 00:00:00 +0000</pubDate>
+      
+      <guid>http://www.lihongkun.com/categories/network/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>concurrent</title>
+      <link>http://www.lihongkun.com/categories/concurrent/</link>
+      <pubDate>Mon, 17 Dec 2018 00:00:00 +0000</pubDate>
+      
+      <guid>http://www.lihongkun.com/categories/concurrent/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>springcloud</title>
+      <link>http://www.lihongkun.com/categories/springcloud/</link>
+      <pubDate>Wed, 12 Sep 2018 00:00:00 +0000</pubDate>
+      
+      <guid>http://www.lihongkun.com/categories/springcloud/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>springframework</title>
+      <link>http://www.lihongkun.com/categories/springframework/</link>
+      <pubDate>Tue, 13 Mar 2018 00:00:00 +0000</pubDate>
+      
+      <guid>http://www.lihongkun.com/categories/springframework/</guid>
+      <description></description>
+    </item>
+    
+  </channel>
+</rss>

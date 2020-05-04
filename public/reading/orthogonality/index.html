@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html><head>
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+
+    
+    <meta name="author"
+            content=""/>
+
+    
+    <meta name="description" content="如果你想要制作易于设计、构建、测试及扩展的系统，正交性就是一个十分关键的概念，但是正交性的概念很少被直接讲授，而常常是你学习的各种其他方法和技术的隐含特性。这是一个错误。一旦学会了直接应用正交性原则，你将发现，你制作的系统的质量就得到了提高。
+"/>
+    
+
+    
+
+    
+    <link rel="canonical" href="http://www.lihongkun.com/reading/orthogonality/"/>
+
+    
+
+    
+    
+    
+        
+            
+        
+    
+        
+            
+                
+            
+                
+            
+                
+            
+                
+            
+        
+    
+        
+            
+                
+            
+                
+            
+                
+            
+                
+            
+        
+    
+        
+            
+        
+    
+        
+            
+        
+    
+        
+            
+        
+    
+    <title> 正交性 | 泛泛之辈 </title>
+
+    <link rel="shortcut icon" href="http://www.lihongkun.com/favicon.jpg"/>
+    <link rel="stylesheet" href="http://www.lihongkun.com/css/bulma.min.css"/>
+    <link rel="stylesheet" href="http://www.lihongkun.com/css/style.css"/>
+</head><body><header>
+    <nav class="navbar is-fixed-top is-primary" role="navigation" aria-label="main navigation">
+        <div class="navbar-brand is-size-4">
+            <a class="navbar-item" href="http://www.lihongkun.com/">
+                    泛泛之辈
+            </a>
+            <a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false" data-target="navbar-menu">
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+            </a>
+        </div>
+        <div id="navbar-menu" class="navbar-menu">
+            <div class="navbar-end">
+                
+                    
+                        <a class="navbar-item" href="/">首页</a>
+                    
+                
+                    
+                        <div class="navbar-item has-dropdown is-hoverable">
+                            <a class="navbar-link">基本功</a>
+                            <div class="navbar-dropdown">
+                                
+                                <a class="navbar-item" href="/categories/concurrent/">并发</a>
+                                
+                                <a class="navbar-item" href="/categories/network/">网络</a>
+                                
+                                <a class="navbar-item" href="/categories/security/">Web安全</a>
+                                
+                                <a class="navbar-item" href="/categories/jvm/">Java虚拟机</a>
+                                
+                            </div>
+                        </div>
+                    
+                
+                    
+                        <div class="navbar-item has-dropdown is-hoverable">
+                            <a class="navbar-link">编程框架</a>
+                            <div class="navbar-dropdown">
+                                
+                                <a class="navbar-item" href="/categories/springframework/">Spring</a>
+                                
+                                <a class="navbar-item" href="/categories/mybatis/">Mybatis</a>
+                                
+                                <a class="navbar-item" href="/categories/springcloud/">SpringCloud</a>
+                                
+                                <a class="navbar-item" href="/categories/common/">常用框架</a>
+                                
+                            </div>
+                        </div>
+                    
+                
+                    
+                        <a class="navbar-item" href="/categories/troubleshooting/">问题排查</a>
+                    
+                
+                    
+                        <a class="navbar-item" href="/categories/design/">设计思路</a>
+                    
+                
+                    
+                        <a class="navbar-item" href="/categories/reading/">读书笔记</a>
+                    
+                
+            </div>
+            </div>
+    </nav>
+</header><main>
+            <div class="container">
+                <div class="columns">
+                <div class="column is-four-fifths">
+                    <article class="post box is-radiusless">
+                        <div class="post-title">
+                            <h2 class="is-size-4">正交性</h2>
+                        </div>
+                            <div class="post-meta">
+                            <span class="post-time">日期&nbsp;:&nbsp;2019-04-21</span>
+                        </div>
+                        <div class="post-content content">
+                            <p>如果你想要制作易于设计、构建、测试及扩展的系统，正交性就是一个十分关键的概念，但是正交性的概念很少被直接讲授，而常常是你学习的各种其他方法和技术的隐含特性。这是一个错误。一旦学会了直接应用正交性原则，你将发现，你制作的系统的质量就得到了提高。</p>
+
+<h3 id="什么是正交性">什么是正交性</h3>
+
+<p>“正交性”是从几何学中借来的术语。如果两条直线相交成直角，它们就是正交的。用向量术语说，这两条直线互不依赖。沿着某一条直线移动，你投影到另一条直接上的位置不变。</p>
+
+<p>在计算机中，该术语用于表示某种不相依赖性货是解耦性。如果两个或者更多事物中的一个发生变化，不会影响到其他事物，这些事物就是正交的。在设计良好的系统中，数据库代码与用户界面是正交的：你可以改动界面，而不影响数据库；更换数据库，而不改动界面。</p>
+
+<h4 id="非正交系统">非正交系统</h4>
+
+<p>你正乘坐直升机游览科罗拉多大峡谷，驾驶员——他显然犯了一个错误， 在吃鱼，他的午餐——突然呻吟起来，晕了过去。幸运的是，他把你留在了离地面100英尺的地方。你推断，升降杆控制总升力，所以轻轻将其压低可以让升机平缓降向地面。然而，当你这样做时，却发现生活井非那么简单。直升机的鼻子向下，开始向左盘旋下降。突间你发现，你驾驶的这个系统，所有的控制输人都有次级效应。压低左手的操作杆，你需要补偿性地向后移动右手柄，并踩右踏板。但这些改变中的每一项都会再次影响所有其他的控制。突然间，你在用一个让人难以置信的复系统玩杂耍，其中每一项改变都会影响所有其他的输入。你的工作负担异常巨大：你的手脚在不停地移动，试图平衡所有交互影响的力量。</p>
+
+<p>直升机的各个控制器断然不是正交的。</p>
+
+<h3 id="正交的好处">正交的好处</h3>
+
+<p>如直升机的例子所阐明的，非正交系统的改变与控制更复杂是其固有的性质。当任何系统的个组件相互高度依赖时，就不再有局部修正这样的事情。</p>
+
+<p>我们想要设计自足的组件：独立，具有单一、良好定义目。如果组件是相互隔离的，你就知道你能改变其中之一，而不用担心其余组件。只要你不改变组件的外部接口，你就可以放心：不不会造成波及整个系统的问题。</p>
+
+<p>如果你编写正交的系统，你得到两个主要的好处：提高生产率与降低风向。</p>
+
+<h4 id="提高生产率">提高生产率</h4>
+
+<ul>
+<li>改动得以局部化，所以开发时间和测试时间得以降低。与编写单个的大块代码相比，编写多个相对较小的、自足的组件更为容易。你可以设计、编写简单的组件，对其进行单元测试，然后把它们忘掉——当你增加新代码时，无须不断改动已有的代码。</li>
+<li>正交的途径还能够促进复用。如果组件具有明确而具体的， 良好定义的责任，就可以用其最初的实现者未曾想象过的方式，把它们与新组件组合在一起。</li>
+<li>如果你对正交的组件进行组合，生产率会有相当微妙的提高。假定某个组件做M件事情，而另一个组件做N件事情。如果它们是正交的，而你把它们组合在一起， 结果就能做MxN件事情。但是，如果这两个组件是非正交的，它们就会重叠，结果能做的事情就更少。通过组合正交的组件，你的每一份 努力都能得到更多的功能。</li>
+</ul>
+
+<h4 id="降低风险">降低风险</h4>
+
+<ul>
+<li>正交的途径能降低任何开发中固有的风险。</li>
+<li>有问题的代码区域被隔离开来。如果某个模块有毛病，它不大可能把病症扩散到系统的其余部分。要把它切掉，换成健康的新模块也更容易。</li>
+<li>所得系统更健壮。对特定区域做出小的改动与修正，你所导致的任何问题都将局限在该区域中。</li>
+<li>正交系统很可能能得到更好的测试，因为设计测试、并针对其组件运行测试更容易。</li>
+<li>你不会与特定的供应商、产品、或是平台紧绑在一 起，因为与这些第三方组件的接口将被隔离在全部开发的较小部分中。</li>
+</ul>
+
+<h3 id="项目团队">项目团队</h3>
+
+<p>你是否注意到，有些项目团队很有效率，每个人都知道要做什么，并全力做出贡献。而另一些团队的成员却老是在争吵，而且好像无法避免互相妨碍?
+这常常是一个正交性问题。如果团队的组织有许多重叠，各个成员就会对责任感到困惑。每一次改动都需要整个团队开一次会，因为他们中的任何一个人都有可能受到影响。</p>
+
+<p>怎样把团队划分为责任得到了良好定义的小组，并使重叠降至最低呢？没有简单的答案。这部分地取决于项目本身，以及你对可能变动的区域的分析。这还取决于你可以得到的人员。我们的偏好是从使基础设施与应用分离开始。每个主要的基础设施组件(数据库、通信接口、中间件层，等等)有自己的子团队。如果应用功能的划分显而易见，那就照此划分。然后我们考察我们现有的(或计划有的)人员，并对分组进行相应的调整。
+你可以对项目团队的正交性进行非正式的衡量。只要看一看，在讨论每个所需改动时需要涉及多少人。人数越多，团队的正交性就越差。显然，正交的团队效率也更高(尽管如此，我们也鼓励子团队不断地相互交流)。</p>
+
+<h3 id="编码">编码</h3>
+
+<p>每次你编写代码，都有降低应用正交性的风险。除非你不仅时刻监视你正在做的事情，也时刻监视应用的更大语境，否则，你就有可能无意中重复其他模块的功能，或是两次表示已有的知识。</p>
+
+<p>你可以将若干技术用于维持正交性：</p>
+
+<ul>
+<li><p><strong>让你的代码保持解耦</strong>。编写“羞怯”的代码-也就是不会没有必要地向其他模块暴露任何事情、也不依赖其他模块的实现的模块。如果你需要改变对象的状态，让这个对象替你去做。这样，你的代码就会保持与其他代码的实现的隔离，并增加你保持正交的机会。</p></li>
+
+<li><p><strong>避免使用全局数据</strong>。每当你的代码引用全局数据时，它都把自己与共享该数据的其他组件绑在了一起。即使你只想对全局数据进行读取，也可能会带来麻烦(例如，如果你突然需要把代码改为多线程的),一般而言，如果你把所需的任何语境( context)显式地传入模块，你的代码就会更易于理解和维护。在面向对象应用中，语境常常作为参数传给对象的构造器换句话说，你可以创建含有语境的结构，并传递指向这些结构的引用。</p></li>
+</ul>
+
+<p>《设计模式》 [GHJV95]一书中的Singleton (单体)模式是确保特定类的对象只有一个实例的一种途径。许多人把这些singleton对象用作某种全局变量(特别是在除此而外不支持全局概念的语言中，比如Java ),使用singleton要小心-它们可能造成不必要的关联。</p>
+
+<ul>
+<li><strong>避免编写相似的函数</strong>。你常常会遇到看起来全都很像的一组函数——它们也许在开始和结束处共享公共的代码，中间的算法各不相同。重复的代码是结构问题的一种症状。要了解更多好的实现，参见《设计模式》一书中的Strategy（策略）模式。</li>
+</ul>
+
+<p>养成不断地批判对待自己的代码的习惯。寻找任何重新进行组织、以改善其结构和正交性的计划。这个过程叫重构，它非常重要。</p>
+
+<p>摘自  &lt;&lt;程序员修炼之道&gt;&gt;</p>
+                        </div>
+                        <div class="columns is-mobile post-meta">
+                            <div class="column is-half-desktop has-text-left is-paddingless"> 
+                                 
+                                更老一篇:<a href="http://www.lihongkun.com/reading/entropy_of_software/"> 软件的熵</a>
+                                
+                            </div>
+                            <div class="column is-half-desktop has-text-right is-paddingless">
+                                
+                                没有了，已经是最新文章
+                                
+                            </div>
+                            <div class="is-clearfix"></div>
+                        </div>
+                        <script src="https://utteranc.es/client.js"
+                                repo="lihongkun/lihongkun.github.io"
+                                issue-term="title"
+                                theme="github-light"
+                                crossorigin="anonymous"
+                                async>
+                        </script>
+                    </article>
+                </div>
+                <div class="column">    <aside>
+        <h2 class="is-size-4">关于我</h2>
+        <div class="content">
+            Working in advertising platform team. Backend on duty,full stack in my own time.
+        </div>
+        <h2 class="is-size-4">GitHub</h2>
+        <div class="content">
+            <a href="https://github.com/lihongkun" target="_blank">https://github.com/lihongkun</a>
+        </div>
+    </aside></div>
+                </div>
+            </div>
+         </main>    <footer class="footer">
+    
+        <div class="copyright has-text-centered">
+            <a href="https://bulma.io">
+                <img src="http://www.lihongkun.com/images/made-with-bulma.png" alt="Made with Bulma" width="128" height="24">
+            </a>
+            <p>© 泛泛之辈 Power by Hugo v0.55.6 - 闽ICP备15009606号</p>
+        </div>
+    </footer>
+    <script type="text/javascript">
+    document.addEventListener('DOMContentLoaded', () => {
+        
+        const $navbarBurgers = Array.prototype.slice.call(document.querySelectorAll('.navbar-burger'), 0);
+        
+        if ($navbarBurgers.length > 0) {
+            
+            $navbarBurgers.forEach( el => {
+                el.addEventListener('click', () => {
+                
+                const target = el.dataset.target;
+                const $target = document.getElementById(target);
+                
+                el.classList.toggle('is-active');
+                $target.classList.toggle('is-active');
+    
+                });
+            });
+        }
+    });
+    </script></body>
+</html>

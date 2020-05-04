@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Designs on 泛泛之辈</title>
+    <link>http://www.lihongkun.com/design/</link>
+    <description>Recent content in Designs on 泛泛之辈</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-CN</language>
+    <lastBuildDate>Sat, 25 Apr 2020 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="http://www.lihongkun.com/design/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>大型项目的依赖包管理</title>
+      <link>http://www.lihongkun.com/design/bom/</link>
+      <pubDate>Sat, 25 Apr 2020 00:00:00 +0000</pubDate>
+      
+      <guid>http://www.lihongkun.com/design/bom/</guid>
+      <description>&lt;p&gt;Java的世界里，几乎所有项目的包管理都是使用了Maven，或者在其之上演进的组件。大型项目比如有成百上千个工程，依赖的包比较多，如果没有统一的版本管理，很容易就失控了。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>后端大量数据导出场景的处理</title>
+      <link>http://www.lihongkun.com/design/mass_data_export/</link>
+      <pubDate>Sat, 04 Apr 2020 00:00:00 +0000</pubDate>
+      
+      <guid>http://www.lihongkun.com/design/mass_data_export/</guid>
+      <description>&lt;p&gt;统计类报表除了提供界面查询还提供导出的功能，一般量也不是很大，不容易遇到瓶颈。日志明细类的，比如一个全民APP的下载数据，可能一天的量就是百万级别的。在这种场景下，如果客户需要导出这类数据的明细那么就会遇到一些挑战。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>高并发系统的在线诊断日志</title>
+      <link>http://www.lihongkun.com/design/online_debug/</link>
+      <pubDate>Wed, 01 Apr 2020 00:00:00 +0000</pubDate>
+      
+      <guid>http://www.lihongkun.com/design/online_debug/</guid>
+      <description>&lt;p&gt;线上日志是工程师诊断业务问题的主要依据。在并发量比较小的情况下，关键日志都是全量打印。在QPS到达十万甚至百万量级的服务里面，打印全量业务日志是不现实的。那么在这种情况下，我们如何去跟踪和重现偶发性的业务问题 ？&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>加权随机算法</title>
+      <link>http://www.lihongkun.com/design/weight_random/</link>
+      <pubDate>Sun, 17 Nov 2019 00:00:00 +0000</pubDate>
+      
+      <guid>http://www.lihongkun.com/design/weight_random/</guid>
+      <description>&lt;p&gt;加权重随机是一个比较常见的计算方式，比如 负载均衡算法中的一种、随机抽奖、广告系统流量分配等等。这种算法的实现方式比较成熟。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>一次开放API的设计演进思路</title>
+      <link>http://www.lihongkun.com/design/an_open_api_design_evolution/</link>
+      <pubDate>Wed, 12 Sep 2018 00:00:00 +0000</pubDate>
+      
+      <guid>http://www.lihongkun.com/design/an_open_api_design_evolution/</guid>
+      <description>&lt;p&gt;很多时候使用dubbo,gRPC等关注度主要在内部的服务化 , 反而容易忽略了用微服务的思想去设计对外的HTTP接口,导致HTTP接入业务层的边界服务重复且混乱不堪. 最近有一次比较大的重构 , 聊聊一些思路.&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>二进制思维</title>
+      <link>http://www.lihongkun.com/design/binary_system_thinking/</link>
+      <pubDate>Mon, 27 Aug 2018 00:00:00 +0000</pubDate>
+      
+      <guid>http://www.lihongkun.com/design/binary_system_thinking/</guid>
+      <description>&lt;p&gt;有1000个苹果10个盒子,要求把1000个苹果分装到10个盒子里.如果有人来买苹果随便说出一个数,直接拿这些盒子组装一下就可以给他,不用拆分盒子.请问这10个盒子应该分别装多少苹果.&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>前端页面内容监控</title>
+      <link>http://www.lihongkun.com/design/web_page_content_monitoring/</link>
+      <pubDate>Wed, 04 Jul 2018 00:00:00 +0000</pubDate>
+      
+      <guid>http://www.lihongkun.com/design/web_page_content_monitoring/</guid>
+      <description>&lt;p&gt;最近有个事件抖音在搜狗的搜索引擎上面投放了侮辱先烈的广告，导致公司被相关部门约谈,还涉及了多家广告代理商。他们纷纷表示完善广告审查机制,将广告审查纳入总编辑负责制；切实落实公共信息巡查，应急处置等网络安全主体责任制度。&lt;/p&gt;
+
+&lt;p&gt;一般这种投放广告是推广一个落地页链接,广告主可以自己做这个页面,然后创建广告的时候落地链接填入到广告中。广告平台对其进行审核。到这个步骤是没有问题的，只要平台方严格执行。但是总是有那么一些状况。比如广告主在审核通过后对页面进行了修改没有重新提交审核。猪队友总是有的。求生欲望强一些总要做点什么来监控这种情况。&lt;/p&gt;</description>
+    </item>
+    
+  </channel>
+</rss>

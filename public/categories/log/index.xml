@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>log on 泛泛之辈</title>
+    <link>http://www.lihongkun.com/categories/log/</link>
+    <description>Recent content in log on 泛泛之辈</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-CN</language>
+    <lastBuildDate>Sat, 22 Feb 2020 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="http://www.lihongkun.com/categories/log/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Logback日志框架</title>
+      <link>http://www.lihongkun.com/common/logback/</link>
+      <pubDate>Sat, 22 Feb 2020 00:00:00 +0000</pubDate>
+      
+      <guid>http://www.lihongkun.com/common/logback/</guid>
+      <description>&lt;p&gt;Logback是一个日志实现框架，它实现了SLF4J 。它们二者出自同一作者之手，也是时下比较普及的一个组合。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Java日志门面系统</title>
+      <link>http://www.lihongkun.com/common/slf4j/</link>
+      <pubDate>Sat, 08 Feb 2020 00:00:00 +0000</pubDate>
+      
+      <guid>http://www.lihongkun.com/common/slf4j/</guid>
+      <description>&lt;p&gt;一个线上程序的运行情况监测，日志扮演着极其重要的角色。Java发展了20年，日志系统也是百家争鸣，不同历史时期出现的开源组件往往有着不同的日志实现，应用的整合难度陡升。所幸Simple Logging Facade for Java（SLF4J）对各种日志框架进行了抽象。如其名字，它对开发者提供了统一的门面，允许开发者在部署时插入所需的日志框架。&lt;/p&gt;</description>
+    </item>
+    
+  </channel>
+</rss>

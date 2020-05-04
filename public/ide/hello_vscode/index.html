@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html><head>
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+
+    
+    <meta name="author"
+            content=""/>
+
+    
+    <meta name="description" content="Visual Studio Code (简称 VS Code) 是一款免费开源的现代化轻量级代码编辑器，支持几乎所有主流的开发语言的语法高亮、智能代码补全、自定义热键、括号匹配、代码片段、代码对比 Diff、Git 等特性，支持插件扩展，并针对网页开发和云端应用开发做了优化。轻量、免费、开源和扩展机制为它赢得了很多用户，同时社区和官方对他的维护和扩展是非常活跃的。
+"/>
+    
+
+    
+
+    
+    <link rel="canonical" href="http://www.lihongkun.com/ide/hello_vscode/"/>
+
+    
+
+    
+    
+    
+        
+            
+        
+    
+        
+            
+                
+            
+                
+            
+                
+            
+                
+            
+        
+    
+        
+            
+                
+            
+                
+            
+                
+            
+                
+            
+        
+    
+        
+            
+        
+    
+        
+            
+        
+    
+        
+            
+        
+    
+    <title> 初见 VS Code | 泛泛之辈 </title>
+
+    <link rel="shortcut icon" href="http://www.lihongkun.com/favicon.jpg"/>
+    <link rel="stylesheet" href="http://www.lihongkun.com/css/bulma.min.css"/>
+    <link rel="stylesheet" href="http://www.lihongkun.com/css/style.css"/>
+</head><body><header>
+    <nav class="navbar is-fixed-top is-primary" role="navigation" aria-label="main navigation">
+        <div class="navbar-brand is-size-4">
+            <a class="navbar-item" href="http://www.lihongkun.com/">
+                    泛泛之辈
+            </a>
+            <a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false" data-target="navbar-menu">
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+            </a>
+        </div>
+        <div id="navbar-menu" class="navbar-menu">
+            <div class="navbar-end">
+                
+                    
+                        <a class="navbar-item" href="/">首页</a>
+                    
+                
+                    
+                        <div class="navbar-item has-dropdown is-hoverable">
+                            <a class="navbar-link">基本功</a>
+                            <div class="navbar-dropdown">
+                                
+                                <a class="navbar-item" href="/categories/concurrent/">并发</a>
+                                
+                                <a class="navbar-item" href="/categories/network/">网络</a>
+                                
+                                <a class="navbar-item" href="/categories/security/">Web安全</a>
+                                
+                                <a class="navbar-item" href="/categories/jvm/">Java虚拟机</a>
+                                
+                            </div>
+                        </div>
+                    
+                
+                    
+                        <div class="navbar-item has-dropdown is-hoverable">
+                            <a class="navbar-link">编程框架</a>
+                            <div class="navbar-dropdown">
+                                
+                                <a class="navbar-item" href="/categories/springframework/">Spring</a>
+                                
+                                <a class="navbar-item" href="/categories/mybatis/">Mybatis</a>
+                                
+                                <a class="navbar-item" href="/categories/springcloud/">SpringCloud</a>
+                                
+                                <a class="navbar-item" href="/categories/common/">常用框架</a>
+                                
+                            </div>
+                        </div>
+                    
+                
+                    
+                        <a class="navbar-item" href="/categories/troubleshooting/">问题排查</a>
+                    
+                
+                    
+                        <a class="navbar-item" href="/categories/design/">设计思路</a>
+                    
+                
+                    
+                        <a class="navbar-item" href="/categories/reading/">读书笔记</a>
+                    
+                
+            </div>
+            </div>
+    </nav>
+</header><main>
+            <div class="container">
+                <div class="columns">
+                <div class="column is-four-fifths">
+                    <article class="post box is-radiusless">
+                        <div class="post-title">
+                            <h2 class="is-size-4">初见 VS Code</h2>
+                        </div>
+                            <div class="post-meta">
+                            <span class="post-time">日期&nbsp;:&nbsp;2020-02-02</span>
+                        </div>
+                        <div class="post-content content">
+                            <p>Visual Studio Code (简称 VS Code) 是一款免费开源的现代化轻量级代码编辑器，支持几乎所有主流的开发语言的语法高亮、智能代码补全、自定义热键、括号匹配、代码片段、代码对比 Diff、Git 等特性，支持插件扩展，并针对网页开发和云端应用开发做了优化。轻量、免费、开源和扩展机制为它赢得了很多用户，同时社区和官方对他的维护和扩展是非常活跃的。</p>
+
+<h3 id="安装和使用">安装和使用</h3>
+
+<p>官网（<a href="https://code.visualstudio.com/">https://code.visualstudio.com/</a>）提供了安装包的下载</p>
+
+<h4 id="用户界面">用户界面</h4>
+
+<p>安装完成以后首先要熟悉一下界面的构成和作用。</p>
+
+<p><img src="hero.png" alt="" /></p>
+
+<p><strong>活动栏（Activity Bar）</strong>：位于最左边，它的主要作用是切换边栏的内容。默认从上倒下依次是 资源管理器、搜索、源代码管理、调试运行、扩展。</p>
+
+<p><strong>边栏（Side Bar）</strong>：展示不同的视图来管理不同的内容，主要通过活动栏来切换。如资源管理器，帮助你管理工作空间中的项目和文件。源代码管理则是源代码版本管理。</p>
+
+<p><strong>编辑器（Editor）</strong>：编辑文件的主区域。能够打开多个文件进行编辑，且能横向、纵向分组。</p>
+
+<p><strong>面板（Panels）</strong>：可以在编辑器区域下显示不同的面板，用于输出或调试信息、错误和警告，或集成终端。面板也可以向右移动以获得更大的垂直空间。</p>
+
+<p><strong>状态栏（Status Bar）</strong>：有关打开的项目和编辑的文件的信息。</p>
+
+<h4 id="快捷键">快捷键</h4>
+
+<p>vscode为了让使用者尽量在键盘上完成工作，设置了一些快捷键，并且可以定制。基础的快捷键表可以通过官方的表进行速查 <a href="https://code.visualstudio.com/shortcuts/keyboard-shortcuts-windows.pdf">https://code.visualstudio.com/shortcuts/keyboard-shortcuts-windows.pdf</a> 。</p>
+
+<h5 id="自定义">自定义</h5>
+
+<p>当然它也提供自定义的功能，可以从【文件】-&gt; 【首选项】-&gt; 【键盘快捷方式】进入，或者使用快捷键【Ctrl+S &amp; Ctrl + K】调起快捷键定制界面。</p>
+
+<h5 id="扩展">扩展</h5>
+
+<p>可能很多人都有自己习惯的编辑器，这个可以通过扩展的方式来实现，比如个人比较喜欢Vim则可以安装一个Vim插件。目前主流编辑器的快捷键映射插件基本都有，切换相当方便。</p>
+
+<p><img src="keymaps.png" alt="" /></p>
+
+<h4 id="命令界面">命令界面</h4>
+
+<p>快捷键 F1或者Ctrl + Shift + P 可以会直接调出命令界面。这个功能跟IDEA的Double Shift 类似。在vscode里面可以直接选择搜索出所有的命令。任何菜单、任何快捷键和任何扩展的功能都能做上面搜索出来，非常方便。</p>
+
+<p>命令行框里面的首字符 可以实现其他的功能。比如默认是【&gt;】则是执行命令，【空】则是查找当前工作空间的文件，【#】查找类型，【?】列出可用的操作分类，类似一个菜单逐层去选择。</p>
+
+<h4 id="代码片段">代码片段</h4>
+
+<p>微软官方有推荐安装扩展Visual Studio IntelliCode，可达到代码智能代码目的。效果如以下动图所示</p>
+
+<p><img src="python-intellicode.gif" alt="" /></p>
+
+<p>不同的语言或者框架代码都有对应的智能代码提示实现。例如安装了java和spring的扩展包以后则能对Java常见的功能进行代码提示。</p>
+
+<p><img src="java-intellicode.gif" alt="" /></p>
+
+<p>如果扩展无法支持的，比如自己项目的公共方法静态类或者其他没有扩展的库，均可以使用代码片段的功能来实现。官方给出的效果</p>
+
+<p><img src="ajax-snippet.gif" alt="" /></p>
+
+<p>配置可以通过【文件】-&gt; 【首选项】-&gt; 【用户代码片段】调出配置选项。</p>
+
+<h3 id="java环境搭建">java环境搭建</h3>
+
+<h4 id="扩展安装">扩展安装</h4>
+
+<p>机器上的 JDK 和 Maven 需要自行安装。 完成后则可进行vscode的扩展安装，需要安装两个插件 Java Extension Pack 和 Spring Boot Extension Pack ，其中后者是Spring专用的，如果没有用到Spring可以不用安装。</p>
+
+<p>安装方式如下</p>
+
+<p><img src="java-extension-pack.jpg" alt="" /></p>
+
+<p>安装完成后需要配置JDK和Maven的位置。直接使用命令打开 setting.json 进行编辑，配置JDK的路径和Maven路径。</p>
+
+<pre><code>{
+    &quot;java.home&quot;: &quot;D:\\jdk-11.0.2&quot;,
+    &quot;java.configuration.maven.userSettings&quot;: &quot;D:\\apache-maven-3.6.1\\conf\\settings.xml&quot;
+    &quot;maven.terminal.useJavaHome&quot;: true,
+    &quot;maven.view&quot;: &quot;hierarchical&quot;,
+    &quot;maven.pomfile.autoUpdateEffectivePOM&quot;: true,
+    &quot;maven.executable.path&quot;: &quot;D:\\apache-maven-3.6.1\\bin\\mvn&quot;,
+}
+</code></pre>
+
+<p>#### Maven项目</p>
+
+<p><img src="java-maven.jpg" alt="" /></p>
+
+<p>在【资源管理器】右键菜单上可以选择【从Maven原型创建新项目】，则进入选择maven 原型的界面，选择后如命令行创建Maven项目一样，填入一些项目的信息则进行创建。</p>
+
+<p>初始化后的项目如上图，<strong>边栏</strong>从上到下依次是，代码目录结构、当前编辑文件的大纲、Maven项目的概况和相关操作（右键菜单）、以及依赖树。</p>
+
+<p><strong>编辑区域</strong>的main方法上有Run|Debug 标识 ，可以直接点击运行或者是启动。</p>
+
+<p>至此使用它来开发java项目基本没什么大的硬伤。</p>
+
+<h4 id="spring-项目">Spring 项目</h4>
+
+<p>对比单纯Maven项目的创建 直接使用了命令行，spring boot 插件集成得让人比较舒服。</p>
+
+<p><img src="vscode-spring.gif" alt="" /></p>
+
+<h4 id="远程调试">远程调试</h4>
+
+<p>远程调试在日常开发中是一个必备的功能。首先以例子程序启动一个服务。启动命令如下，服务端口是8080，调试端口是8081</p>
+
+<pre><code>/d/jdk-11.0.2/bin/java -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:8081 -jar vscode-0.0.1-SNAPSHOT.jar
+</code></pre>
+
+<p>vscode配置远程调试需要配置工作空间.vscode/launch.json文件 ，亦可直接使用界面进行配置来生成，操作演示如下图：</p>
+
+<p><img src="vscode-debug.gif" alt="" /></p>
+
+<h3 id="其他插件推荐">其他插件推荐</h3>
+
+<ul>
+<li>vscode-icons  - 图标主题</li>
+<li>Polacode-2019 - 代码截图</li>
+<li>Copy/Paste Detector - 重复代码检测</li>
+</ul>
+
+<p><strong>题外话</strong></p>
+
+<p>本来一直使用eclipse ，后续由于其太过臃肿耗性能以及功能上的一些原因，2019年直接就换成了IntelliJ IDEA 。正式版本虽然好用，无奈收费，还比较贵。破解反复，比较消耗耐性。业余写一些Vue代码的时候有使用了vscode ，除了快捷键不适应之外，作为纯文本编辑器觉得还是不错。所以趁着假期好好玩了一下，准备全面使用在工作中。</p>
+                        </div>
+                        <div class="columns is-mobile post-meta">
+                            <div class="column is-half-desktop has-text-left is-paddingless"> 
+                                
+                                没有了，已经是最后文章
+                                
+                            </div>
+                            <div class="column is-half-desktop has-text-right is-paddingless">
+                                
+                                没有了，已经是最新文章
+                                
+                            </div>
+                            <div class="is-clearfix"></div>
+                        </div>
+                        <script src="https://utteranc.es/client.js"
+                                repo="lihongkun/lihongkun.github.io"
+                                issue-term="title"
+                                theme="github-light"
+                                crossorigin="anonymous"
+                                async>
+                        </script>
+                    </article>
+                </div>
+                <div class="column">    <aside>
+        <h2 class="is-size-4">关于我</h2>
+        <div class="content">
+            Working in advertising platform team. Backend on duty,full stack in my own time.
+        </div>
+        <h2 class="is-size-4">GitHub</h2>
+        <div class="content">
+            <a href="https://github.com/lihongkun" target="_blank">https://github.com/lihongkun</a>
+        </div>
+    </aside></div>
+                </div>
+            </div>
+         </main>    <footer class="footer">
+    
+        <div class="copyright has-text-centered">
+            <a href="https://bulma.io">
+                <img src="http://www.lihongkun.com/images/made-with-bulma.png" alt="Made with Bulma" width="128" height="24">
+            </a>
+            <p>© 泛泛之辈 Power by Hugo v0.55.6 - 闽ICP备15009606号</p>
+        </div>
+    </footer>
+    <script type="text/javascript">
+    document.addEventListener('DOMContentLoaded', () => {
+        
+        const $navbarBurgers = Array.prototype.slice.call(document.querySelectorAll('.navbar-burger'), 0);
+        
+        if ($navbarBurgers.length > 0) {
+            
+            $navbarBurgers.forEach( el => {
+                el.addEventListener('click', () => {
+                
+                const target = el.dataset.target;
+                const $target = document.getElementById(target);
+                
+                el.classList.toggle('is-active');
+                $target.classList.toggle('is-active');
+    
+                });
+            });
+        }
+    });
+    </script></body>
+</html>

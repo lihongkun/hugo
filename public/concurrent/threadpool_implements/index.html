@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html><head>
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+
+    
+    <meta name="author"
+            content=""/>
+
+    
+    <meta name="description" content="线程池状态和数量 ThreadPoolExecutor拥有如下状态 , 它控制着线程是否接收新任务以及当前在队列中或者执行中的任务如何结束.
+RUNNING: 接收新的任务,新建或者放入任务队列
+SHUTDOWN: 不接收新的任务,但是会执行任务队列的中任务
+STOP: 不接收新的任务,不会执行任务队列中的任务,并且停止在执行中的任务
+TIDYING: 任务执行结束,workerCountOf返回 0 ,线程池状态设置为此状态,并执行钩子函数.
+TERMINATED: terminated() 结束
+"/>
+    
+
+    
+
+    
+    <link rel="canonical" href="http://www.lihongkun.com/concurrent/threadpool_implements/"/>
+
+    
+
+    
+    
+    
+        
+            
+        
+    
+        
+            
+                
+            
+                
+            
+                
+            
+                
+            
+        
+    
+        
+            
+                
+            
+                
+            
+                
+            
+                
+            
+        
+    
+        
+            
+        
+    
+        
+            
+        
+    
+        
+            
+        
+    
+    <title> 线程池实现 | 泛泛之辈 </title>
+
+    <link rel="shortcut icon" href="http://www.lihongkun.com/favicon.jpg"/>
+    <link rel="stylesheet" href="http://www.lihongkun.com/css/bulma.min.css"/>
+    <link rel="stylesheet" href="http://www.lihongkun.com/css/style.css"/>
+</head><body><header>
+    <nav class="navbar is-fixed-top is-primary" role="navigation" aria-label="main navigation">
+        <div class="navbar-brand is-size-4">
+            <a class="navbar-item" href="http://www.lihongkun.com/">
+                    泛泛之辈
+            </a>
+            <a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false" data-target="navbar-menu">
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+            </a>
+        </div>
+        <div id="navbar-menu" class="navbar-menu">
+            <div class="navbar-end">
+                
+                    
+                        <a class="navbar-item" href="/">首页</a>
+                    
+                
+                    
+                        <div class="navbar-item has-dropdown is-hoverable">
+                            <a class="navbar-link">基本功</a>
+                            <div class="navbar-dropdown">
+                                
+                                <a class="navbar-item" href="/categories/concurrent/">并发</a>
+                                
+                                <a class="navbar-item" href="/categories/network/">网络</a>
+                                
+                                <a class="navbar-item" href="/categories/security/">Web安全</a>
+                                
+                                <a class="navbar-item" href="/categories/jvm/">Java虚拟机</a>
+                                
+                            </div>
+                        </div>
+                    
+                
+                    
+                        <div class="navbar-item has-dropdown is-hoverable">
+                            <a class="navbar-link">编程框架</a>
+                            <div class="navbar-dropdown">
+                                
+                                <a class="navbar-item" href="/categories/springframework/">Spring</a>
+                                
+                                <a class="navbar-item" href="/categories/mybatis/">Mybatis</a>
+                                
+                                <a class="navbar-item" href="/categories/springcloud/">SpringCloud</a>
+                                
+                                <a class="navbar-item" href="/categories/common/">常用框架</a>
+                                
+                            </div>
+                        </div>
+                    
+                
+                    
+                        <a class="navbar-item" href="/categories/troubleshooting/">问题排查</a>
+                    
+                
+                    
+                        <a class="navbar-item" href="/categories/design/">设计思路</a>
+                    
+                
+                    
+                        <a class="navbar-item" href="/categories/reading/">读书笔记</a>
+                    
+                
+            </div>
+            </div>
+    </nav>
+</header><main>
+            <div class="container">
+                <div class="columns">
+                <div class="column is-four-fifths">
+                    <article class="post box is-radiusless">
+                        <div class="post-title">
+                            <h2 class="is-size-4">线程池实现</h2>
+                        </div>
+                            <div class="post-meta">
+                            <span class="post-time">日期&nbsp;:&nbsp;2018-11-26</span>
+                        </div>
+                        <div class="post-content content">
+                            <h3 id="线程池状态和数量">线程池状态和数量</h3>
+
+<p>ThreadPoolExecutor拥有如下状态 , 它控制着线程是否接收新任务以及当前在队列中或者执行中的任务如何结束.</p>
+
+<p><strong>RUNNING</strong>:  接收新的任务,新建或者放入任务队列</p>
+
+<p><strong>SHUTDOWN</strong>: 不接收新的任务,但是会执行任务队列的中任务</p>
+
+<p><strong>STOP</strong>:     不接收新的任务,不会执行任务队列中的任务,并且停止在执行中的任务</p>
+
+<p><strong>TIDYING</strong>:  任务执行结束,workerCountOf返回 0 ,线程池状态设置为此状态,并执行钩子函数.</p>
+
+<p><strong>TERMINATED</strong>: terminated() 结束</p>
+
+<p>ThreadPoolExecutor使用一个变量来表示线程池的状态和线程池可以使用的worker数量.</p>
+
+<pre><code>private final AtomicInteger ctl = new AtomicInteger(ctlOf(RUNNING, 0));
+private static final int COUNT_BITS = Integer.SIZE - 3; // 等于29 
+private static final int CAPACITY   = (1 &lt;&lt; COUNT_BITS) - 1; // 2^29-1,线程池最大容量
+
+// runState is stored in the high-order bits
+private static final int RUNNING    = -1 &lt;&lt; COUNT_BITS; // 高三位是 111
+private static final int SHUTDOWN   =  0 &lt;&lt; COUNT_BITS; // 高三位是 000
+private static final int STOP       =  1 &lt;&lt; COUNT_BITS; // 高三位是 001
+private static final int TIDYING    =  2 &lt;&lt; COUNT_BITS; // 高三位是 010
+private static final int TERMINATED =  3 &lt;&lt; COUNT_BITS; // 高三位是 011
+
+// Packing and unpacking ctl
+private static int runStateOf(int c)     { return c &amp; ~CAPACITY; } // 线程池运行状态
+private static int workerCountOf(int c)  { return c &amp; CAPACITY; } // 线程池工作线程数
+private static int ctlOf(int rs, int wc) { return rs | wc; } 
+</code></pre>
+
+<p>上述代码中ctl就是状态和数量的变量.其中COUNT_BITS为29,RUNNING等状态的值都是做左移29位的运算,结合runStateOf函数的运算可以看出其使用ctl变量的的二进制高三位来表示线程池的运行状态.</p>
+
+<h3 id="任务提交">任务提交</h3>
+
+<p>线程池提交任务有几个方法,基本逻辑一致.创建一个FutureTask(RunnableFuture的实现)然后执行任务.</p>
+
+<pre><code>// AbstractExecutorService.java
+public Future&lt;?&gt; submit(Runnable task) {
+    if (task == null) throw new NullPointerException();
+    RunnableFuture&lt;Void&gt; ftask = newTaskFor(task, null);
+    execute(ftask);
+    return ftask;
+}
+</code></pre>
+
+<p>上面的execute方法并没有进行直接的实现,而是子类来实现.以ThreadPoolExecutor为例子</p>
+
+<pre><code>public void execute(Runnable command) {
+    if (command == null)
+        throw new NullPointerException();
+
+    int c = ctl.get();
+    // worker数量小于核心线程数直接创建新worker并缓存
+    if (workerCountOf(c) &lt; corePoolSize) {
+        if (addWorker(command, true))
+            return;
+        c = ctl.get();
+    }
+    
+    // 线程池 执行中 &amp;&amp; 任务入队列成功
+    if (isRunning(c) &amp;&amp; workQueue.offer(command)) {
+        int recheck = ctl.get();
+        if (! isRunning(recheck) &amp;&amp; remove(command))
+            // 线程池非执行中 &amp;&amp; 执行出队 且执行拒绝策略
+            reject(command);
+        else if (workerCountOf(recheck) == 0)
+        // because existing ones died since last checking
+            addWorker(null, false);
+    }
+    // 上一个if条件入队列失败 , 创建新线程,边界是maximumPoolSize
+    else if (!addWorker(command, false))
+        // 创建新线程失败执行拒绝策略
+        reject(command);
+}
+</code></pre>
+
+<p>这个方法的源码有比较清晰的注释,大意是此操作分几个步骤 :</p>
+
+<ol>
+<li>当 workers 数量小于 corePoolSize 的时候, 则创建一个线程来执行当前任务并添加到workers里面. addWorker对当前线程的执行状态和线程数会进行再次校验</li>
+<li>workers 已经到达 corePoolSize的数量, 尝试将任务放入到workQueue. 如果失败则使用addWorker创建线程,失败则执行拒绝策略.</li>
+
+<li><p>如果放入workQueue成功 , double-check 线程池的运行状态,如果线程池非运行状态,则出队,并执行拒绝策略.如果线程池在运行状态,则校验worker数量,为0的的话则调用addWorker</p>
+
+<pre><code>private boolean addWorker(Runnable firstTask, boolean core) {
+    
+// double-check
+...
+
+boolean workerStarted = false;
+boolean workerAdded = false;
+Worker w = null;
+..
+final ReentrantLock mainLock = this.mainLock;
+mainLock.lock();
+try {
+    // Recheck while holding lock.
+    // Back out on ThreadFactory failure or if
+    // shut down before lock acquired.
+    int rs = runStateOf(ctl.get());
+
+    if (rs &lt; SHUTDOWN ||
+        (rs == SHUTDOWN &amp;&amp; firstTask == null)) {
+        if (t.isAlive()) // precheck that t is startable
+            throw new IllegalThreadStateException();
+        workers.add(w);
+        int s = workers.size();
+        if (s &gt; largestPoolSize)
+            largestPoolSize = s;
+        workerAdded = true;
+    }
+} finally {
+    mainLock.unlock();
+}
+...
+return workerStarted;
+}
+</code></pre></li>
+</ol>
+
+<p>addWorker 有两个参数 , 一个表示任务,一个表示是否使用corePoolSize作为创建线程数的上限, 如果为false的话则可创建的线程数上限是maximumPoolSize.创建线程先要获得显式锁,创建完成后加入到workers中,加入成功则执行该线程的start方法,开始执行线程.</p>
+
+<p>从上面的源码分析中, 提交任务的大致流程如下图所示:</p>
+
+<p><img src="task_submit.jpg" alt="" /></p>
+
+<h3 id="任务执行">任务执行</h3>
+
+<p>处理任务的是ThreadPoolExecutor的内部类Worker,提交任务时addWorker方法创建的.</p>
+
+<pre><code>private final class Worker
+        extends AbstractQueuedSynchronizer
+        implements Runnable {
+
+    // 忽略其他方法
+    public void run() {
+        runWorker(this);
+    }
+
+}
+</code></pre>
+
+<p>其中的runWorker 在ThreadPoolExecutor中实现.</p>
+
+<pre><code>final void runWorker(Worker w) {
+    Thread wt = Thread.currentThread();
+    Runnable task = w.firstTask;
+    w.firstTask = null;
+    w.unlock(); // allow interrupts
+    boolean completedAbruptly = true;
+    try {
+        while (task != null || (task = getTask()) != null) {
+            w.lock();
+            // If pool is stopping, ensure thread is interrupted;
+            // if not, ensure thread is not interrupted.  This
+            // requires a recheck in second case to deal with
+            // shutdownNow race while clearing interrupt
+            if ((runStateAtLeast(ctl.get(), STOP) ||
+                 (Thread.interrupted() &amp;&amp;
+                  runStateAtLeast(ctl.get(), STOP))) &amp;&amp;
+                !wt.isInterrupted())
+                wt.interrupt();
+            try {
+                beforeExecute(wt, task);
+                Throwable thrown = null;
+                try {
+                    task.run();
+                } catch (RuntimeException x) {
+                    thrown = x; throw x;
+                } catch (Error x) {
+                    thrown = x; throw x;
+                } catch (Throwable x) {
+                    thrown = x; throw new Error(x);
+                } finally {
+                    afterExecute(task, thrown);
+                }
+            } finally {
+                task = null;
+                w.completedTasks++;
+                w.unlock();
+            }
+        }
+        completedAbruptly = false;
+    } finally {
+        processWorkerExit(w, completedAbruptly);
+    }
+}
+</code></pre>
+
+<p>可以看出worker创建并开始执行,会在一个任务执行完成后,使用getTask方法从workQueue取出等待中的任务继续执行,直到没有任务或者线程池关闭.最后执行worker退出操作.</p>
+
+<h3 id="任务结果">任务结果</h3>
+
+<p>提交任务的方法中可以看出提交的是RunnableFuture 具体实现是 FutureTask , 对当前提交的Runnable或者Callable进行封装.</p>
+
+<pre><code>public FutureTask(Callable&lt;V&gt; callable) {
+    if (callable == null)
+        throw new NullPointerException();
+    this.callable = callable;
+    this.state = NEW;       // ensure visibility of callable
+}
+
+public FutureTask(Runnable runnable, V result) {
+    this.callable = Executors.callable(runnable, result);
+    this.state = NEW;       // ensure visibility of callable
+}
+</code></pre>
+
+<p>封装后提交到线程池中实际执行的是FutureTask的run方法,该方法的实现如下</p>
+
+<pre><code>public void run() {
+    if (state != NEW ||
+        !UNSAFE.compareAndSwapObject(this, runnerOffset,
+                                     null, Thread.currentThread()))
+        return;
+    try {
+        Callable&lt;V&gt; c = callable;
+        if (c != null &amp;&amp; state == NEW) {
+            V result;
+            boolean ran;
+            try {
+                result = c.call();
+                ran = true;
+            } catch (Throwable ex) {
+                result = null;
+                ran = false;
+                setException(ex);
+            }
+            if (ran)
+                set(result);
+        }
+    } finally {
+        // runner must be non-null until state is settled to
+        // prevent concurrent calls to run()
+        runner = null;
+        // state must be re-read after nulling runner to prevent
+        // leaked interrupts
+        int s = state;
+        if (s &gt;= INTERRUPTING)
+            handlePossibleCancellationInterrupt(s);
+    }
+}
+
+protected void set(V v) {
+    if (UNSAFE.compareAndSwapInt(this, stateOffset, NEW, COMPLETING)) {
+        outcome = v;
+        UNSAFE.putOrderedInt(this, stateOffset, NORMAL); // final state
+        finishCompletion();
+    }
+}
+</code></pre>
+
+<p>任务体执行的是callable的run方法,只是执行成功后,会调用set(result)方法设置线程执行的结果.于是我们可以从FutureTask的get中取的结果.</p>
+
+<pre><code>// 阻塞直到任务结束取得结果
+public V get() throws InterruptedException, ExecutionException {
+    int s = state;
+    if (s &lt;= COMPLETING)
+        s = awaitDone(false, 0L);
+    return report(s);
+}
+
+// 阻塞直到任务结束取得结果或者超时
+public V get(long timeout, TimeUnit unit)
+    throws InterruptedException, ExecutionException, TimeoutException {
+    if (unit == null)
+        throw new NullPointerException();
+    int s = state;
+    if (s &lt;= COMPLETING &amp;&amp;
+        (s = awaitDone(true, unit.toNanos(timeout))) &lt;= COMPLETING)
+        throw new TimeoutException();
+    return report(s);
+}
+</code></pre>
+
+<p>awaitDone的实现有点类似AQS的条件变量实现Waiter, 它将阻塞调用的线程.取得结果是使用了report方法.</p>
+
+<pre><code>private V report(int s) throws ExecutionException {
+    Object x = outcome;
+    if (s == NORMAL)
+        return (V)x;
+    if (s &gt;= CANCELLED)
+        throw new CancellationException();
+    throw new ExecutionException((Throwable)x);
+}
+</code></pre>
+                        </div>
+                        <div class="columns is-mobile post-meta">
+                            <div class="column is-half-desktop has-text-left is-paddingless"> 
+                                 
+                                更老一篇:<a href="http://www.lihongkun.com/concurrent/threadpool/"> 任务执行与线程池</a>
+                                
+                            </div>
+                            <div class="column is-half-desktop has-text-right is-paddingless">
+                                
+                                更新一篇:<a href="http://www.lihongkun.com/concurrent/threadlocal/"> 线程封闭与ThreadLocal</a>
+                                
+                            </div>
+                            <div class="is-clearfix"></div>
+                        </div>
+                        <script src="https://utteranc.es/client.js"
+                                repo="lihongkun/lihongkun.github.io"
+                                issue-term="title"
+                                theme="github-light"
+                                crossorigin="anonymous"
+                                async>
+                        </script>
+                    </article>
+                </div>
+                <div class="column">    <aside>
+        <h2 class="is-size-4">关于我</h2>
+        <div class="content">
+            Working in advertising platform team. Backend on duty,full stack in my own time.
+        </div>
+        <h2 class="is-size-4">GitHub</h2>
+        <div class="content">
+            <a href="https://github.com/lihongkun" target="_blank">https://github.com/lihongkun</a>
+        </div>
+    </aside></div>
+                </div>
+            </div>
+         </main>    <footer class="footer">
+    
+        <div class="copyright has-text-centered">
+            <a href="https://bulma.io">
+                <img src="http://www.lihongkun.com/images/made-with-bulma.png" alt="Made with Bulma" width="128" height="24">
+            </a>
+            <p>© 泛泛之辈 Power by Hugo v0.55.6 - 闽ICP备15009606号</p>
+        </div>
+    </footer>
+    <script type="text/javascript">
+    document.addEventListener('DOMContentLoaded', () => {
+        
+        const $navbarBurgers = Array.prototype.slice.call(document.querySelectorAll('.navbar-burger'), 0);
+        
+        if ($navbarBurgers.length > 0) {
+            
+            $navbarBurgers.forEach( el => {
+                el.addEventListener('click', () => {
+                
+                const target = el.dataset.target;
+                const $target = document.getElementById(target);
+                
+                el.classList.toggle('is-active');
+                $target.classList.toggle('is-active');
+    
+                });
+            });
+        }
+    });
+    </script></body>
+</html>

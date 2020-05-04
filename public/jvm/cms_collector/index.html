@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html><head>
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+
+    
+    <meta name="author"
+            content=""/>
+
+    
+    <meta name="description" content="并发标记清除垃圾收集器(简称CMS) , 是一款为低延迟而设计的垃圾收集器 , 在应用进程工作的时候利用机器多处理器资源在后台进行垃圾收集动作. 特别适用于有比较多的长期存活对象 , 且机器的处理器大于2.可以使用 -XX:&#43;UseConcMarkSweepGC命令行选项来启用 .
+CMS已经不推荐使用 , 业界推荐使用G1来替代它 . 虽然如此很多老的应用依旧运行着此垃圾收集器.
+"/>
+    
+
+    
+
+    
+    <link rel="canonical" href="http://www.lihongkun.com/jvm/cms_collector/"/>
+
+    
+
+    
+    
+    
+        
+            
+        
+    
+        
+            
+                
+            
+                
+            
+                
+            
+                
+            
+        
+    
+        
+            
+                
+            
+                
+            
+                
+            
+                
+            
+        
+    
+        
+            
+        
+    
+        
+            
+        
+    
+        
+            
+        
+    
+    <title> CMS垃圾收集器 | 泛泛之辈 </title>
+
+    <link rel="shortcut icon" href="http://www.lihongkun.com/favicon.jpg"/>
+    <link rel="stylesheet" href="http://www.lihongkun.com/css/bulma.min.css"/>
+    <link rel="stylesheet" href="http://www.lihongkun.com/css/style.css"/>
+</head><body><header>
+    <nav class="navbar is-fixed-top is-primary" role="navigation" aria-label="main navigation">
+        <div class="navbar-brand is-size-4">
+            <a class="navbar-item" href="http://www.lihongkun.com/">
+                    泛泛之辈
+            </a>
+            <a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false" data-target="navbar-menu">
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+            </a>
+        </div>
+        <div id="navbar-menu" class="navbar-menu">
+            <div class="navbar-end">
+                
+                    
+                        <a class="navbar-item" href="/">首页</a>
+                    
+                
+                    
+                        <div class="navbar-item has-dropdown is-hoverable">
+                            <a class="navbar-link">基本功</a>
+                            <div class="navbar-dropdown">
+                                
+                                <a class="navbar-item" href="/categories/concurrent/">并发</a>
+                                
+                                <a class="navbar-item" href="/categories/network/">网络</a>
+                                
+                                <a class="navbar-item" href="/categories/security/">Web安全</a>
+                                
+                                <a class="navbar-item" href="/categories/jvm/">Java虚拟机</a>
+                                
+                            </div>
+                        </div>
+                    
+                
+                    
+                        <div class="navbar-item has-dropdown is-hoverable">
+                            <a class="navbar-link">编程框架</a>
+                            <div class="navbar-dropdown">
+                                
+                                <a class="navbar-item" href="/categories/springframework/">Spring</a>
+                                
+                                <a class="navbar-item" href="/categories/mybatis/">Mybatis</a>
+                                
+                                <a class="navbar-item" href="/categories/springcloud/">SpringCloud</a>
+                                
+                                <a class="navbar-item" href="/categories/common/">常用框架</a>
+                                
+                            </div>
+                        </div>
+                    
+                
+                    
+                        <a class="navbar-item" href="/categories/troubleshooting/">问题排查</a>
+                    
+                
+                    
+                        <a class="navbar-item" href="/categories/design/">设计思路</a>
+                    
+                
+                    
+                        <a class="navbar-item" href="/categories/reading/">读书笔记</a>
+                    
+                
+            </div>
+            </div>
+    </nav>
+</header><main>
+            <div class="container">
+                <div class="columns">
+                <div class="column is-four-fifths">
+                    <article class="post box is-radiusless">
+                        <div class="post-title">
+                            <h2 class="is-size-4">CMS垃圾收集器</h2>
+                        </div>
+                            <div class="post-meta">
+                            <span class="post-time">日期&nbsp;:&nbsp;2019-06-26</span>
+                        </div>
+                        <div class="post-content content">
+                            <p>并发标记清除垃圾收集器(简称CMS) , 是一款为低延迟而设计的垃圾收集器 , 在应用进程工作的时候利用机器多处理器资源在后台进行垃圾收集动作. 特别适用于有比较多的长期存活对象 , 且机器的处理器大于2.可以使用 -XX:+UseConcMarkSweepGC命令行选项来启用 .</p>
+
+<p>CMS已经不推荐使用 , 业界推荐使用G1来替代它 . 虽然如此很多老的应用依旧运行着此垃圾收集器.</p>
+
+<h3 id="cms的工作原理">CMS的工作原理</h3>
+
+<p>与其他垃圾收集器类似 ， CMS垃圾收集器也是一个分代垃圾收集器。它分为 minor gc 和 major gc。CMS垃圾收集器为了减少应用程序的停顿时间 ， 在major gc的时候垃圾回收线程与应用程序线程是 并发执行的。</p>
+
+<p>minor  gc 可以与 major gc交替进行， 它跟parallel 收集器工作方式类似，直接停顿应用程序线程。</p>
+
+<p>major gc 比较复杂 。每一个major gc周期，应用程序将会有两次停顿， 一次是开始的时候，一次在垃圾回收周期的中间。第二次停顿会比第一次的时间长，停顿的时候垃圾回收线程是多个线程进行工作的。其他阶段则由1个或者多个垃圾回收线程并发进行处理。</p>
+
+<p>过程分为以下阶段</p>
+
+<h4 id="初始标记-initial-mark">初始标记（Initial Mark）</h4>
+
+<p>这是CMS垃圾回收周期其中一个停顿应用程序的阶段 ，这个阶段主要是从GC Roots遍历可直达的老年代对象和遍历被新生代存活对象所引用的老年代对象。这个过程相较于重新标记的停顿时间比较短。</p>
+
+<p><img src="initial_mark.png" alt="" /></p>
+
+<h4 id="并发标记-concurrent-mark">并发标记（Concurrent Mark）</h4>
+
+<p>它的主要工作是通过遍历初始标记阶段标记出来的存活对象，递归遍历老年代，并标记可直接或间接到达的所有老年代存活对象。此阶段GC线程和应用程序线程并发工作，因此在标记的过程中可能有些对象的引用已经发生了改变，如新生代的对象已经晋升到老年代、直接在老年代分配对象、老年代的对象应用失效等。对于这些对象，需要重新标记以防止被遗漏。为了提高重新标记的效率，本阶段会把这些发生变化的对象所在的Card标识为Dirty，这样后续就只需要扫描这些Dirty Card的对象，从而避免扫描整个老年代。</p>
+
+<p><img src="concurrent_mark.png" alt="" /></p>
+
+<p>如上图，“Current obj”原来直接或间接可达对象有3个，引用关系发生改变，后面的3个对象变为不可达。</p>
+
+<h4 id="并发预清理-concurrent-preclean">并发预清理（Concurrent Preclean）</h4>
+
+<p>此阶段的主要工作是会重新扫描前一个阶段标记的Dirty对象，并标记被Dirty对象直接或间接引用的对象，然后清除Card标识。</p>
+
+<p><img src="preclean_dirty_card.png" alt="" /></p>
+
+<p>如上图”Current Obj“在上一个阶段标记完以后，引用的对象发生了该表 。那么被标记为Dirty Card。将在本阶段进行重新标记并清除Dirty Card的标记。标记完成如下图所示。</p>
+
+<p><img src="preclean_card.png" alt="" /></p>
+
+<h4 id="可中止的并发预清理-concurrent-abortable-preclean">可中止的并发预清理（Concurrent Abortable Preclean）</h4>
+
+<p>主要工作是尽可能承担更多的并发预处理工作，从而减轻在重新标记（下一个阶段）的停顿时间。主要通过处理 From 和 To 区的对象，标记可达的老年代对象 和 扫描处理Dirty Card中的对象。</p>
+
+<p>具体执行多久，取决于许多因素，满足其中一个条件将会中止运行：</p>
+
+<ul>
+<li>执行循环次数达到了阈值；</li>
+<li>执行时间达到了阈值；</li>
+<li>新生代Eden区的内存使用率达到了阈值。</li>
+</ul>
+
+<h4 id="重新标记-remark">重新标记（Remark）</h4>
+
+<p>这是CMS垃圾回收周期另外一个停顿应用程序的阶段。前面的并发阶段并不一定是所有存活对象都会被标记。因此需要一个停顿应用程序的阶段来完成最后的标记工作。它的主要目的是来标记前面阶段已经变化的对象。</p>
+
+<h4 id="并发清理concurrent-sweep">并发清理Concurrent Sweep）</h4>
+
+<p>主要工作是移除所有未使用的对象，并回收器占用的空间。回收后的对象引用图如下 ， 可对比并发预清理阶段的对象引用图。</p>
+
+<p><img src="concurrent_sweep.png" alt="" /></p>
+
+<h4 id="并发重置-concurrent-reset">并发重置（Concurrent Reset）</h4>
+
+<p>清理并恢复在CMS GC过程中的各种状态，重新初始化CMS相关数据结构，为下一个垃圾收集周期做好准备。</p>
+
+<p><strong>并发阶段</strong>有一个或者多个垃圾收集线程占用处理器资源。虽然应用程序没有停顿但是吞吐量会有一定的降低。在重新标记之后并发清理阶段会对不可达的对象进行清理。在垃圾回收周期结束之后，CMS垃圾收集器进入等待阶段，几乎不消耗处理器资源。直到下一个垃圾回收周期开始。</p>
+
+<p>这里是一个完整的CMS老年代垃圾回收周期日志</p>
+
+<pre><code>2019-06-19T20:00:35.883+0800: 13180.592: [GC [1 CMS-initial-mark: 767820K(1048576K)] 933451K(3879744K), 0.1057880 secs] [Times: user=0.11 sys=0.00, real=0.11 secs]
+2019-06-19T20:00:35.989+0800: 13180.698: [CMS-concurrent-mark-start]
+2019-06-19T20:00:36.089+0800: 13180.797: [CMS-concurrent-mark: 0.099/0.100 secs] [Times: user=0.62 sys=0.00, real=0.10 secs]
+2019-06-19T20:00:36.089+0800: 13180.798: [CMS-concurrent-preclean-start]
+2019-06-19T20:00:36.092+0800: 13180.800: [CMS-concurrent-preclean: 0.003/0.003 secs] [Times: user=0.00 sys=0.00, real=0.00 secs]
+2019-06-19T20:00:36.092+0800: 13180.800: [CMS-concurrent-abortable-preclean-start]
+ CMS: abort preclean due to time 2019-06-19T20:00:41.309+0800: 13186.017: [CMS-concurrent-abortable-preclean: 5.117/5.217 secs] [Times: user=6.25 sys=0.13, real=5.22 secs]
+2019-06-19T20:00:41.309+0800: 13186.018: [GC[YG occupancy: 589986 K (2831168 K)]2019-06-19T20:00:41.310+0800: 13186.018: [Rescan (parallel) , 0.2814280 secs]2019-06-19T20:00:41.591+0800: 13186.300: [weak refs processing, 0.0002360 secs]2019-06-19T20:00:41.591+0800: 13186.300: [scrub string table, 0.0009200 secs] [1 CMS-remark: 767820K(1048576K)] 1357806K(3879744K), 0.2828330 secs] [Times: user=6.10 sys=0.01, real=0.28 secs]
+2019-06-19T20:00:41.593+0800: 13186.301: [CMS-concurrent-sweep-start]
+2019-06-19T20:00:42.421+0800: 13187.130: [CMS-concurrent-sweep: 0.828/0.829 secs] [Times: user=0.84 sys=0.00, real=0.83 secs]
+2019-06-19T20:00:42.421+0800: 13187.130: [CMS-concurrent-reset-start]
+2019-06-19T20:00:42.425+0800: 13187.134: [CMS-concurrent-reset: 0.004/0.004 secs] [Times: user=0.00 sys=0.00, real=0.00 secs]
+</code></pre>
+
+<h3 id="并发模式失效">并发模式失效</h3>
+
+<p>正常情况下它在应用线程正常运行的同时做了大部分的垃圾标记和清除,因此应用线程只有短暂的一些暂停。但是如果它在老年代被填满之前无法完成回收不可达对象的操作 或者无法满足老年代的空闲空间分配,那么它将所有应用线程停顿 ， 来进行垃圾收集。</p>
+
+<p>无法并发完成老年代的垃圾收集 称为并发模式失效 ， 表示着需要调整CMS收集器的参数。</p>
+
+<p>除此之外 ，并发模式还能被显示的GC如 System.gc()或者JVM相关的工具打断。</p>
+
+<h3 id="垃圾收集时间和outofmemoryerror">垃圾收集时间和OutOfMemoryError</h3>
+
+<p>如果耗费过多的时间在GC 上面 ， CMS收集器将抛出一个异常 <code>OutOfMemoryError</code> ：应用花了98%的时间在垃圾收集却只却只能清理出2%的空间 , 那么这时候<code>OutOfMemoryError</code> 就会被抛出来。</p>
+
+<p>这个特性是为了防止因为堆空间太小，导致应用程序长时间运行，却花费很多的时间在GC上，而没有真正执行应用程序的内容。如果需要，可以使用<code>-XX:-UseGCOverheadLimit</code>这个命令行选项来进行关闭。</p>
+
+<p>这个策略跟并行垃圾收集器类似，限制并发垃圾收集的时间没有超过整体时间的98%。换句话说，只有在应用程序停顿来进行GC才会开始计算时间。 这种情况通常是由于并发模式失败或显式收集请求。</p>
+
+<h3 id="启动垃圾回收周期">启动垃圾回收周期</h3>
+
+<p>使用Serial垃圾收集器的时候 ，只要老年代被填满则应用程序停顿直到垃圾收集完成。相反，CMS必须定时启动垃圾回收周期，以便在老年代被填满之前完成它。否则 应用程序将因为并发模式失效而陷入比较长时间的停顿。在以下几种情况下会启动并发垃圾收集。</p>
+
+<ol>
+<li>根据最近的垃圾收集情况 ， 估算老年代被填满之前能完成一次垃圾回收周期的时间。通常这个估算的时间会比较宽裕，因为一旦进入并发失效模式，代价是比较昂贵的。</li>
+<li>老年代的空间占用率超过的整体一个百分比的时候也会启动垃圾回收周期。这个比例的默认值是92%，可以使用命令行选项<code>-XX:CMSInitiatingOccupancyFraction=&lt;N&gt;</code> 进行调整。<code>&lt;N&gt;</code>的取值是 0-100之间的整数， 表示老年代的占用率是0-100。</li>
+</ol>
+
+<h4 id="参考">参考</h4>
+
+<p><a href="https://plumbr.io/handbook/garbage-collection-algorithms-implementations">https://plumbr.io/handbook/garbage-collection-algorithms-implementations</a></p>
+
+<p><a href="https://www.oracle.com/technetwork/tutorials/tutorials-1876574.html">https://www.oracle.com/technetwork/tutorials/tutorials-1876574.html</a></p>
+
+<p><a href="https://docs.oracle.com/en/java/javase/11/gctuning/index.html">https://docs.oracle.com/en/java/javase/11/gctuning/index.html</a></p>
+                        </div>
+                        <div class="columns is-mobile post-meta">
+                            <div class="column is-half-desktop has-text-left is-paddingless"> 
+                                 
+                                更老一篇:<a href="http://www.lihongkun.com/jvm/garbage_collector/"> Java垃圾收集器概览</a>
+                                
+                            </div>
+                            <div class="column is-half-desktop has-text-right is-paddingless">
+                                
+                                更新一篇:<a href="http://www.lihongkun.com/jvm/garbage_first_collector/"> G1垃圾收集器</a>
+                                
+                            </div>
+                            <div class="is-clearfix"></div>
+                        </div>
+                        <script src="https://utteranc.es/client.js"
+                                repo="lihongkun/lihongkun.github.io"
+                                issue-term="title"
+                                theme="github-light"
+                                crossorigin="anonymous"
+                                async>
+                        </script>
+                    </article>
+                </div>
+                <div class="column">    <aside>
+        <h2 class="is-size-4">关于我</h2>
+        <div class="content">
+            Working in advertising platform team. Backend on duty,full stack in my own time.
+        </div>
+        <h2 class="is-size-4">GitHub</h2>
+        <div class="content">
+            <a href="https://github.com/lihongkun" target="_blank">https://github.com/lihongkun</a>
+        </div>
+    </aside></div>
+                </div>
+            </div>
+         </main>    <footer class="footer">
+    
+        <div class="copyright has-text-centered">
+            <a href="https://bulma.io">
+                <img src="http://www.lihongkun.com/images/made-with-bulma.png" alt="Made with Bulma" width="128" height="24">
+            </a>
+            <p>© 泛泛之辈 Power by Hugo v0.55.6 - 闽ICP备15009606号</p>
+        </div>
+    </footer>
+    <script type="text/javascript">
+    document.addEventListener('DOMContentLoaded', () => {
+        
+        const $navbarBurgers = Array.prototype.slice.call(document.querySelectorAll('.navbar-burger'), 0);
+        
+        if ($navbarBurgers.length > 0) {
+            
+            $navbarBurgers.forEach( el => {
+                el.addEventListener('click', () => {
+                
+                const target = el.dataset.target;
+                const $target = document.getElementById(target);
+                
+                el.classList.toggle('is-active');
+                $target.classList.toggle('is-active');
+    
+                });
+            });
+        }
+    });
+    </script></body>
+</html>

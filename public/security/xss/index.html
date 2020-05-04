@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html><head>
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+
+    
+    <meta name="author"
+            content=""/>
+
+    
+    <meta name="description" content="跨站脚本攻击,简称XSS(Cross Site Scripting) , 是最常见的Web应用程序安全漏洞.
+"/>
+    
+
+    
+
+    
+    <link rel="canonical" href="http://www.lihongkun.com/security/xss/"/>
+
+    
+
+    
+    
+    
+        
+            
+        
+    
+        
+            
+                
+            
+                
+            
+                
+            
+                
+            
+        
+    
+        
+            
+                
+            
+                
+            
+                
+            
+                
+            
+        
+    
+        
+            
+        
+    
+        
+            
+        
+    
+        
+            
+        
+    
+    <title> XSS漏洞 | 泛泛之辈 </title>
+
+    <link rel="shortcut icon" href="http://www.lihongkun.com/favicon.jpg"/>
+    <link rel="stylesheet" href="http://www.lihongkun.com/css/bulma.min.css"/>
+    <link rel="stylesheet" href="http://www.lihongkun.com/css/style.css"/>
+</head><body><header>
+    <nav class="navbar is-fixed-top is-primary" role="navigation" aria-label="main navigation">
+        <div class="navbar-brand is-size-4">
+            <a class="navbar-item" href="http://www.lihongkun.com/">
+                    泛泛之辈
+            </a>
+            <a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false" data-target="navbar-menu">
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+            </a>
+        </div>
+        <div id="navbar-menu" class="navbar-menu">
+            <div class="navbar-end">
+                
+                    
+                        <a class="navbar-item" href="/">首页</a>
+                    
+                
+                    
+                        <div class="navbar-item has-dropdown is-hoverable">
+                            <a class="navbar-link">基本功</a>
+                            <div class="navbar-dropdown">
+                                
+                                <a class="navbar-item" href="/categories/concurrent/">并发</a>
+                                
+                                <a class="navbar-item" href="/categories/network/">网络</a>
+                                
+                                <a class="navbar-item" href="/categories/security/">Web安全</a>
+                                
+                                <a class="navbar-item" href="/categories/jvm/">Java虚拟机</a>
+                                
+                            </div>
+                        </div>
+                    
+                
+                    
+                        <div class="navbar-item has-dropdown is-hoverable">
+                            <a class="navbar-link">编程框架</a>
+                            <div class="navbar-dropdown">
+                                
+                                <a class="navbar-item" href="/categories/springframework/">Spring</a>
+                                
+                                <a class="navbar-item" href="/categories/mybatis/">Mybatis</a>
+                                
+                                <a class="navbar-item" href="/categories/springcloud/">SpringCloud</a>
+                                
+                                <a class="navbar-item" href="/categories/common/">常用框架</a>
+                                
+                            </div>
+                        </div>
+                    
+                
+                    
+                        <a class="navbar-item" href="/categories/troubleshooting/">问题排查</a>
+                    
+                
+                    
+                        <a class="navbar-item" href="/categories/design/">设计思路</a>
+                    
+                
+                    
+                        <a class="navbar-item" href="/categories/reading/">读书笔记</a>
+                    
+                
+            </div>
+            </div>
+    </nav>
+</header><main>
+            <div class="container">
+                <div class="columns">
+                <div class="column is-four-fifths">
+                    <article class="post box is-radiusless">
+                        <div class="post-title">
+                            <h2 class="is-size-4">XSS漏洞</h2>
+                        </div>
+                            <div class="post-meta">
+                            <span class="post-time">日期&nbsp;:&nbsp;2018-01-15</span>
+                        </div>
+                        <div class="post-content content">
+                            <p>跨站脚本攻击,简称XSS(Cross Site Scripting) , 是最常见的Web应用程序安全漏洞.</p>
+
+<h3 id="xss原理">XSS原理</h3>
+
+<p>XSS攻击是指在网页中嵌入客户端恶意代码,通常是JavaScript.当用户访问了被嵌入恶意代码的网页时,恶意代码就会在用户的浏览器上执行.所以,基本上JavaScript能做什么XSS就能做什么.</p>
+
+<p>JavaScript可以用来获取用户的Cookie,动态修改网页内容,URL跳转等.那么意味着存在XSS漏洞的网站,用户的Cookie可能被盗取,页面会被篡改,或者被导航到其他网站</p>
+
+<h3 id="xss类型">XSS类型</h3>
+
+<p>XSS主要分为三类,分别是反射型,存储型,DOM型</p>
+
+<ol>
+<li>反射型 XSS</li>
+</ol>
+
+<p>反射型XSS是最容易出现的一种漏洞.当用户访问一个带有XSS代码的URL时,服务器端接收到数据后,把带有XSS代码的数据发送到浏览器,浏览器渲染后,执行了该代码,最终造成XSS漏洞.</p>
+
+<pre><code>&lt;%
+    String name = request.getParameter(&quot;username&quot;);
+    out.println(name);
+    
+    //username = &quot;&lt;script&gt;alter('XSS漏洞')&lt;/script&gt;&quot;
+%&gt;
+</code></pre>
+
+<p>上述代码,如果输入的username 是一段XSS代码,那么则会执行该段XSS代码.假若有人利用此漏洞,构造一段获取用户Cookie并发送到指定网站的XSS代码.并将该链接发送给该网站的用户,用户访问了该链接后,则私密信息会被窃取.</p>
+
+<ol>
+<li>存储型XSS</li>
+</ol>
+
+<p>当攻击者提供一段包含XSS代码的数据提交到服务器并且被存储后,用户再次访问页面时,这段XSS代码被服务器重新读出来,被浏览器执行,造成XSS跨站攻击.这就形成了存储型的XSS.</p>
+
+<p>存储型的XSS无需用户主动去触发,危险性比较大.</p>
+
+<pre><code>&lt;input type=&quot;text&quot; name=&quot;username&quot; value=&quot;&quot; /&gt;
+// username 输入&quot; /&gt;&lt;script&gt;alert('XSS漏洞')&lt;/script&gt;，提交到服务器并被保存
+</code></pre>
+
+<p>保存后如果用户名显示如下</p>
+
+<pre><code>欢迎,${username}
+
+</code></pre>
+
+<p>编辑,回限如下</p>
+
+<pre><code>&lt;input type=&quot;text&quot; name=&quot;username&quot; value=&quot;${username}&quot; /&gt;
+
+</code></pre>
+
+<p>那么此时浏览器渲染后的HTML代码是</p>
+
+<pre><code>&lt;input type=&quot;text&quot; name=&quot;username&quot; value=&quot;&quot; /&gt;&lt;script&gt;alert('XSS漏洞')&lt;/script&gt;&quot; /&gt;
+</code></pre>
+
+<p>不难理解,保存后.上面2段使用了username的代码均出现了XSS</p>
+
+<ol>
+<li>DOM型XSS</li>
+</ol>
+
+<p>DOM即文档对象模型,在网页的制作中经常使用JavaScript来动态操作DOM的内容,结构或者样式.顾名思义DOM型XSS是在操作过程中产生的.</p>
+
+<pre><code>
+&lt;input type=&quot;text&quot; name=&quot;content&quot; value=&quot;&quot; /&gt;
+&lt;div id=&quot;echo&quot;&gt;&lt;/div&gt;
+
+&lt;script&gt;
+
+$(&quot;[name=content]&quot;).change(function(){
+    $(&quot;echo&quot;).html($(this).val());
+});
+
+&lt;/script&gt;
+
+</code></pre>
+
+<p>上述代码是将文本框输入的内容直接回显到echo的标签里面,如果输入的是一段XSS脚本则会出现DOM型XSS</p>
+
+<h3 id="xss利用">XSS利用</h3>
+
+<ol>
+<li>会话劫持</li>
+</ol>
+
+<p>前面的文章说过,应用的会话保存依赖于浏览器的Cookie.也就是session id,如果应用存储XSS漏洞,那么攻击者便以此来获取到用户的Cookie,从而获得用户的session id,并发送到某个预先准备好的地址.那么在你登录的情况下,他就可以冒用你的身份,在你的账户上操作,比如替你发微博,转发,评论等等.</p>
+
+<ol>
+<li>XSS蠕虫</li>
+</ol>
+
+<p>XSS蠕虫具备自传播性,估计很多人当年都曾经看过朋友转发的空间说说或者微博,然后自己也莫名其妙转发了.其实原理很简单,就是应用存在XSS漏洞,而攻击者发布了带有XSS攻击的微博.只要该微博被查看,就自动执行XSS脚本,进行转发操作.此时你登录着,便已你的身份进行转发.大概流程如图:</p>
+
+<p><img src="xss.jpg" alt="image" /></p>
+
+<h3 id="xss-修复">XSS 修复</h3>
+
+<p>XSS形成的原因是因为网站对用户的输入和输出没有严格的过滤.导致用户可以再你的网站上面输入并执行JavaScript等客户端语言.所以修复此类漏洞主要采用的方法是过滤或者转义一些特殊的字符.</p>
+
+<ol>
+<li>输入输出</li>
+</ol>
+
+<p>在HTML里面 【&lt;】【&gt;】【&rdquo;】【&rsquo;】【&amp;】这几个符号是标签和属性的组成部分,一般输入输出都会进行转义,或者过滤.</p>
+
+<p>可用的如 PHP 的 htmlspecialchars ,JSTL 的 escapeXml 或者FreeMarker 的</p>
+
+<pre><code>&lt;#escape x as x?html&gt;&lt;/#escape&gt;
+</code></pre>
+
+<ol>
+<li>HttpOnly</li>
+</ol>
+
+<p>Set-Cookie的时候使用HttpOnly 属性的话可以防止JavaScript操作该Cookie,从而有效防止XSS攻击者获取到用户的会话ID,但是本身并不防止XSS漏洞.只是XSS漏洞出现后防止会话劫持</p>
+                        </div>
+                        <div class="columns is-mobile post-meta">
+                            <div class="column is-half-desktop has-text-left is-paddingless"> 
+                                
+                                没有了，已经是最后文章
+                                
+                            </div>
+                            <div class="column is-half-desktop has-text-right is-paddingless">
+                                
+                                更新一篇:<a href="http://www.lihongkun.com/security/csrf/"> CSRF漏洞</a>
+                                
+                            </div>
+                            <div class="is-clearfix"></div>
+                        </div>
+                        <script src="https://utteranc.es/client.js"
+                                repo="lihongkun/lihongkun.github.io"
+                                issue-term="title"
+                                theme="github-light"
+                                crossorigin="anonymous"
+                                async>
+                        </script>
+                    </article>
+                </div>
+                <div class="column">    <aside>
+        <h2 class="is-size-4">关于我</h2>
+        <div class="content">
+            Working in advertising platform team. Backend on duty,full stack in my own time.
+        </div>
+        <h2 class="is-size-4">GitHub</h2>
+        <div class="content">
+            <a href="https://github.com/lihongkun" target="_blank">https://github.com/lihongkun</a>
+        </div>
+    </aside></div>
+                </div>
+            </div>
+         </main>    <footer class="footer">
+    
+        <div class="copyright has-text-centered">
+            <a href="https://bulma.io">
+                <img src="http://www.lihongkun.com/images/made-with-bulma.png" alt="Made with Bulma" width="128" height="24">
+            </a>
+            <p>© 泛泛之辈 Power by Hugo v0.55.6 - 闽ICP备15009606号</p>
+        </div>
+    </footer>
+    <script type="text/javascript">
+    document.addEventListener('DOMContentLoaded', () => {
+        
+        const $navbarBurgers = Array.prototype.slice.call(document.querySelectorAll('.navbar-burger'), 0);
+        
+        if ($navbarBurgers.length > 0) {
+            
+            $navbarBurgers.forEach( el => {
+                el.addEventListener('click', () => {
+                
+                const target = el.dataset.target;
+                const $target = document.getElementById(target);
+                
+                el.classList.toggle('is-active');
+                $target.classList.toggle('is-active');
+    
+                });
+            });
+        }
+    });
+    </script></body>
+</html>

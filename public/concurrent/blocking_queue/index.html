@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html><head>
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+
+    
+    <meta name="author"
+            content=""/>
+
+    
+    <meta name="description" content="阻塞队列(BlockingQueue)提供了可阻塞的put和take方法,以及支持定时的offer和pull.如果队列已经满了,那么put方法将阻塞到有空间可用;如果队列为空那么take方法将阻塞到有元素可用.
+"/>
+    
+
+    
+
+    
+    <link rel="canonical" href="http://www.lihongkun.com/concurrent/blocking_queue/"/>
+
+    
+
+    
+    
+    
+        
+            
+        
+    
+        
+            
+                
+            
+                
+            
+                
+            
+                
+            
+        
+    
+        
+            
+                
+            
+                
+            
+                
+            
+                
+            
+        
+    
+        
+            
+        
+    
+        
+            
+        
+    
+        
+            
+        
+    
+    <title> 阻塞队列 | 泛泛之辈 </title>
+
+    <link rel="shortcut icon" href="http://www.lihongkun.com/favicon.jpg"/>
+    <link rel="stylesheet" href="http://www.lihongkun.com/css/bulma.min.css"/>
+    <link rel="stylesheet" href="http://www.lihongkun.com/css/style.css"/>
+</head><body><header>
+    <nav class="navbar is-fixed-top is-primary" role="navigation" aria-label="main navigation">
+        <div class="navbar-brand is-size-4">
+            <a class="navbar-item" href="http://www.lihongkun.com/">
+                    泛泛之辈
+            </a>
+            <a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false" data-target="navbar-menu">
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+            </a>
+        </div>
+        <div id="navbar-menu" class="navbar-menu">
+            <div class="navbar-end">
+                
+                    
+                        <a class="navbar-item" href="/">首页</a>
+                    
+                
+                    
+                        <div class="navbar-item has-dropdown is-hoverable">
+                            <a class="navbar-link">基本功</a>
+                            <div class="navbar-dropdown">
+                                
+                                <a class="navbar-item" href="/categories/concurrent/">并发</a>
+                                
+                                <a class="navbar-item" href="/categories/network/">网络</a>
+                                
+                                <a class="navbar-item" href="/categories/security/">Web安全</a>
+                                
+                                <a class="navbar-item" href="/categories/jvm/">Java虚拟机</a>
+                                
+                            </div>
+                        </div>
+                    
+                
+                    
+                        <div class="navbar-item has-dropdown is-hoverable">
+                            <a class="navbar-link">编程框架</a>
+                            <div class="navbar-dropdown">
+                                
+                                <a class="navbar-item" href="/categories/springframework/">Spring</a>
+                                
+                                <a class="navbar-item" href="/categories/mybatis/">Mybatis</a>
+                                
+                                <a class="navbar-item" href="/categories/springcloud/">SpringCloud</a>
+                                
+                                <a class="navbar-item" href="/categories/common/">常用框架</a>
+                                
+                            </div>
+                        </div>
+                    
+                
+                    
+                        <a class="navbar-item" href="/categories/troubleshooting/">问题排查</a>
+                    
+                
+                    
+                        <a class="navbar-item" href="/categories/design/">设计思路</a>
+                    
+                
+                    
+                        <a class="navbar-item" href="/categories/reading/">读书笔记</a>
+                    
+                
+            </div>
+            </div>
+    </nav>
+</header><main>
+            <div class="container">
+                <div class="columns">
+                <div class="column is-four-fifths">
+                    <article class="post box is-radiusless">
+                        <div class="post-title">
+                            <h2 class="is-size-4">阻塞队列</h2>
+                        </div>
+                            <div class="post-meta">
+                            <span class="post-time">日期&nbsp;:&nbsp;2018-11-05</span>
+                        </div>
+                        <div class="post-content content">
+                            <p>阻塞队列(BlockingQueue)提供了可阻塞的put和take方法,以及支持定时的offer和pull.如果队列已经满了,那么put方法将阻塞到有空间可用;如果队列为空那么take方法将阻塞到有元素可用.</p>
+
+<h4 id="如何使用">如何使用</h4>
+
+<p>主要关注的方法</p>
+
+<p><img src="blocking_queue_method.png" alt="image" /></p>
+
+<p>主要实现类:</p>
+
+<ul>
+<li>ArrayBlockingQueue:一个由数组结构组成的有界阻塞队列.</li>
+<li>LinkedBlockingQueue:一个由链表结构组成的有界阻塞队列.</li>
+<li>PriorityBlockingQueue:一个支持优先级排序的无界阻塞队列.</li>
+<li>DelayQueue:一个使用优先级队列实现的无界阻塞队列.</li>
+<li>SynchronousQueue:一个不存储元素的阻塞队列.</li>
+<li>LinkedTransferQueue:一个由链表结构组成的无界阻塞队列.</li>
+<li>LinkedBlockingDeque:一个由链表结构组成的双向阻塞队列.</li>
+</ul>
+
+<p>比较特殊的是PriorityBlockingQueue 和 DelayQueue</p>
+
+<p><strong>PriorityBlockingQueue</strong> 具备了排序功能.可以实现一个comparator在构造的时候传入,定制其排序规则.</p>
+
+<p><strong>DelayQueue</strong> 是一个支持延时获取元素的无界阻塞队列.队列使用PriorityQueue来实现.队列中的元素必须实现Delayed接口,在创建元素时可以指定多久才能从队列中获取当前元素.只有在延迟期满时才能从队列中提取元素.我们可以将DelayQueue运用在以下应用场景:</p>
+
+<ul>
+<li>缓存系统的设计:可以用DelayQueue保存缓存元素的有效期，使用一个线程循环查询DelayQueue,一旦能从DelayQueue中获取元素时,表示缓存有效期到了.</li>
+<li>定时任务调度:使用DelayQueue保存当天将会执行的任务和执行时间,一旦从DelayQueue中获取到任务就开始执行,从比如TimerQueue就是使用DelayQueue实现的.</li>
+</ul>
+
+<h4 id="使用场景">使用场景</h4>
+
+<p>阻塞队列常用于生产者和消费者的场景,生产者是往队列里添加元素的线程,消费者是从队列里拿元素的线程.阻塞队列就是生产者存放元素的容器,而消费者也只从容器里拿元素.</p>
+
+<p>它是一个典型的生产者-消费着模式,将生产数据与使用数据的两个过程分开,简化开发过程.消除了生产者和消费者类之间的代码依赖.</p>
+
+<p>举个例子,一个服务不断接收到数据请求,每个请求都需要落地到本地磁盘.你是选择每次请求都执行写入文件还是选择一批请求写一次文件.</p>
+
+<pre><code>// 接口类
+public interface IAppender&lt;T&gt; extends Closeable {
+    
+    public abstract void handle(T param);
+    
+    public abstract void handle(Collection&lt;T&gt; params);
+}
+
+// 使用队列实现的积累 --- 示意代码省略异常处理
+public abstract class BufferAppender&lt;T&gt; implements IAppender&lt;T&gt; {
+    
+    private int queueSize;
+    private int batchSize;
+    private int maxWaitMills;
+    private boolean isClosed;
+    private LinkedBlockingQueue&lt;T&gt; queue;
+
+    public BufferAppender() {
+        this.queueSize = 50000;
+        this.batchSize = 500;
+        this.maxWaitMills = 3000;
+        this.isClosed = false;
+
+        this.queue = new LinkedBlockingQueue&lt;T&gt;(this.queueSize);
+
+        Thread th = new BufferThread(this.batchSize, this.maxWaitMills);
+        th.setName(super.getClass().getSimpleName());
+        th.start();
+    }
+
+    public abstract OutputStream getOutputStream();
+
+    public abstract void closeOutputStream();
+
+    public void close() throws IOException {
+        this.isClosed = true;
+    }
+
+    public void handle(T bean) {
+        this.queue.add(bean);
+    }
+
+    public void handle(Collection&lt;T&gt; beans) {
+        this.queue.addAll(beans);
+    }
+
+    private void internalHandle(List&lt;T&gt; bufferList) {
+        try{
+            if (bufferList != null) {
+                OutputStream os = getOutputStream();
+                for (T bean:bufferList) {
+                    os.write(bean.toString().getBytes());
+                }
+                os.flush();
+            }
+        }
+        catch (Exception e) {
+        }
+    }
+
+    private class BufferThread extends Thread {
+        private int batchSize;
+        private int maxWaitMills;
+        private long lastHandle;
+
+        public BufferThread(int batchSize, int maxWaitMills) {
+            this.lastHandle = System.currentTimeMillis();
+            this.maxWaitMills = batchSize;
+            this.batchSize = maxWaitMills;
+        }
+
+        public void run() {
+            List&lt;T&gt; bufferList = new ArrayList&lt;T&gt;(this.batchSize);
+            T bean = null;
+            //未关闭时刷入
+            while (!isClosed) {
+                bean = queue.poll(100L, TimeUnit.MILLISECONDS);
+                if (null != bean) {
+                    bufferList.add(bean);
+                }
+
+                long interval = System.currentTimeMillis() - this.lastHandle;
+                // 积累一批 或者积累 最大时间后刷入
+                if ((interval &gt;= this.maxWaitMills) || (bufferList.size() &gt;= this.batchSize)) {
+                    this.lastHandle = System.currentTimeMillis();
+
+                    if (!(bufferList.isEmpty()))
+                        try {
+                            internalHandle(bufferList);
+                        } finally {
+                            bufferList.clear();
+                        }
+                }
+            }
+            
+            //关闭前 最后全部刷入
+            while ((bean = BufferAppender.this.queue.poll()) != null) {
+                bufferList.add(bean);
+            }
+
+            internalHandle(bufferList);
+        }
+    }
+}
+</code></pre>
+
+<p>上述示例代码重点在于使用一个有界队列缓存数据.累积batchSize或者maxWaitMills时间后才执行操作.这里面最需要注意的生产和消费的速率.否则有可能会丢弃数据.</p>
+
+<p>我们知道内存的操作耗时比磁盘少了很多.在并发比较高的场景下,直接写磁盘并不可取.累积一定的请求,一次性刷入磁盘能提高不少性能.而且上述例子把接收请求和数据使用(写入磁盘)分开.使操作更加清晰.</p>
+
+<h4 id="实现原理">实现原理</h4>
+
+<p>阻塞方法是如果实现的,怎么保证多线程下的数据安全.很容易想到的就是加锁.曾经在ReentrantLock的时候举过一个例子.</p>
+
+<pre><code>public class BoundedBlockingQueue&lt;T&gt; {
+
+    final Lock lock = new ReentrantLock(true);// 锁对象
+    final Condition notFull = lock.newCondition();// 写线程条件
+    final Condition notEmpty = lock.newCondition();// 读线程条件
+
+    final LinkedList&lt;T&gt; items = new LinkedList&lt;T&gt;();
+    final int totalCount = 100;
+
+    public void put(T x) throws InterruptedException {
+        lock.lock();
+        try {
+            while (totalCount == items.size())// 如果队列满了
+                notFull.await();// 阻塞写线程 ,释放锁
+
+            items.addLast(x);
+
+            notEmpty.signal();// 唤醒读线程
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    public T take() throws InterruptedException {
+        lock.lock();
+        try {
+            while (items.size() == 0)// 如果队列为空
+                notEmpty.await();// 阻塞读线程 ，释放锁
+
+            T x = items.removeFirst();
+            notFull.signal();// 唤醒写线程
+            return x;
+        } finally {
+            lock.unlock();
+        }
+    }
+}
+</code></pre>
+
+<p>上述代码一个锁2个条件变量巧妙实现,进队和出队的阻塞.实际上以ArrayBlockingQueue的源码来看也是类似的.</p>
+
+<p>加锁意味着有竞争,性能受损.后续可以聊聊JDK之外的内存队列实现.</p>
+                        </div>
+                        <div class="columns is-mobile post-meta">
+                            <div class="column is-half-desktop has-text-left is-paddingless"> 
+                                 
+                                更老一篇:<a href="http://www.lihongkun.com/concurrent/synchronized_container_and_concurrent_container/"> 同步容器和并发容器</a>
+                                
+                            </div>
+                            <div class="column is-half-desktop has-text-right is-paddingless">
+                                
+                                更新一篇:<a href="http://www.lihongkun.com/concurrent/disruptor/"> 高效队列框架Disruptor</a>
+                                
+                            </div>
+                            <div class="is-clearfix"></div>
+                        </div>
+                        <script src="https://utteranc.es/client.js"
+                                repo="lihongkun/lihongkun.github.io"
+                                issue-term="title"
+                                theme="github-light"
+                                crossorigin="anonymous"
+                                async>
+                        </script>
+                    </article>
+                </div>
+                <div class="column">    <aside>
+        <h2 class="is-size-4">关于我</h2>
+        <div class="content">
+            Working in advertising platform team. Backend on duty,full stack in my own time.
+        </div>
+        <h2 class="is-size-4">GitHub</h2>
+        <div class="content">
+            <a href="https://github.com/lihongkun" target="_blank">https://github.com/lihongkun</a>
+        </div>
+    </aside></div>
+                </div>
+            </div>
+         </main>    <footer class="footer">
+    
+        <div class="copyright has-text-centered">
+            <a href="https://bulma.io">
+                <img src="http://www.lihongkun.com/images/made-with-bulma.png" alt="Made with Bulma" width="128" height="24">
+            </a>
+            <p>© 泛泛之辈 Power by Hugo v0.55.6 - 闽ICP备15009606号</p>
+        </div>
+    </footer>
+    <script type="text/javascript">
+    document.addEventListener('DOMContentLoaded', () => {
+        
+        const $navbarBurgers = Array.prototype.slice.call(document.querySelectorAll('.navbar-burger'), 0);
+        
+        if ($navbarBurgers.length > 0) {
+            
+            $navbarBurgers.forEach( el => {
+                el.addEventListener('click', () => {
+                
+                const target = el.dataset.target;
+                const $target = document.getElementById(target);
+                
+                el.classList.toggle('is-active');
+                $target.classList.toggle('is-active');
+    
+                });
+            });
+        }
+    });
+    </script></body>
+</html>

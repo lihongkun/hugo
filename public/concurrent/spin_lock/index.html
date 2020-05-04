@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html><head>
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+
+    
+    <meta name="author"
+            content=""/>
+
+    
+    <meta name="description" content="自旋锁是指当一个线程尝试获取某个锁时,如果该锁已被其他线程占用,就一直循环检测锁是否被释放,而不是进入线程挂起或睡眠状态.它适用于锁保护的临界区很小的情况,临界区很小的话,锁占用的时间就很短.
+"/>
+    
+
+    
+
+    
+    <link rel="canonical" href="http://www.lihongkun.com/concurrent/spin_lock/"/>
+
+    
+
+    
+    
+    
+        
+            
+        
+    
+        
+            
+                
+            
+                
+            
+                
+            
+                
+            
+        
+    
+        
+            
+                
+            
+                
+            
+                
+            
+                
+            
+        
+    
+        
+            
+        
+    
+        
+            
+        
+    
+        
+            
+        
+    
+    <title> 自旋锁 | 泛泛之辈 </title>
+
+    <link rel="shortcut icon" href="http://www.lihongkun.com/favicon.jpg"/>
+    <link rel="stylesheet" href="http://www.lihongkun.com/css/bulma.min.css"/>
+    <link rel="stylesheet" href="http://www.lihongkun.com/css/style.css"/>
+</head><body><header>
+    <nav class="navbar is-fixed-top is-primary" role="navigation" aria-label="main navigation">
+        <div class="navbar-brand is-size-4">
+            <a class="navbar-item" href="http://www.lihongkun.com/">
+                    泛泛之辈
+            </a>
+            <a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false" data-target="navbar-menu">
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+            </a>
+        </div>
+        <div id="navbar-menu" class="navbar-menu">
+            <div class="navbar-end">
+                
+                    
+                        <a class="navbar-item" href="/">首页</a>
+                    
+                
+                    
+                        <div class="navbar-item has-dropdown is-hoverable">
+                            <a class="navbar-link">基本功</a>
+                            <div class="navbar-dropdown">
+                                
+                                <a class="navbar-item" href="/categories/concurrent/">并发</a>
+                                
+                                <a class="navbar-item" href="/categories/network/">网络</a>
+                                
+                                <a class="navbar-item" href="/categories/security/">Web安全</a>
+                                
+                                <a class="navbar-item" href="/categories/jvm/">Java虚拟机</a>
+                                
+                            </div>
+                        </div>
+                    
+                
+                    
+                        <div class="navbar-item has-dropdown is-hoverable">
+                            <a class="navbar-link">编程框架</a>
+                            <div class="navbar-dropdown">
+                                
+                                <a class="navbar-item" href="/categories/springframework/">Spring</a>
+                                
+                                <a class="navbar-item" href="/categories/mybatis/">Mybatis</a>
+                                
+                                <a class="navbar-item" href="/categories/springcloud/">SpringCloud</a>
+                                
+                                <a class="navbar-item" href="/categories/common/">常用框架</a>
+                                
+                            </div>
+                        </div>
+                    
+                
+                    
+                        <a class="navbar-item" href="/categories/troubleshooting/">问题排查</a>
+                    
+                
+                    
+                        <a class="navbar-item" href="/categories/design/">设计思路</a>
+                    
+                
+                    
+                        <a class="navbar-item" href="/categories/reading/">读书笔记</a>
+                    
+                
+            </div>
+            </div>
+    </nav>
+</header><main>
+            <div class="container">
+                <div class="columns">
+                <div class="column is-four-fifths">
+                    <article class="post box is-radiusless">
+                        <div class="post-title">
+                            <h2 class="is-size-4">自旋锁</h2>
+                        </div>
+                            <div class="post-meta">
+                            <span class="post-time">日期&nbsp;:&nbsp;2018-09-04</span>
+                        </div>
+                        <div class="post-content content">
+                            <p>自旋锁是指当一个线程尝试获取某个锁时,如果该锁已被其他线程占用,就一直循环检测锁是否被释放,而不是进入线程挂起或睡眠状态.它适用于锁保护的临界区很小的情况,临界区很小的话,锁占用的时间就很短.</p>
+
+<p>下面是一个自旋锁的实现,lock里面有一个while忙循环也就是自旋的过程.AtomicReference为了保证操作的原子性.</p>
+
+<pre><code>public class SpinLock {
+
+    private AtomicReference&lt;Thread&gt; lock = new AtomicReference&lt;Thread&gt;();
+
+    public void lock() {
+        Thread currentThread = Thread.currentThread();
+        
+        // 没有抢到锁就自旋
+        while (!lock.compareAndSet(null, currentThread)) {
+            System.out.println(&quot;spin...&quot;);
+        }
+    }
+
+    public void unlock() {
+        Thread currentThread = Thread.currentThread();
+        lock.compareAndSet(currentThread, null);
+    }
+}
+</code></pre>
+
+<p>写一段测试代码.一个抢锁的任务,由多个线程来执行.</p>
+
+<pre><code>private static class SpinLockThread extends Thread{
+        
+    private SpinLock spinLock;
+    
+    public SpinLockRunable(SpinLock spinLock){
+        this.spinLock = spinLock;
+    }
+    
+    @Override
+    public void run() {
+        try{
+            spinLock.lock();
+            System.out.println(Thread.currentThread().getName()+&quot;|lock&quot;);
+            Thread.sleep(1000);
+        }
+        catch (Exception e) {
+        }
+        finally {
+            System.out.println(Thread.currentThread().getName()+&quot;|unlock&quot;);
+            spinLock.unlock();
+        }
+    }
+}
+
+public static void main(String[] args) {
+        
+    final SpinLock spinLock = new SpinLock();
+    
+    Thread t1 = new SpinLockThread(spinLock);
+    Thread t2 = new SpinLockThread(spinLock);
+    Thread t3 = new SpinLockThread(spinLock);
+    
+    t1.start();
+    t2.start();
+    t3.start();
+}
+</code></pre>
+
+<p>输出的结果是lock和unlock中间穿插着很多的spin.也就是自旋的输出.一般是t1先执行.t2和t3进入自旋.而t1结束后,谁将获得锁是不确定的.它无法保证公平性,不保证等待线程按照FIFO顺序获得锁.</p>
+
+<h2 id="clh锁">CLH锁</h2>
+
+<p>CLH(Craig,Landin,and Hagersten  locks): 是一个自旋锁,能确保无饥饿性,提供先来先服务的公平性.</p>
+
+<p>CLH锁也是一种基于链表的可扩展、高性能、公平的自旋锁,申请线程只在本地变量上自旋.它不断轮询前驱的状态，如果发现前驱释放了锁就结束自旋.</p>
+
+<pre><code>public class CLHLock {
+
+    public static class CLHNode {
+        public boolean isLocked = false;
+    }
+
+    private AtomicReference&lt;CLHNode&gt; tail;
+    private ThreadLocal&lt;CLHNode&gt; previous;
+    private ThreadLocal&lt;CLHNode&gt; current;
+
+    public CLHLock() {
+
+        tail = new AtomicReference&lt;CLHNode&gt;(new CLHNode());
+        current = new ThreadLocal&lt;CLHNode&gt;() {
+            protected CLHNode initialValue() {
+                return new CLHNode();
+            }
+        };
+        previous = new ThreadLocal&lt;CLHNode&gt;() {
+            protected CLHNode initialValue() {
+                return null;
+            }
+        };
+    }
+
+    public void lock() {
+        CLHNode node = current.get();
+        node.isLocked = true;
+        CLHNode pre = tail.getAndSet(node);
+        previous.set(pre);
+        while (pre.isLocked) {
+            
+        }
+    }
+
+    public void unlock() {
+        CLHNode node = current.get();
+        node.isLocked = false;
+        current.set(null); // 去掉引用,可以被垃圾回收
+        previous.set(null);// 前置从链表中移除
+    }
+}
+</code></pre>
+
+<p>上面是一个简单的CLH实现,每个线程都有当前Node和前置Node,他们前后连接组成一个单向链表.每个请求锁的线程都先入队.如果前置节点不是被锁住的状态当前就是成功,否则进入自旋.</p>
+
+<p>JDK并发包里面的基础框架AbstractQueuedSynchronizer 所使用的锁算法就是CLH锁.</p>
+                        </div>
+                        <div class="columns is-mobile post-meta">
+                            <div class="column is-half-desktop has-text-left is-paddingless"> 
+                                 
+                                更老一篇:<a href="http://www.lihongkun.com/concurrent/using_reentrantlock/"> ReentrantLock使用</a>
+                                
+                            </div>
+                            <div class="column is-half-desktop has-text-right is-paddingless">
+                                
+                                更新一篇:<a href="http://www.lihongkun.com/concurrent/abstract_queued_synchronizer/"> AbstractQueuedSynchronizer</a>
+                                
+                            </div>
+                            <div class="is-clearfix"></div>
+                        </div>
+                        <script src="https://utteranc.es/client.js"
+                                repo="lihongkun/lihongkun.github.io"
+                                issue-term="title"
+                                theme="github-light"
+                                crossorigin="anonymous"
+                                async>
+                        </script>
+                    </article>
+                </div>
+                <div class="column">    <aside>
+        <h2 class="is-size-4">关于我</h2>
+        <div class="content">
+            Working in advertising platform team. Backend on duty,full stack in my own time.
+        </div>
+        <h2 class="is-size-4">GitHub</h2>
+        <div class="content">
+            <a href="https://github.com/lihongkun" target="_blank">https://github.com/lihongkun</a>
+        </div>
+    </aside></div>
+                </div>
+            </div>
+         </main>    <footer class="footer">
+    
+        <div class="copyright has-text-centered">
+            <a href="https://bulma.io">
+                <img src="http://www.lihongkun.com/images/made-with-bulma.png" alt="Made with Bulma" width="128" height="24">
+            </a>
+            <p>© 泛泛之辈 Power by Hugo v0.55.6 - 闽ICP备15009606号</p>
+        </div>
+    </footer>
+    <script type="text/javascript">
+    document.addEventListener('DOMContentLoaded', () => {
+        
+        const $navbarBurgers = Array.prototype.slice.call(document.querySelectorAll('.navbar-burger'), 0);
+        
+        if ($navbarBurgers.length > 0) {
+            
+            $navbarBurgers.forEach( el => {
+                el.addEventListener('click', () => {
+                
+                const target = el.dataset.target;
+                const $target = document.getElementById(target);
+                
+                el.classList.toggle('is-active');
+                $target.classList.toggle('is-active');
+    
+                });
+            });
+        }
+    });
+    </script></body>
+</html>

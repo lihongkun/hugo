@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html><head>
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+
+    
+    <meta name="author"
+            content=""/>
+
+    
+
+    
+
+    
+    <link rel="canonical" href="http://www.lihongkun.com/categories/concurrent/"/>
+
+    
+    <link rel="alternate" type="application/rss&#43;xml" href="http://www.lihongkun.com/categories/concurrent/index.xml">
+    
+
+    
+    
+    
+        
+            
+        
+    
+        
+            
+                
+                    
+
+                
+            
+                
+            
+                
+            
+                
+            
+        
+    
+        
+            
+                
+            
+                
+            
+                
+            
+                
+            
+        
+    
+        
+            
+        
+    
+        
+            
+        
+    
+        
+            
+        
+    
+    <title> 并发  |  泛泛之辈  </title>
+
+    <link rel="shortcut icon" href="http://www.lihongkun.com/favicon.jpg"/>
+    <link rel="stylesheet" href="http://www.lihongkun.com/css/bulma.min.css"/>
+    <link rel="stylesheet" href="http://www.lihongkun.com/css/style.css"/>
+</head><body><header>
+    <nav class="navbar is-fixed-top is-primary" role="navigation" aria-label="main navigation">
+        <div class="navbar-brand is-size-4">
+            <a class="navbar-item" href="http://www.lihongkun.com/">
+                    泛泛之辈
+            </a>
+            <a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false" data-target="navbar-menu">
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+            </a>
+        </div>
+        <div id="navbar-menu" class="navbar-menu">
+            <div class="navbar-end">
+                
+                    
+                        <a class="navbar-item" href="/">首页</a>
+                    
+                
+                    
+                        <div class="navbar-item has-dropdown is-hoverable">
+                            <a class="navbar-link">基本功</a>
+                            <div class="navbar-dropdown">
+                                
+                                <a class="navbar-item" href="/categories/concurrent/">并发</a>
+                                
+                                <a class="navbar-item" href="/categories/network/">网络</a>
+                                
+                                <a class="navbar-item" href="/categories/security/">Web安全</a>
+                                
+                                <a class="navbar-item" href="/categories/jvm/">Java虚拟机</a>
+                                
+                            </div>
+                        </div>
+                    
+                
+                    
+                        <div class="navbar-item has-dropdown is-hoverable">
+                            <a class="navbar-link">编程框架</a>
+                            <div class="navbar-dropdown">
+                                
+                                <a class="navbar-item" href="/categories/springframework/">Spring</a>
+                                
+                                <a class="navbar-item" href="/categories/mybatis/">Mybatis</a>
+                                
+                                <a class="navbar-item" href="/categories/springcloud/">SpringCloud</a>
+                                
+                                <a class="navbar-item" href="/categories/common/">常用框架</a>
+                                
+                            </div>
+                        </div>
+                    
+                
+                    
+                        <a class="navbar-item" href="/categories/troubleshooting/">问题排查</a>
+                    
+                
+                    
+                        <a class="navbar-item" href="/categories/design/">设计思路</a>
+                    
+                
+                    
+                        <a class="navbar-item" href="/categories/reading/">读书笔记</a>
+                    
+                
+            </div>
+            </div>
+    </nav>
+</header><main>
+            <div class="container">
+                <div class="columns">
+                <div class="column is-four-fifths"><section class="posts">
+
+<article class="post box is-radiusless">
+    <div class="post-title">
+        <a class="post-title-link" href="/concurrent/atomic/"><h2 class="is-size-4 has-text-dark">原子变量</h2></a>
+    </div>
+    <div class="post-meta">
+        <span class="post-time">日期 : 2018-12-17</span>
+    </div>
+    <div class="post-excerpt content">
+        <p>锁机制提供了独占的方法来访问变量,并且对变量的任何修改都会对随后获得这个锁的其他线程可见.但是如果一个线程在休眠或者自旋的时候持有一个锁,那么其他线程便无法执行下去.而非阻塞算法不会受到单个线程失败的影响.对于<strong>细粒度</strong>的操作,非阻塞算法更高效.它需要借助冲突检查机制来判断更新过程中是否存在来自其他线程的干扰,如果存在则操作失败,并且重试.现代处理器都提供了这种读-改-写(Compare-And-Swap)的指令,来实现这种复杂的并发对象.</p>
+    </div>
+    <a href="/concurrent/atomic/">阅读全文>></a>
+    </article>
+
+<article class="post box is-radiusless">
+    <div class="post-title">
+        <a class="post-title-link" href="/concurrent/threadlocal/"><h2 class="is-size-4 has-text-dark">线程封闭与ThreadLocal</h2></a>
+    </div>
+    <div class="post-meta">
+        <span class="post-time">日期 : 2018-12-03</span>
+    </div>
+    <div class="post-excerpt content">
+        <p>访问共享数据,通常需要使用同步来保证变量的并发安全性.避免同步的方式就是不共享数据,如果数据只有单线程访问则不需要同步.这叫做线程封闭.</p>
+
+<p>线程封闭分为两种方式</p>
+
+<p><strong>栈封闭</strong> 通常我们使用的局部变量,天然具备线程封闭性,它没有被其他地方访问,方法结束后即不可访问.</p>
+
+<p><strong>ThreadLocal类</strong> 它提供了get和set等方法,这些方法为每个使用变量的线程存储一份独立的副本.因此get总是返回由当前执行线程在调用set时设置的最新值.</p>
+    </div>
+    <a href="/concurrent/threadlocal/">阅读全文>></a>
+    </article>
+
+<article class="post box is-radiusless">
+    <div class="post-title">
+        <a class="post-title-link" href="/concurrent/threadpool_implements/"><h2 class="is-size-4 has-text-dark">线程池实现</h2></a>
+    </div>
+    <div class="post-meta">
+        <span class="post-time">日期 : 2018-11-26</span>
+    </div>
+    <div class="post-excerpt content">
+        <h3 id="线程池状态和数量">线程池状态和数量</h3>
+
+<p>ThreadPoolExecutor拥有如下状态 , 它控制着线程是否接收新任务以及当前在队列中或者执行中的任务如何结束.</p>
+
+<p><strong>RUNNING</strong>:  接收新的任务,新建或者放入任务队列</p>
+
+<p><strong>SHUTDOWN</strong>: 不接收新的任务,但是会执行任务队列的中任务</p>
+
+<p><strong>STOP</strong>:     不接收新的任务,不会执行任务队列中的任务,并且停止在执行中的任务</p>
+
+<p><strong>TIDYING</strong>:  任务执行结束,workerCountOf返回 0 ,线程池状态设置为此状态,并执行钩子函数.</p>
+
+<p><strong>TERMINATED</strong>: terminated() 结束</p>
+    </div>
+    <a href="/concurrent/threadpool_implements/">阅读全文>></a>
+    </article>
+
+<article class="post box is-radiusless">
+    <div class="post-title">
+        <a class="post-title-link" href="/concurrent/threadpool/"><h2 class="is-size-4 has-text-dark">任务执行与线程池</h2></a>
+    </div>
+    <div class="post-meta">
+        <span class="post-time">日期 : 2018-11-19</span>
+    </div>
+    <div class="post-excerpt content">
+        <p>任务通常是一些抽象的离散的工作单元,我们把应用程序的工作分解到多个任务中,可以简化程序的组织结构,提供一种自然的事务边界来优化错误恢复过程,以及提供一种自然的并行工作结构来提升并发性.而并发执行任务在Java体系里面就是线程.</p>
+    </div>
+    <a href="/concurrent/threadpool/">阅读全文>></a>
+    </article>
+
+<article class="post box is-radiusless">
+    <div class="post-title">
+        <a class="post-title-link" href="/concurrent/disruptor/"><h2 class="is-size-4 has-text-dark">高效队列框架Disruptor</h2></a>
+    </div>
+    <div class="post-meta">
+        <span class="post-time">日期 : 2018-11-13</span>
+    </div>
+    <div class="post-excerpt content">
+        <p>Disruptor是英国外汇交易公司LMAX开发的一个高性能队列，研发的初衷是解决内存队列的延迟问题.2010年在QCon演讲后,获得了业界关注. 2011年，Martin Fowler大神专门撰写长文对其进行介绍.由于熟悉程度问题,只能科普介绍一下,介绍之前可以先了解下ArrayBlockingQueue存在的一些问题.</p>
+    </div>
+    <a href="/concurrent/disruptor/">阅读全文>></a>
+    </article>
+
+</section>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<nav class="page-nav">
+    
+
+    
+
+      
+
+        
+
+      
+
+      
+      
+          <a href="/categories/concurrent/" class="page-number current">1</a>
+      
+
+    
+
+      
+
+        
+
+      
+
+      
+      
+          <a href="/categories/concurrent/page/2/" class="page-number">2</a>
+      
+
+    
+
+      
+
+        
+
+      
+
+      
+      
+          <a href="/categories/concurrent/page/3/" class="page-number">3</a>
+      
+
+        
+
+
+    
+      <a href="/categories/concurrent/page/2/" class="extend next">下一页</a>
+    
+
+</nav>
+</div>
+                <div class="column">    <aside>
+        <h2 class="is-size-4">关于我</h2>
+        <div class="content">
+            Working in advertising platform team. Backend on duty,full stack in my own time.
+        </div>
+        <h2 class="is-size-4">GitHub</h2>
+        <div class="content">
+            <a href="https://github.com/lihongkun" target="_blank">https://github.com/lihongkun</a>
+        </div>
+    </aside></div>
+                </div>
+            </div>
+         </main>    <footer class="footer">
+    
+        <div class="copyright has-text-centered">
+            <a href="https://bulma.io">
+                <img src="http://www.lihongkun.com/images/made-with-bulma.png" alt="Made with Bulma" width="128" height="24">
+            </a>
+            <p>© 泛泛之辈 Power by Hugo v0.55.6 - 闽ICP备15009606号</p>
+        </div>
+    </footer>
+    <script type="text/javascript">
+    document.addEventListener('DOMContentLoaded', () => {
+        
+        const $navbarBurgers = Array.prototype.slice.call(document.querySelectorAll('.navbar-burger'), 0);
+        
+        if ($navbarBurgers.length > 0) {
+            
+            $navbarBurgers.forEach( el => {
+                el.addEventListener('click', () => {
+                
+                const target = el.dataset.target;
+                const $target = document.getElementById(target);
+                
+                el.classList.toggle('is-active');
+                $target.classList.toggle('is-active');
+    
+                });
+            });
+        }
+    });
+    </script></body>
+</html>

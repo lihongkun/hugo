@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>troubleshooting on 泛泛之辈</title>
+    <link>http://www.lihongkun.com/categories/troubleshooting/</link>
+    <description>Recent content in troubleshooting on 泛泛之辈</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-CN</language>
+    <lastBuildDate>Sat, 10 Aug 2019 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="http://www.lihongkun.com/categories/troubleshooting/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>async-profiler查找CPU热点</title>
+      <link>http://www.lihongkun.com/troubleshooting/async-profiler/</link>
+      <pubDate>Sat, 10 Aug 2019 00:00:00 +0000</pubDate>
+      
+      <guid>http://www.lihongkun.com/troubleshooting/async-profiler/</guid>
+      <description>&lt;p&gt;算法新上线的接口，平均耗时增加了20ms。使用jstack一类的脚本出来的堆栈基本上比较平均。很难定位到确切的位置。这种微小耗时监测场景。典型的方式是直接进行CPU热点采样，通常是linux的perf加上perf-map-agent来映射出java的堆栈。这个组合略复杂。我使用的是 async-profiler 。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>正则表达式灾难性回溯</title>
+      <link>http://www.lihongkun.com/troubleshooting/regulation_expression_backtracing/</link>
+      <pubDate>Thu, 02 Aug 2018 00:00:00 +0000</pubDate>
+      
+      <guid>http://www.lihongkun.com/troubleshooting/regulation_expression_backtracing/</guid>
+      <description>&lt;p&gt;运营反馈问题,日志排查中发现线上有个任务一直没有执行.工具脚本看出基本上CPU都消耗在正则表达式上面了.无疑是进入正则表达式的回溯陷阱.&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>随机数阻塞问题</title>
+      <link>http://www.lihongkun.com/troubleshooting/linux_random_dev_blocking/</link>
+      <pubDate>Wed, 25 Jul 2018 00:00:00 +0000</pubDate>
+      
+      <guid>http://www.lihongkun.com/troubleshooting/linux_random_dev_blocking/</guid>
+      <description>&lt;p&gt;有个使用了SpringBoot的API的项目拆分了不同业务的服务,一个jar包通过不同的命令行来启动不同的10个业务进程.所以发布版本的时候基本上是重启所有的进程. 偶然的一次线上发布看业务日志,发现进程启动的时候卡在tomcat embeded初始化的时候.而且基本上重启的进程都卡住了.&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>高效定位Java进程高CPU问题</title>
+      <link>http://www.lihongkun.com/troubleshooting/efficient_locate_high_cpu_program/</link>
+      <pubDate>Mon, 23 Jul 2018 00:00:00 +0000</pubDate>
+      
+      <guid>http://www.lihongkun.com/troubleshooting/efficient_locate_high_cpu_program/</guid>
+      <description>&lt;p&gt;线上环境某个业务无端卡住,死锁或者CPU使用率突然飙得很高.通常情况下是某些线程下的代码作祟.如何排查到指定线程和指定代码.&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Java执行shell避坑指南</title>
+      <link>http://www.lihongkun.com/troubleshooting/java_exec_shell/</link>
+      <pubDate>Mon, 16 Jul 2018 00:00:00 +0000</pubDate>
+      
+      <guid>http://www.lihongkun.com/troubleshooting/java_exec_shell/</guid>
+      <description>&lt;p&gt;后端一些任务场景中经常需要去执行shell,使用可能踩坑.&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>tomcat连接器调优</title>
+      <link>http://www.lihongkun.com/springframework/springboot_tomcat_connetor/</link>
+      <pubDate>Tue, 13 Mar 2018 00:00:00 +0000</pubDate>
+      
+      <guid>http://www.lihongkun.com/springframework/springboot_tomcat_connetor/</guid>
+      <description>&lt;p&gt;在并发不高的场景下是不需要在进行特殊的配置了,但是在并发量比较大的话springboot 对于默认的tomcat连接器参数可能会导致频频的连接拒绝现象.&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Springboot的embeded tomcat目录</title>
+      <link>http://www.lihongkun.com/springframework/springboot_tomcat_directory/</link>
+      <pubDate>Thu, 08 Mar 2018 00:00:00 +0000</pubDate>
+      
+      <guid>http://www.lihongkun.com/springframework/springboot_tomcat_directory/</guid>
+      <description>&lt;p&gt;Springboot官方使用web的配置内嵌了tomcat , 其目录在正式环境下存在着诸多问题.&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Springboot使用logback的坑点</title>
+      <link>http://www.lihongkun.com/springframework/springboot_logback/</link>
+      <pubDate>Thu, 01 Mar 2018 00:00:00 +0000</pubDate>
+      
+      <guid>http://www.lihongkun.com/springframework/springboot_logback/</guid>
+      <description>&lt;p&gt;尽管SpringBoot能够在application.properties来配置一些日志相关的内容,但是针对一个比较复杂,或者是有着自己运维体系的应用,这是远远不够用的.所以拓展自己的日志配置文件是必须的,官方推荐的是使用logback-spring.xml直接覆盖&lt;/p&gt;</description>
+    </item>
+    
+  </channel>
+</rss>

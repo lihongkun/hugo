@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html><head>
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+
+    
+    <meta name="author"
+            content=""/>
+
+    
+    <meta name="description" content="&amp;ldquo;熵&amp;rdquo;是一个物理学的定义,指的是某个系统中的&amp;rdquo;无序&amp;rdquo;的总量.热力学定律保证了宇宙中的熵倾向于最大化.当软件中的无序增长时,程序员们称之为&amp;rdquo;软件腐烂&amp;rdquo;
+"/>
+    
+
+    
+
+    
+    <link rel="canonical" href="http://www.lihongkun.com/reading/entropy_of_software/"/>
+
+    
+
+    
+    
+    
+        
+            
+        
+    
+        
+            
+                
+            
+                
+            
+                
+            
+                
+            
+        
+    
+        
+            
+                
+            
+                
+            
+                
+            
+                
+            
+        
+    
+        
+            
+        
+    
+        
+            
+        
+    
+        
+            
+        
+    
+    <title> 软件的熵 | 泛泛之辈 </title>
+
+    <link rel="shortcut icon" href="http://www.lihongkun.com/favicon.jpg"/>
+    <link rel="stylesheet" href="http://www.lihongkun.com/css/bulma.min.css"/>
+    <link rel="stylesheet" href="http://www.lihongkun.com/css/style.css"/>
+</head><body><header>
+    <nav class="navbar is-fixed-top is-primary" role="navigation" aria-label="main navigation">
+        <div class="navbar-brand is-size-4">
+            <a class="navbar-item" href="http://www.lihongkun.com/">
+                    泛泛之辈
+            </a>
+            <a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false" data-target="navbar-menu">
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+            </a>
+        </div>
+        <div id="navbar-menu" class="navbar-menu">
+            <div class="navbar-end">
+                
+                    
+                        <a class="navbar-item" href="/">首页</a>
+                    
+                
+                    
+                        <div class="navbar-item has-dropdown is-hoverable">
+                            <a class="navbar-link">基本功</a>
+                            <div class="navbar-dropdown">
+                                
+                                <a class="navbar-item" href="/categories/concurrent/">并发</a>
+                                
+                                <a class="navbar-item" href="/categories/network/">网络</a>
+                                
+                                <a class="navbar-item" href="/categories/security/">Web安全</a>
+                                
+                                <a class="navbar-item" href="/categories/jvm/">Java虚拟机</a>
+                                
+                            </div>
+                        </div>
+                    
+                
+                    
+                        <div class="navbar-item has-dropdown is-hoverable">
+                            <a class="navbar-link">编程框架</a>
+                            <div class="navbar-dropdown">
+                                
+                                <a class="navbar-item" href="/categories/springframework/">Spring</a>
+                                
+                                <a class="navbar-item" href="/categories/mybatis/">Mybatis</a>
+                                
+                                <a class="navbar-item" href="/categories/springcloud/">SpringCloud</a>
+                                
+                                <a class="navbar-item" href="/categories/common/">常用框架</a>
+                                
+                            </div>
+                        </div>
+                    
+                
+                    
+                        <a class="navbar-item" href="/categories/troubleshooting/">问题排查</a>
+                    
+                
+                    
+                        <a class="navbar-item" href="/categories/design/">设计思路</a>
+                    
+                
+                    
+                        <a class="navbar-item" href="/categories/reading/">读书笔记</a>
+                    
+                
+            </div>
+            </div>
+    </nav>
+</header><main>
+            <div class="container">
+                <div class="columns">
+                <div class="column is-four-fifths">
+                    <article class="post box is-radiusless">
+                        <div class="post-title">
+                            <h2 class="is-size-4">软件的熵</h2>
+                        </div>
+                            <div class="post-meta">
+                            <span class="post-time">日期&nbsp;:&nbsp;2019-04-08</span>
+                        </div>
+                        <div class="post-content content">
+                            <p>&ldquo;熵&rdquo;是一个物理学的定义,指的是某个系统中的&rdquo;无序&rdquo;的总量.热力学定律保证了宇宙中的熵倾向于最大化.当软件中的无序增长时,程序员们称之为&rdquo;软件腐烂&rdquo;</p>
+
+<p>有许多因素可以促生软件腐烂。其中最重要的一个似乎是开发项目时的心理(或文化)。即使你的团队只有你一个人，你开发项目时的心理也可能是非常微妙的事情。尽管制定了最好的计划，拥有最好的开发者，项目在其生命期中仍可能遭遇毁灭和衰败。而另外有一些项目，尽管遇到巨大的困难和接连而来的挫折，却成功地击败自然的无序倾向，设法取得了相当好的结果。</p>
+
+<p>是什么造成了这样的差异?</p>
+
+<h4 id="破窗理论">破窗理论</h4>
+
+<p>在市区，有些建筑漂亮而整洁，而另一些却是破败不堪的 “废弃船只”。为什么?犯罪和城市度退领域的研究者发现了一种迷人的触发机制，一种能够很快將整洁,完整和有人居住的建筑变为破败的废弃物的机制。</p>
+
+<p>一扇破窗户，只要有那么一段时间不修理，就会渐渐给建筑的居民带来一种废弃感.一种职权部门不关心这座建筑的感觉。于是又一扇窗户破了。 人们开始乱扔垃圾。出现了乱涂乱画。严重的结构损坏开始了。在相对较短的&ndash;段时间里,建筑就被损毁得超出了业主愿意修理的程度，而废弃感变成了现实。</p>
+
+<p>“破窗户理论”启发了纽约和其他大城市的警察部门,他们对一些轻微的案件严加处理，以防止大案的发生。这起了作用 : 管束破窗户、乱涂乱画和其他轻微违法事件减少了严重罪案的发生。</p>
+
+<h4 id="不要容忍破窗户">不要容忍破窗户</h4>
+
+<p>不要留着“破窗户”(低劣的设计、错误决策、或是糟糕的代码)不修。发现一个就修一个。如果没有足够的时间进行适当的修理，就用木板把它钉起来。或许你可以把出问题的代码放入注释(comment out), 或是显示“未实现”消息，或是用虚设的数据( dummy data)加以替代。采取某种行动防止进一步的损坏,并说明情势处在你的控制之下。</p>
+
+<p>我们看到过整洁、运行良好的系统,一旦窗户开始破裂,就相当迅速地恶化。还有其他一些因素能够促生软件腐烂，我们将在别处探讨它们，但与其他任何因素相比,置之不理都会更快地加速腐烂的进程。</p>
+
+<p>你也许在想，没有人有时间到处清理项目的所有碎玻璃。如果你继续这么想，你就最好计划找一个大型垃圾罐， 或是搬到别处去。不要让熵赢得胜利。</p>
+
+<p>摘自 &lt;&lt;程序员修炼之道&gt;&gt;</p>
+                        </div>
+                        <div class="columns is-mobile post-meta">
+                            <div class="column is-half-desktop has-text-left is-paddingless"> 
+                                 
+                                更老一篇:<a href="http://www.lihongkun.com/reading/the_long_tail/"> 长尾理论</a>
+                                
+                            </div>
+                            <div class="column is-half-desktop has-text-right is-paddingless">
+                                
+                                更新一篇:<a href="http://www.lihongkun.com/reading/orthogonality/"> 正交性</a>
+                                
+                            </div>
+                            <div class="is-clearfix"></div>
+                        </div>
+                        <script src="https://utteranc.es/client.js"
+                                repo="lihongkun/lihongkun.github.io"
+                                issue-term="title"
+                                theme="github-light"
+                                crossorigin="anonymous"
+                                async>
+                        </script>
+                    </article>
+                </div>
+                <div class="column">    <aside>
+        <h2 class="is-size-4">关于我</h2>
+        <div class="content">
+            Working in advertising platform team. Backend on duty,full stack in my own time.
+        </div>
+        <h2 class="is-size-4">GitHub</h2>
+        <div class="content">
+            <a href="https://github.com/lihongkun" target="_blank">https://github.com/lihongkun</a>
+        </div>
+    </aside></div>
+                </div>
+            </div>
+         </main>    <footer class="footer">
+    
+        <div class="copyright has-text-centered">
+            <a href="https://bulma.io">
+                <img src="http://www.lihongkun.com/images/made-with-bulma.png" alt="Made with Bulma" width="128" height="24">
+            </a>
+            <p>© 泛泛之辈 Power by Hugo v0.55.6 - 闽ICP备15009606号</p>
+        </div>
+    </footer>
+    <script type="text/javascript">
+    document.addEventListener('DOMContentLoaded', () => {
+        
+        const $navbarBurgers = Array.prototype.slice.call(document.querySelectorAll('.navbar-burger'), 0);
+        
+        if ($navbarBurgers.length > 0) {
+            
+            $navbarBurgers.forEach( el => {
+                el.addEventListener('click', () => {
+                
+                const target = el.dataset.target;
+                const $target = document.getElementById(target);
+                
+                el.classList.toggle('is-active');
+                $target.classList.toggle('is-active');
+    
+                });
+            });
+        }
+    });
+    </script></body>
+</html>

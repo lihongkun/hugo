@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html><head>
+	<meta name="generator" content="Hugo 0.55.6" />
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+
+    
+    <meta name="author"
+            content=""/>
+
+    
+
+    
+
+    
+    <link rel="canonical" href="http://www.lihongkun.com/"/>
+
+    
+    <link rel="alternate" type="application/rss&#43;xml" href="http://www.lihongkun.com/index.xml">
+    
+
+    
+    
+    
+        
+            
+                
+            
+        
+    
+        
+            
+                
+            
+                
+            
+                
+            
+                
+            
+        
+    
+        
+            
+                
+            
+                
+            
+                
+            
+                
+            
+        
+    
+        
+            
+        
+    
+        
+            
+        
+    
+        
+            
+        
+    
+    <title>泛泛之辈</title>
+
+    <link rel="shortcut icon" href="http://www.lihongkun.com/favicon.jpg"/>
+    <link rel="stylesheet" href="http://www.lihongkun.com/css/bulma.min.css"/>
+    <link rel="stylesheet" href="http://www.lihongkun.com/css/style.css"/>
+</head><body><header>
+    <nav class="navbar is-fixed-top is-primary" role="navigation" aria-label="main navigation">
+        <div class="navbar-brand is-size-4">
+            <a class="navbar-item" href="http://www.lihongkun.com/">
+                    泛泛之辈
+            </a>
+            <a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false" data-target="navbar-menu">
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+            </a>
+        </div>
+        <div id="navbar-menu" class="navbar-menu">
+            <div class="navbar-end">
+                
+                    
+                        <a class="navbar-item" href="/">首页</a>
+                    
+                
+                    
+                        <div class="navbar-item has-dropdown is-hoverable">
+                            <a class="navbar-link">基本功</a>
+                            <div class="navbar-dropdown">
+                                
+                                <a class="navbar-item" href="/categories/concurrent/">并发</a>
+                                
+                                <a class="navbar-item" href="/categories/network/">网络</a>
+                                
+                                <a class="navbar-item" href="/categories/security/">Web安全</a>
+                                
+                                <a class="navbar-item" href="/categories/jvm/">Java虚拟机</a>
+                                
+                            </div>
+                        </div>
+                    
+                
+                    
+                        <div class="navbar-item has-dropdown is-hoverable">
+                            <a class="navbar-link">编程框架</a>
+                            <div class="navbar-dropdown">
+                                
+                                <a class="navbar-item" href="/categories/springframework/">Spring</a>
+                                
+                                <a class="navbar-item" href="/categories/mybatis/">Mybatis</a>
+                                
+                                <a class="navbar-item" href="/categories/springcloud/">SpringCloud</a>
+                                
+                                <a class="navbar-item" href="/categories/common/">常用框架</a>
+                                
+                            </div>
+                        </div>
+                    
+                
+                    
+                        <a class="navbar-item" href="/categories/troubleshooting/">问题排查</a>
+                    
+                
+                    
+                        <a class="navbar-item" href="/categories/design/">设计思路</a>
+                    
+                
+                    
+                        <a class="navbar-item" href="/categories/reading/">读书笔记</a>
+                    
+                
+            </div>
+            </div>
+    </nav>
+</header><main>
+            <div class="container">
+                <div class="columns">
+                <div class="column is-four-fifths"><section class="posts">
+
+<article class="post box is-radiusless">
+    <div class="post-title">
+        <a class="post-title-link" href="/troubleshooting/async-profiler/"><h2 class="is-size-4 has-text-dark">async-profiler查找CPU热点</h2></a>
+    </div>
+    <div class="post-meta">
+        <span class="post-time">日期 : 2019-08-10</span>
+    </div>
+    <div class="post-excerpt content">
+        <p>算法新上线的接口，平均耗时增加了20ms。使用jstack一类的脚本出来的堆栈基本上比较平均。很难定位到确切的位置。这种微小耗时监测场景。典型的方式是直接进行CPU热点采样，通常是linux的perf加上perf-map-agent来映射出java的堆栈。这个组合略复杂。我使用的是 async-profiler 。</p>
+    </div>
+    <a href="/troubleshooting/async-profiler/">阅读全文>></a>
+    </article>
+
+<article class="post box is-radiusless">
+    <div class="post-title">
+        <a class="post-title-link" href="/security/sso/"><h2 class="is-size-4 has-text-dark">单点登录</h2></a>
+    </div>
+    <div class="post-meta">
+        <span class="post-time">日期 : 2019-07-15</span>
+    </div>
+    <div class="post-excerpt content">
+        <p><a href="https://www.lihongkun.com/security/sign_in/">分布式登录状态一致性</a> 解决的是同一个域名下的状态，如果一个企业内部存储多个领域的系统，且他们具备不同的特性和域名，又必须提供统一的登录方式。那么这时候单点登录就派上用场了。</p>
+    </div>
+    <a href="/security/sso/">阅读全文>></a>
+    </article>
+
+<article class="post box is-radiusless">
+    <div class="post-title">
+        <a class="post-title-link" href="/common/lombok/"><h2 class="is-size-4 has-text-dark">使用Lombok简化代码</h2></a>
+    </div>
+    <div class="post-meta">
+        <span class="post-time">日期 : 2019-07-14</span>
+    </div>
+    <div class="post-excerpt content">
+        <p>POJO等一系列的java bean最让人诟病的是他们有很多重复的工作存在。比如里面的属性要暴露出去需要写很多的Getter和Setter方法。完全是体力活。Lombok是一个开源库，能够改善这种现状。</p>
+    </div>
+    <a href="/common/lombok/">阅读全文>></a>
+    </article>
+
+<article class="post box is-radiusless">
+    <div class="post-title">
+        <a class="post-title-link" href="/security/sign_in/"><h2 class="is-size-4 has-text-dark">分布式登录状态一致性</h2></a>
+    </div>
+    <div class="post-meta">
+        <span class="post-time">日期 : 2019-07-08</span>
+    </div>
+    <div class="post-excerpt content">
+        <p>无状态的HTTP协议如何来保持用户的信息？分布式环境下的登录态是如何存储和使用的？ 本文给你详细的答案。</p>
+    </div>
+    <a href="/security/sign_in/">阅读全文>></a>
+    </article>
+
+<article class="post box is-radiusless">
+    <div class="post-title">
+        <a class="post-title-link" href="/jvm/garbage_first_collector/"><h2 class="is-size-4 has-text-dark">G1垃圾收集器</h2></a>
+    </div>
+    <div class="post-meta">
+        <span class="post-time">日期 : 2019-07-06</span>
+    </div>
+    <div class="post-excerpt content">
+        <p>G1 (Garbage-First)是一款面向服务器的垃圾收集器,主要针对处理器并且使用大容量堆内存的应用。它尽可能满足GC停顿时间要求的同时，还具备高吞吐量性能特征。</p>
+    </div>
+    <a href="/jvm/garbage_first_collector/">阅读全文>></a>
+    </article>
+
+</section>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<nav class="page-nav">
+    
+    <a href="/page/3/" class="extend prev">上一页</a>
+    
+
+    
+
+      
+
+        
+
+        
+          
+        
+
+        
+
+        
+
+        
+
+        
+
+      
+
+      
+      
+          <a href="/" class="page-number">1</a>
+      
+
+    
+
+      
+
+        
+
+        
+
+        
+          
+            
+          
+        
+
+        
+
+        
+
+        
+
+      
+
+      
+      
+          <a href="/page/2/" class="page-number">2</a>
+      
+
+    
+
+      
+
+        
+
+        
+
+        
+
+        
+          
+        
+
+        
+
+        
+
+      
+
+      
+      
+          <a href="/page/3/" class="page-number">3</a>
+      
+
+    
+
+      
+
+        
+
+        
+
+        
+
+        
+          
+        
+
+        
+
+        
+
+      
+
+      
+      
+          <a href="/page/4/" class="page-number current">4</a>
+      
+
+    
+
+      
+
+        
+
+        
+
+        
+
+        
+          
+        
+
+        
+
+        
+
+      
+
+      
+      
+          <a href="/page/5/" class="page-number">5</a>
+      
+
+    
+
+      
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+      
+
+      
+      
+
+    
+
+      
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+      
+
+      
+      
+
+    
+
+      
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+      
+
+      
+      
+
+    
+
+      
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+      
+
+      
+      
+
+    
+
+      
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+      
+
+      
+      
+
+    
+
+      
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+      
+
+      
+      
+
+    
+
+      
+
+        
+
+        
+
+        
+
+        
+
+        
+          
+            <span class="space">...</span>
+          
+        
+
+        
+
+      
+
+      
+      
+
+    
+
+      
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+          
+        
+
+      
+
+      
+      
+          <a href="/page/13/" class="page-number">13</a>
+      
+
+        
+
+
+    
+      <a href="/page/5/" class="extend next">下一页</a>
+    
+
+</nav>
+</div>
+                <div class="column">    <aside>
+        <h2 class="is-size-4">关于我</h2>
+        <div class="content">
+            Working in advertising platform team. Backend on duty,full stack in my own time.
+        </div>
+        <h2 class="is-size-4">GitHub</h2>
+        <div class="content">
+            <a href="https://github.com/lihongkun" target="_blank">https://github.com/lihongkun</a>
+        </div>
+    </aside></div>
+                </div>
+            </div>
+         </main>    <footer class="footer">
+    
+        <div class="copyright has-text-centered">
+            <a href="https://bulma.io">
+                <img src="http://www.lihongkun.com/images/made-with-bulma.png" alt="Made with Bulma" width="128" height="24">
+            </a>
+            <p>© 泛泛之辈 Power by Hugo v0.55.6 - 闽ICP备15009606号</p>
+        </div>
+    </footer>
+    <script type="text/javascript">
+    document.addEventListener('DOMContentLoaded', () => {
+        
+        const $navbarBurgers = Array.prototype.slice.call(document.querySelectorAll('.navbar-burger'), 0);
+        
+        if ($navbarBurgers.length > 0) {
+            
+            $navbarBurgers.forEach( el => {
+                el.addEventListener('click', () => {
+                
+                const target = el.dataset.target;
+                const $target = document.getElementById(target);
+                
+                el.classList.toggle('is-active');
+                $target.classList.toggle('is-active');
+    
+                });
+            });
+        }
+    });
+    </script></body>
+</html>

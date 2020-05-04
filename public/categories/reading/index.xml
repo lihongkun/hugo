@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>reading on 泛泛之辈</title>
+    <link>http://www.lihongkun.com/categories/reading/</link>
+    <description>Recent content in reading on 泛泛之辈</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-CN</language>
+    <lastBuildDate>Sun, 21 Apr 2019 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="http://www.lihongkun.com/categories/reading/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>正交性</title>
+      <link>http://www.lihongkun.com/reading/orthogonality/</link>
+      <pubDate>Sun, 21 Apr 2019 00:00:00 +0000</pubDate>
+      
+      <guid>http://www.lihongkun.com/reading/orthogonality/</guid>
+      <description>&lt;p&gt;如果你想要制作易于设计、构建、测试及扩展的系统，正交性就是一个十分关键的概念，但是正交性的概念很少被直接讲授，而常常是你学习的各种其他方法和技术的隐含特性。这是一个错误。一旦学会了直接应用正交性原则，你将发现，你制作的系统的质量就得到了提高。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>软件的熵</title>
+      <link>http://www.lihongkun.com/reading/entropy_of_software/</link>
+      <pubDate>Mon, 08 Apr 2019 00:00:00 +0000</pubDate>
+      
+      <guid>http://www.lihongkun.com/reading/entropy_of_software/</guid>
+      <description>&lt;p&gt;&amp;ldquo;熵&amp;rdquo;是一个物理学的定义,指的是某个系统中的&amp;rdquo;无序&amp;rdquo;的总量.热力学定律保证了宇宙中的熵倾向于最大化.当软件中的无序增长时,程序员们称之为&amp;rdquo;软件腐烂&amp;rdquo;&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>长尾理论</title>
+      <link>http://www.lihongkun.com/reading/the_long_tail/</link>
+      <pubDate>Tue, 15 Mar 2016 23:10:27 +0000</pubDate>
+      
+      <guid>http://www.lihongkun.com/reading/the_long_tail/</guid>
+      <description>&lt;p&gt;虽然目前长尾主要是一种网络现象显现出来，但其起源要早于亚马逊和易趣，甚至比网络还要早，长尾是一系列商业创新的巅峰，这可以追溯到一个多世纪以前—这些创新主要体现在我们生产、供应、配送和销售商品的方法上，举例来说，让我们回想一下使亚马逊网上购物得以实现的所有非互联网要素：联邦快递、国际标准图书编号、信用卡、关系型数据库以及条形码。&lt;/p&gt;</description>
+    </item>
+    
+  </channel>
+</rss>

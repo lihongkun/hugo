@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html><head>
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+
+    
+    <meta name="author"
+            content=""/>
+
+    
+    <meta name="description" content="算法新上线的接口，平均耗时增加了20ms。使用jstack一类的脚本出来的堆栈基本上比较平均。很难定位到确切的位置。这种微小耗时监测场景。典型的方式是直接进行CPU热点采样，通常是linux的perf加上perf-map-agent来映射出java的堆栈。这个组合略复杂。我使用的是 async-profiler 。
+"/>
+    
+
+    
+
+    
+    <link rel="canonical" href="http://www.lihongkun.com/troubleshooting/async-profiler/"/>
+
+    
+
+    
+    
+    
+        
+            
+        
+    
+        
+            
+                
+            
+                
+            
+                
+            
+                
+            
+        
+    
+        
+            
+                
+            
+                
+            
+                
+            
+                
+            
+        
+    
+        
+            
+        
+    
+        
+            
+        
+    
+        
+            
+        
+    
+    <title> async-profiler查找CPU热点 | 泛泛之辈 </title>
+
+    <link rel="shortcut icon" href="http://www.lihongkun.com/favicon.jpg"/>
+    <link rel="stylesheet" href="http://www.lihongkun.com/css/bulma.min.css"/>
+    <link rel="stylesheet" href="http://www.lihongkun.com/css/style.css"/>
+</head><body><header>
+    <nav class="navbar is-fixed-top is-primary" role="navigation" aria-label="main navigation">
+        <div class="navbar-brand is-size-4">
+            <a class="navbar-item" href="http://www.lihongkun.com/">
+                    泛泛之辈
+            </a>
+            <a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false" data-target="navbar-menu">
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+            </a>
+        </div>
+        <div id="navbar-menu" class="navbar-menu">
+            <div class="navbar-end">
+                
+                    
+                        <a class="navbar-item" href="/">首页</a>
+                    
+                
+                    
+                        <div class="navbar-item has-dropdown is-hoverable">
+                            <a class="navbar-link">基本功</a>
+                            <div class="navbar-dropdown">
+                                
+                                <a class="navbar-item" href="/categories/concurrent/">并发</a>
+                                
+                                <a class="navbar-item" href="/categories/network/">网络</a>
+                                
+                                <a class="navbar-item" href="/categories/security/">Web安全</a>
+                                
+                                <a class="navbar-item" href="/categories/jvm/">Java虚拟机</a>
+                                
+                            </div>
+                        </div>
+                    
+                
+                    
+                        <div class="navbar-item has-dropdown is-hoverable">
+                            <a class="navbar-link">编程框架</a>
+                            <div class="navbar-dropdown">
+                                
+                                <a class="navbar-item" href="/categories/springframework/">Spring</a>
+                                
+                                <a class="navbar-item" href="/categories/mybatis/">Mybatis</a>
+                                
+                                <a class="navbar-item" href="/categories/springcloud/">SpringCloud</a>
+                                
+                                <a class="navbar-item" href="/categories/common/">常用框架</a>
+                                
+                            </div>
+                        </div>
+                    
+                
+                    
+                        <a class="navbar-item" href="/categories/troubleshooting/">问题排查</a>
+                    
+                
+                    
+                        <a class="navbar-item" href="/categories/design/">设计思路</a>
+                    
+                
+                    
+                        <a class="navbar-item" href="/categories/reading/">读书笔记</a>
+                    
+                
+            </div>
+            </div>
+    </nav>
+</header><main>
+            <div class="container">
+                <div class="columns">
+                <div class="column is-four-fifths">
+                    <article class="post box is-radiusless">
+                        <div class="post-title">
+                            <h2 class="is-size-4">async-profiler查找CPU热点</h2>
+                        </div>
+                            <div class="post-meta">
+                            <span class="post-time">日期&nbsp;:&nbsp;2019-08-10</span>
+                        </div>
+                        <div class="post-content content">
+                            <p>算法新上线的接口，平均耗时增加了20ms。使用jstack一类的脚本出来的堆栈基本上比较平均。很难定位到确切的位置。这种微小耗时监测场景。典型的方式是直接进行CPU热点采样，通常是linux的perf加上perf-map-agent来映射出java的堆栈。这个组合略复杂。我使用的是 async-profiler 。</p>
+
+<pre><code>wegt https://github.com/jvm-profiling-tools/async-profiler/releases/download/v1.5/async-profiler-1.5-linux-x64.tar.gz
+</code></pre>
+
+<p>直接下载到服务器然后进行解压。找出要采样的进程号。</p>
+
+<pre><code>sh profiler.sh -d 5 -e cpu 130822 &gt; /tmp/130822.cpu.trace
+</code></pre>
+
+<p>执行上述脚本， 得到一个cpu采样的文件。</p>
+
+<pre><code>tarted [cpu] profiling
+--- Execution profile ---
+Total samples:         468
+Non-Java:              3 (0.64%)
+
+Frame buffer usage:    0.321%
+
+--- 680387991 ns (14.53%), 68 samples
+  [ 0] java.nio.HeapByteBuffer._get
+  [ 1] java.nio.Bits.getIntB
+  [ 2] java.nio.Bits.getFloatB
+  [ 3] java.nio.Bits.getFloat
+  [ 4] java.nio.HeapByteBuffer.getFloat
+  [ 5] com.mayabot.blas.MutableByteBufferVector.plusAssign
+  [ 6] com.mayabot.mynlp.fasttext.FastText.addInputVector
+  [ 7] com.mayabot.mynlp.fasttext.FastText.getWordVector
+  [ 8] com.mayabot.mynlp.fasttext.FastText.getWordVector
+  [ 9] (project package).search.rank.CandidateSelect.selectAdvanceRankCandidatesFromRtAd
+  [10] (project package).search.rank.CandidateSelect.candidateSelect
+  [11] (project package).search.rank.SearchRanking.candidateSelect
+  [12] (project package).search.recall.SearchRecallHelper.adRecallWork
+  [13] (project package).search.recall.SearchRecallHelper.adRecall
+  [14] (project package).search.service.SearchRecallSvcImpl.adRecall
+  ....
+  [44] java.lang.Thread.run
+
+--- 490290559 ns (10.47%), 49 samples
+  [ 0] java.util.Arrays.copyOf
+  [ 1] java.lang.AbstractStringBuilder.expandCapacity
+  [ 2] java.lang.AbstractStringBuilder.ensureCapacityInternal
+  [ 3] java.lang.AbstractStringBuilder.append
+  [ 4] java.lang.StringBuilder.append
+  [ 5] (project package).search.rank.CandidateSelect.selectAdvanceRankCandidatesFromRtAd
+  [ 6] (project package).search.rank.CandidateSelect.candidateSelect
+  [ 7] (project package).search.rank.SearchRanking.candidateSelect
+  [ 8] (project package).search.recall.SearchRecallHelper.adRecallWork
+  [ 9] (project package).search.recall.SearchRecallHelper.adRecall
+  [10] (project package).search.service.SearchRecallSvcImpl.adRecall
+  ....
+  [44] java.lang.Thread.run
+  
+  ....
+  //中间省略
+  
+            ns  percent  samples  top
+  ----------  -------  -------  ---
+  1220574844   26.07%      122  jshort_disjoint_arraycopy
+  1170635197   25.00%      117  java.nio.HeapByteBuffer._get
+   490290559   10.47%       49  java.util.Arrays.copyOf
+   490237824   10.47%       49  (project package).search.rank.CandidateSelect.selectAdvanceRankCandidatesFromRtAd
+</code></pre>
+
+<p>文件内容头部如上所述，CPU热点主要集中在selectAdvanceRankCandidatesFromRtAd 方法，其中最高的是jshort_disjoint_arraycopy的使用，引起它的主要是StringBuilder.append后需要扩容字符数组导致的array copy。于是找到对应的代码，果不其然，发现在未开启debug级别日志的情况下有很多debug相关的字符串拼接动作。修改后重新采样结果如下，问题解决。</p>
+
+<pre><code>          ns  percent  samples  top
+  ----------  -------  -------  ---
+  1573048239   12.74%      157  Monitor::TrySpin(Thread*)
+  1251599098   10.14%      125  [unknown]
+  1222266324    9.90%      122  OtherRegionsTable::add_reference(void*, int)
+   830435668    6.73%       83  java.nio.HeapByteBuffer._get
+   590272841    4.78%       59  HeapRegionRemSetIterator::fine_has_next(unsigned long&amp;)
+   430869401    3.49%       43  Monitor::ILock(Thread*)
+   410395759    3.32%       41  G1BlockOffsetArrayContigSpace::block_start_unsafe(void const*)
+   409558334    3.32%       41  GenericTaskQueueSet&lt;OverflowTaskQueue&lt;StarTask, (MemoryType)5, 131072u&gt;, (MemoryType)5&gt;::steal_best_of_2(unsigned int, int*, StarTask&amp;)
+   390784596    3.17%       39  Monitor::unlock()
+   360671281    2.92%       36  G1RemSet::refine_card(signed char*, unsigned int, bool)
+   360092908    2.92%       36  G1ParScanThreadState::trim_queue()
+   310183234    2.51%       31  FilterIntoCSClosure::do_oop(oopDesc**)
+   300118751    2.43%       30  G1ParScanThreadState::copy_to_survivor_space(oopDesc*)
+   280537975    2.27%       28  SpinPause
+</code></pre>
+
+<h4 id="其它用途">其它用途</h4>
+
+<p>async-profiler还有很多其他的用处，对于性能要求比较高的应用可以使用它来进行分析。</p>
+
+<blockquote>
+<ul>
+<li>CPU cycles</li>
+<li>Hardware and Software performance counters like cache misses, branch misses, page faults, context switches etc.</li>
+<li>Allocations in Java Heap</li>
+<li>Contented lock attempts, including both Java object monitors and ReentrantLocks</li>
+</ul>
+</blockquote>
+
+<p>本文只是简单介绍了CPU热点的查看，它监测cache miss，堆分配事件，锁事件等功能，并生成火焰图。后续再通过真实的操作案例来分享。</p>
+
+<p>参考</p>
+
+<p><a href="https://github.com/jvm-profiling-tools/async-profiler">https://github.com/jvm-profiling-tools/async-profiler</a></p>
+                        </div>
+                        <div class="columns is-mobile post-meta">
+                            <div class="column is-half-desktop has-text-left is-paddingless"> 
+                                 
+                                更老一篇:<a href="http://www.lihongkun.com/troubleshooting/regulation_expression_backtracing/"> 正则表达式灾难性回溯</a>
+                                
+                            </div>
+                            <div class="column is-half-desktop has-text-right is-paddingless">
+                                
+                                没有了，已经是最新文章
+                                
+                            </div>
+                            <div class="is-clearfix"></div>
+                        </div>
+                        <script src="https://utteranc.es/client.js"
+                                repo="lihongkun/lihongkun.github.io"
+                                issue-term="title"
+                                theme="github-light"
+                                crossorigin="anonymous"
+                                async>
+                        </script>
+                    </article>
+                </div>
+                <div class="column">    <aside>
+        <h2 class="is-size-4">关于我</h2>
+        <div class="content">
+            Working in advertising platform team. Backend on duty,full stack in my own time.
+        </div>
+        <h2 class="is-size-4">GitHub</h2>
+        <div class="content">
+            <a href="https://github.com/lihongkun" target="_blank">https://github.com/lihongkun</a>
+        </div>
+    </aside></div>
+                </div>
+            </div>
+         </main>    <footer class="footer">
+    
+        <div class="copyright has-text-centered">
+            <a href="https://bulma.io">
+                <img src="http://www.lihongkun.com/images/made-with-bulma.png" alt="Made with Bulma" width="128" height="24">
+            </a>
+            <p>© 泛泛之辈 Power by Hugo v0.55.6 - 闽ICP备15009606号</p>
+        </div>
+    </footer>
+    <script type="text/javascript">
+    document.addEventListener('DOMContentLoaded', () => {
+        
+        const $navbarBurgers = Array.prototype.slice.call(document.querySelectorAll('.navbar-burger'), 0);
+        
+        if ($navbarBurgers.length > 0) {
+            
+            $navbarBurgers.forEach( el => {
+                el.addEventListener('click', () => {
+                
+                const target = el.dataset.target;
+                const $target = document.getElementById(target);
+                
+                el.classList.toggle('is-active');
+                $target.classList.toggle('is-active');
+    
+                });
+            });
+        }
+    });
+    </script></body>
+</html>

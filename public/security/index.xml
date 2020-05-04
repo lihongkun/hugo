@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Securities on 泛泛之辈</title>
+    <link>http://www.lihongkun.com/security/</link>
+    <description>Recent content in Securities on 泛泛之辈</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-CN</language>
+    <lastBuildDate>Mon, 15 Jul 2019 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="http://www.lihongkun.com/security/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>单点登录</title>
+      <link>http://www.lihongkun.com/security/sso/</link>
+      <pubDate>Mon, 15 Jul 2019 00:00:00 +0000</pubDate>
+      
+      <guid>http://www.lihongkun.com/security/sso/</guid>
+      <description>&lt;p&gt;&lt;a href=&#34;https://www.lihongkun.com/security/sign_in/&#34;&gt;分布式登录状态一致性&lt;/a&gt; 解决的是同一个域名下的状态，如果一个企业内部存储多个领域的系统，且他们具备不同的特性和域名，又必须提供统一的登录方式。那么这时候单点登录就派上用场了。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>分布式登录状态一致性</title>
+      <link>http://www.lihongkun.com/security/sign_in/</link>
+      <pubDate>Mon, 08 Jul 2019 00:00:00 +0000</pubDate>
+      
+      <guid>http://www.lihongkun.com/security/sign_in/</guid>
+      <description>&lt;p&gt;无状态的HTTP协议如何来保持用户的信息？分布式环境下的登录态是如何存储和使用的？ 本文给你详细的答案。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>SQL注入漏洞</title>
+      <link>http://www.lihongkun.com/security/sql_injection/</link>
+      <pubDate>Mon, 05 Mar 2018 00:00:00 +0000</pubDate>
+      
+      <guid>http://www.lihongkun.com/security/sql_injection/</guid>
+      <description>&lt;p&gt;SQL注入是最高危的漏洞之一,它和命令执行漏洞一样是直接危害应用本身,可能导致数据库内容直接泄露或者被删除等.&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>命令执行漏洞</title>
+      <link>http://www.lihongkun.com/security/cmd_exe/</link>
+      <pubDate>Mon, 26 Feb 2018 00:00:00 +0000</pubDate>
+      
+      <guid>http://www.lihongkun.com/security/cmd_exe/</guid>
+      <description>&lt;p&gt;命令执行漏洞是指攻击者可以随意执行系统命令。通常说的远程执行代码漏洞,都是此类型.&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>CSRF漏洞</title>
+      <link>http://www.lihongkun.com/security/csrf/</link>
+      <pubDate>Mon, 22 Jan 2018 00:00:00 +0000</pubDate>
+      
+      <guid>http://www.lihongkun.com/security/csrf/</guid>
+      <description>&lt;p&gt;CSRF（Cross-site request forgery）跨站请求伪造，也被称为“One Click Attack”或者Session Riding，通常缩写为CSRF或者XSRF，是一种对网站的恶意利用.&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>XSS漏洞</title>
+      <link>http://www.lihongkun.com/security/xss/</link>
+      <pubDate>Mon, 15 Jan 2018 00:00:00 +0000</pubDate>
+      
+      <guid>http://www.lihongkun.com/security/xss/</guid>
+      <description>&lt;p&gt;跨站脚本攻击,简称XSS(Cross Site Scripting) , 是最常见的Web应用程序安全漏洞.&lt;/p&gt;</description>
+    </item>
+    
+  </channel>
+</rss>

@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html><head>
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+
+    
+    <meta name="author"
+            content=""/>
+
+    
+
+    
+
+    
+    <link rel="canonical" href="http://www.lihongkun.com/concurrent/"/>
+
+    
+    <link rel="alternate" type="application/rss&#43;xml" href="http://www.lihongkun.com/concurrent/index.xml">
+    
+
+    
+    
+    
+        
+            
+        
+    
+        
+            
+                
+            
+                
+            
+                
+            
+                
+            
+        
+    
+        
+            
+                
+            
+                
+            
+                
+            
+                
+            
+        
+    
+        
+            
+        
+    
+        
+            
+        
+    
+        
+            
+        
+    
+    <title> Concurrents | 泛泛之辈 </title>
+
+    <link rel="shortcut icon" href="http://www.lihongkun.com/favicon.jpg"/>
+    <link rel="stylesheet" href="http://www.lihongkun.com/css/bulma.min.css"/>
+    <link rel="stylesheet" href="http://www.lihongkun.com/css/style.css"/>
+</head><body><header>
+    <nav class="navbar is-fixed-top is-primary" role="navigation" aria-label="main navigation">
+        <div class="navbar-brand is-size-4">
+            <a class="navbar-item" href="http://www.lihongkun.com/">
+                    泛泛之辈
+            </a>
+            <a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false" data-target="navbar-menu">
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+            </a>
+        </div>
+        <div id="navbar-menu" class="navbar-menu">
+            <div class="navbar-end">
+                
+                    
+                        <a class="navbar-item" href="/">首页</a>
+                    
+                
+                    
+                        <div class="navbar-item has-dropdown is-hoverable">
+                            <a class="navbar-link">基本功</a>
+                            <div class="navbar-dropdown">
+                                
+                                <a class="navbar-item" href="/categories/concurrent/">并发</a>
+                                
+                                <a class="navbar-item" href="/categories/network/">网络</a>
+                                
+                                <a class="navbar-item" href="/categories/security/">Web安全</a>
+                                
+                                <a class="navbar-item" href="/categories/jvm/">Java虚拟机</a>
+                                
+                            </div>
+                        </div>
+                    
+                
+                    
+                        <div class="navbar-item has-dropdown is-hoverable">
+                            <a class="navbar-link">编程框架</a>
+                            <div class="navbar-dropdown">
+                                
+                                <a class="navbar-item" href="/categories/springframework/">Spring</a>
+                                
+                                <a class="navbar-item" href="/categories/mybatis/">Mybatis</a>
+                                
+                                <a class="navbar-item" href="/categories/springcloud/">SpringCloud</a>
+                                
+                                <a class="navbar-item" href="/categories/common/">常用框架</a>
+                                
+                            </div>
+                        </div>
+                    
+                
+                    
+                        <a class="navbar-item" href="/categories/troubleshooting/">问题排查</a>
+                    
+                
+                    
+                        <a class="navbar-item" href="/categories/design/">设计思路</a>
+                    
+                
+                    
+                        <a class="navbar-item" href="/categories/reading/">读书笔记</a>
+                    
+                
+            </div>
+            </div>
+    </nav>
+</header><main>
+            <div class="container">
+                <div class="columns">
+                <div class="column is-four-fifths"><section class="posts">
+
+<article class="post box is-radiusless">
+    <div class="post-title">
+        <a class="post-title-link" href="/concurrent/spin_lock/"><h2 class="is-size-4 has-text-dark">自旋锁</h2></a>
+    </div>
+    <div class="post-meta">
+        <span class="post-time">日期 : 2018-09-04</span>
+    </div>
+    <div class="post-excerpt content">
+        <p>自旋锁是指当一个线程尝试获取某个锁时,如果该锁已被其他线程占用,就一直循环检测锁是否被释放,而不是进入线程挂起或睡眠状态.它适用于锁保护的临界区很小的情况,临界区很小的话,锁占用的时间就很短.</p>
+    </div>
+    <a href="/concurrent/spin_lock/">阅读全文>></a>
+    </article>
+
+<article class="post box is-radiusless">
+    <div class="post-title">
+        <a class="post-title-link" href="/concurrent/using_reentrantlock/"><h2 class="is-size-4 has-text-dark">ReentrantLock使用</h2></a>
+    </div>
+    <div class="post-meta">
+        <span class="post-time">日期 : 2018-08-23</span>
+    </div>
+    <div class="post-excerpt content">
+        <p>ReentrantLock能做到synchronized得功能，而且在JDK1.6以前性能比后者好很多。之后synchronized性能进行了改进，差距已经不是很大。</p>
+    </div>
+    <a href="/concurrent/using_reentrantlock/">阅读全文>></a>
+    </article>
+
+<article class="post box is-radiusless">
+    <div class="post-title">
+        <a class="post-title-link" href="/concurrent/shared_variable_in_concurrent_env/"><h2 class="is-size-4 has-text-dark">共享变量的并发安全性</h2></a>
+    </div>
+    <div class="post-meta">
+        <span class="post-time">日期 : 2018-08-15</span>
+    </div>
+    <div class="post-excerpt content">
+        <p>线程通信模型大体可分为两种，共享变量和消息传递。虽然消息传递（Actor模型）是比较被推崇的，但是Java语言并不支持。所以在并发程序中我们必须要面对共享变量所带来的编程复杂度。</p>
+    </div>
+    <a href="/concurrent/shared_variable_in_concurrent_env/">阅读全文>></a>
+    </article>
+
+</section>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<nav class="page-nav">
+    
+    <a href="/concurrent/page/2/" class="extend prev">上一页</a>
+    
+
+    
+
+      
+
+        
+
+      
+
+      
+      
+          <a href="/concurrent/" class="page-number">1</a>
+      
+
+    
+
+      
+
+        
+
+      
+
+      
+      
+          <a href="/concurrent/page/2/" class="page-number">2</a>
+      
+
+    
+
+      
+
+        
+
+      
+
+      
+      
+          <a href="/concurrent/page/3/" class="page-number current">3</a>
+      
+
+        
+
+
+    
+
+</nav>
+</div>
+                <div class="column">    <aside>
+        <h2 class="is-size-4">关于我</h2>
+        <div class="content">
+            Working in advertising platform team. Backend on duty,full stack in my own time.
+        </div>
+        <h2 class="is-size-4">GitHub</h2>
+        <div class="content">
+            <a href="https://github.com/lihongkun" target="_blank">https://github.com/lihongkun</a>
+        </div>
+    </aside></div>
+                </div>
+            </div>
+         </main>    <footer class="footer">
+    
+        <div class="copyright has-text-centered">
+            <a href="https://bulma.io">
+                <img src="http://www.lihongkun.com/images/made-with-bulma.png" alt="Made with Bulma" width="128" height="24">
+            </a>
+            <p>© 泛泛之辈 Power by Hugo v0.55.6 - 闽ICP备15009606号</p>
+        </div>
+    </footer>
+    <script type="text/javascript">
+    document.addEventListener('DOMContentLoaded', () => {
+        
+        const $navbarBurgers = Array.prototype.slice.call(document.querySelectorAll('.navbar-burger'), 0);
+        
+        if ($navbarBurgers.length > 0) {
+            
+            $navbarBurgers.forEach( el => {
+                el.addEventListener('click', () => {
+                
+                const target = el.dataset.target;
+                const $target = document.getElementById(target);
+                
+                el.classList.toggle('is-active');
+                $target.classList.toggle('is-active');
+    
+                });
+            });
+        }
+    });
+    </script></body>
+</html>

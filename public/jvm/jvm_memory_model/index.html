@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html><head>
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+
+    
+    <meta name="author"
+            content=""/>
+
+    
+    <meta name="description" content="Java虚拟机的内存区域 叫做 运行时数据区 , 这是一张比较典型的内存划分图
+"/>
+    
+
+    
+
+    
+    <link rel="canonical" href="http://www.lihongkun.com/jvm/jvm_memory_model/"/>
+
+    
+
+    
+    
+    
+        
+            
+        
+    
+        
+            
+                
+            
+                
+            
+                
+            
+                
+            
+        
+    
+        
+            
+                
+            
+                
+            
+                
+            
+                
+            
+        
+    
+        
+            
+        
+    
+        
+            
+        
+    
+        
+            
+        
+    
+    <title> Java虚拟机内存模型简介 | 泛泛之辈 </title>
+
+    <link rel="shortcut icon" href="http://www.lihongkun.com/favicon.jpg"/>
+    <link rel="stylesheet" href="http://www.lihongkun.com/css/bulma.min.css"/>
+    <link rel="stylesheet" href="http://www.lihongkun.com/css/style.css"/>
+</head><body><header>
+    <nav class="navbar is-fixed-top is-primary" role="navigation" aria-label="main navigation">
+        <div class="navbar-brand is-size-4">
+            <a class="navbar-item" href="http://www.lihongkun.com/">
+                    泛泛之辈
+            </a>
+            <a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false" data-target="navbar-menu">
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+            </a>
+        </div>
+        <div id="navbar-menu" class="navbar-menu">
+            <div class="navbar-end">
+                
+                    
+                        <a class="navbar-item" href="/">首页</a>
+                    
+                
+                    
+                        <div class="navbar-item has-dropdown is-hoverable">
+                            <a class="navbar-link">基本功</a>
+                            <div class="navbar-dropdown">
+                                
+                                <a class="navbar-item" href="/categories/concurrent/">并发</a>
+                                
+                                <a class="navbar-item" href="/categories/network/">网络</a>
+                                
+                                <a class="navbar-item" href="/categories/security/">Web安全</a>
+                                
+                                <a class="navbar-item" href="/categories/jvm/">Java虚拟机</a>
+                                
+                            </div>
+                        </div>
+                    
+                
+                    
+                        <div class="navbar-item has-dropdown is-hoverable">
+                            <a class="navbar-link">编程框架</a>
+                            <div class="navbar-dropdown">
+                                
+                                <a class="navbar-item" href="/categories/springframework/">Spring</a>
+                                
+                                <a class="navbar-item" href="/categories/mybatis/">Mybatis</a>
+                                
+                                <a class="navbar-item" href="/categories/springcloud/">SpringCloud</a>
+                                
+                                <a class="navbar-item" href="/categories/common/">常用框架</a>
+                                
+                            </div>
+                        </div>
+                    
+                
+                    
+                        <a class="navbar-item" href="/categories/troubleshooting/">问题排查</a>
+                    
+                
+                    
+                        <a class="navbar-item" href="/categories/design/">设计思路</a>
+                    
+                
+                    
+                        <a class="navbar-item" href="/categories/reading/">读书笔记</a>
+                    
+                
+            </div>
+            </div>
+    </nav>
+</header><main>
+            <div class="container">
+                <div class="columns">
+                <div class="column is-four-fifths">
+                    <article class="post box is-radiusless">
+                        <div class="post-title">
+                            <h2 class="is-size-4">Java虚拟机内存模型简介</h2>
+                        </div>
+                            <div class="post-meta">
+                            <span class="post-time">日期&nbsp;:&nbsp;2018-05-07</span>
+                        </div>
+                        <div class="post-content content">
+                            <p>Java虚拟机的内存区域 叫做 运行时数据区 , 这是一张比较典型的内存划分图</p>
+
+<p><img src="memory_model.jpg" alt="image" /></p>
+
+<h4 id="heap-space">Heap Space</h4>
+
+<p>堆内存,我们经常在命令行启动的时候指定了他的大小.用于分配和存储绝大部分的对象实例.是VM管理的最大一块内存, 也是垃圾收集器的主要活动区域.</p>
+
+<p>程序中的大多数可回收的内存可归为两类:
+- 大部分对象很快就不再使用
+- 还有一部分不会立即无用,但也不会持续(太)长时间</p>
+
+<p><img src="heap_age.png" alt="image" /></p>
+
+<p>这些观测形成了 弱代假设(Weak Generational Hypothesis).基于这一假设, VM中的内存被分为年轻代(Young Generation)和老年代(Old Generation).老年代有时候也称为 年老区(Tenured).拆分为这样两个可清理的单独区域，允许采用不同的算法来大幅提高GC的性能。</p>
+
+<p>如上图,横坐标可理解为对象的存活时间.大部分对象分配完不就就被回收了.有一些要存活很久.垃圾回收会导致应用程序停顿(Stop-the-world).对于不同存活时间的对象在垃圾回收区别对待从而进行各种优化来减少这种停顿,是分代内存结构设计的初衷.</p>
+
+<p>年轻代(Young Generation) 进一步划分为Eden区 和 两个存活区(Survivor).
+Eden用来分配新创建的对象.在一次Miror GC后Eden区的对象未被回收的将被放到Survivor区的其中一个,Eden和另一个Survivor被清空.符合条件的被晋升到老年代(Old Generation).可以使用一张图来形象表示一下</p>
+
+<p><img src="gc.png" alt="image" /></p>
+
+<h4 id="method-area">Method Area</h4>
+
+<p>也称为&rdquo;永久代&rdquo;(Permanent Generation).这是用于存储被JVM加载的类信息、常量、静态变量、即时编译器编译后的代码等数据.</p>
+
+<p>Java 8直接删除了永久代(Permanent Generation),改用 Metaspace.元数据区位于本地内存(native memory),不再影响到普通的Java对象.默认情况下, Metaspace的大小只受限于Java进程可用的本地内存.</p>
+
+<h4 id="native-area">Native Area</h4>
+
+<p>线程私有域,它生命周期与线程相同,依赖用户线程的启动/结束而创建/销毁(在Hotspot VM内, 每个线程都与操作系统的本地线程直接映射,因此这部分内存区域的存/否跟随本地线程的生/死).</p>
+
+<h5 id="pc">PC</h5>
+
+<p>Program Counter Register(程序计数器),一块较小的内存空间,作用是当前线程所执行字节码的行号指示器(类似于传统CPU模型中的PC),PC在每次指令执行后自增,维护下一个将要执行指令的地址.</p>
+
+<h5 id="stack">Stack</h5>
+
+<p>Java 虚拟机栈,每个方法被执行时会创建一个栈帧(Stack Frame)用于存储局部变量表、操作数栈、动态链接、方法出口等信息.每个方法被调用至返回的过程, 就对应着一个栈帧在虚拟机栈中从入栈到出栈的过程(VM提供了-Xss来指定线程的最大栈空间, 该参数也直接决定了函数调用的最大深度)</p>
+
+<h5 id="native-stack">Native Stack</h5>
+
+<p>本地方法栈,与Java Stack作用类似,区别是Java Stack为执行Java方法服务,而本地方法栈则为Native方法服务.</p>
+
+<h4 id="结语">结语</h4>
+
+<p>本文简述了一下,Java虚拟机的内存模型.大部分系统都还没到拼JVM调优的时候,但是全面了解能够在遇到系统瓶颈时迅速定位.及时发现和解决一些坏代码.</p>
+                        </div>
+                        <div class="columns is-mobile post-meta">
+                            <div class="column is-half-desktop has-text-left is-paddingless"> 
+                                 
+                                更老一篇:<a href="http://www.lihongkun.com/jvm/java_intern/"> Java字符串常量调优</a>
+                                
+                            </div>
+                            <div class="column is-half-desktop has-text-right is-paddingless">
+                                
+                                更新一篇:<a href="http://www.lihongkun.com/jvm/garbage_collection/"> Java垃圾收集简介</a>
+                                
+                            </div>
+                            <div class="is-clearfix"></div>
+                        </div>
+                        <script src="https://utteranc.es/client.js"
+                                repo="lihongkun/lihongkun.github.io"
+                                issue-term="title"
+                                theme="github-light"
+                                crossorigin="anonymous"
+                                async>
+                        </script>
+                    </article>
+                </div>
+                <div class="column">    <aside>
+        <h2 class="is-size-4">关于我</h2>
+        <div class="content">
+            Working in advertising platform team. Backend on duty,full stack in my own time.
+        </div>
+        <h2 class="is-size-4">GitHub</h2>
+        <div class="content">
+            <a href="https://github.com/lihongkun" target="_blank">https://github.com/lihongkun</a>
+        </div>
+    </aside></div>
+                </div>
+            </div>
+         </main>    <footer class="footer">
+    
+        <div class="copyright has-text-centered">
+            <a href="https://bulma.io">
+                <img src="http://www.lihongkun.com/images/made-with-bulma.png" alt="Made with Bulma" width="128" height="24">
+            </a>
+            <p>© 泛泛之辈 Power by Hugo v0.55.6 - 闽ICP备15009606号</p>
+        </div>
+    </footer>
+    <script type="text/javascript">
+    document.addEventListener('DOMContentLoaded', () => {
+        
+        const $navbarBurgers = Array.prototype.slice.call(document.querySelectorAll('.navbar-burger'), 0);
+        
+        if ($navbarBurgers.length > 0) {
+            
+            $navbarBurgers.forEach( el => {
+                el.addEventListener('click', () => {
+                
+                const target = el.dataset.target;
+                const $target = document.getElementById(target);
+                
+                el.classList.toggle('is-active');
+                $target.classList.toggle('is-active');
+    
+                });
+            });
+        }
+    });
+    </script></body>
+</html>

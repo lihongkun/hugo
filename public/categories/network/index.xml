@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>network on 泛泛之辈</title>
+    <link>http://www.lihongkun.com/categories/network/</link>
+    <description>Recent content in network on 泛泛之辈</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-CN</language>
+    <lastBuildDate>Mon, 11 Mar 2019 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="http://www.lihongkun.com/categories/network/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Java NIO</title>
+      <link>http://www.lihongkun.com/network/java_nio/</link>
+      <pubDate>Mon, 11 Mar 2019 00:00:00 +0000</pubDate>
+      
+      <guid>http://www.lihongkun.com/network/java_nio/</guid>
+      <description>&lt;p&gt;Java NIO 是 IO复用模型在Java平台的实现 , 针对Java BIO在高并发情况下的缺点 1.4之后提供了NIO的实现. 还是以EchoServer为例子.&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Java BIO</title>
+      <link>http://www.lihongkun.com/network/java_bio/</link>
+      <pubDate>Mon, 04 Mar 2019 00:00:00 +0000</pubDate>
+      
+      <guid>http://www.lihongkun.com/network/java_bio/</guid>
+      <description>&lt;p&gt;在JDK1.4出来之前,建立网络连接的时候采用BIO模式,下面以EchoServer为例子聊聊Java的阻塞IO.&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>网络IO模型</title>
+      <link>http://www.lihongkun.com/network/network_io_model/</link>
+      <pubDate>Mon, 25 Feb 2019 00:00:00 +0000</pubDate>
+      
+      <guid>http://www.lihongkun.com/network/network_io_model/</guid>
+      <description>&lt;p&gt;一次网络IO 的调用涉及到用户进程和系统内核对象 , 以读为例.&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;等待网络上的数据分组到达,并复制到内核的缓冲区&lt;/li&gt;
+&lt;li&gt;内核缓冲区数据复制到用户进程中,也就是调用网络IO进程的缓冲区.&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;常见的IO模型有五种, 不同的IO模型在这两个阶段的处理上各不相同.&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>TCP三次握手和短连接优化</title>
+      <link>http://www.lihongkun.com/network/tcp_handshake_and_short_connection/</link>
+      <pubDate>Mon, 28 Jan 2019 00:00:00 +0000</pubDate>
+      
+      <guid>http://www.lihongkun.com/network/tcp_handshake_and_short_connection/</guid>
+      <description>&lt;p&gt;虽然高级语言或者网络库对于网络连接的细节进行了屏蔽, 但是在遇到瓶颈的时候难免要深入其中,才能对其进行调优. 那么连接建立和终止的时候发生了什么?&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>网卡容量</title>
+      <link>http://www.lihongkun.com/network/nic_capacity/</link>
+      <pubDate>Mon, 21 Jan 2019 00:00:00 +0000</pubDate>
+      
+      <guid>http://www.lihongkun.com/network/nic_capacity/</guid>
+      <description>&lt;p&gt;网卡是工作在链路层的网络组件,是局域网中连接计算机和传输介质的接口,不仅能实现与局域网传输介质之间的物理连接和电信号匹配,还涉及帧的发送与接收、帧的封装与拆封、介质访问控制、数据的编码与解码以及数据缓存的功能等.又称为通信适配器或网络适配器或网络接口卡(Network Interface Card)&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>网络延时</title>
+      <link>http://www.lihongkun.com/network/network_delay/</link>
+      <pubDate>Mon, 14 Jan 2019 00:00:00 +0000</pubDate>
+      
+      <guid>http://www.lihongkun.com/network/network_delay/</guid>
+      <description>&lt;p&gt;分布式系统中 , 网络是一个不稳定的存在.一些接口的调用通常存在不稳定或者是延时的问题.除了要做好监控外,这里介绍一下简单的快速定位命令.&lt;/p&gt;</description>
+    </item>
+    
+  </channel>
+</rss>

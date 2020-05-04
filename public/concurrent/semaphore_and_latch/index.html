@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html><head>
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+
+    
+    <meta name="author"
+            content=""/>
+
+    
+    <meta name="description" content="底层实现是AbstractQueuedSynchronizer的同步工具类有不少,先来聊聊信号量(Semaphore),闭锁(Latch)
+"/>
+    
+
+    
+
+    
+    <link rel="canonical" href="http://www.lihongkun.com/concurrent/semaphore_and_latch/"/>
+
+    
+
+    
+    
+    
+        
+            
+        
+    
+        
+            
+                
+            
+                
+            
+                
+            
+                
+            
+        
+    
+        
+            
+                
+            
+                
+            
+                
+            
+                
+            
+        
+    
+        
+            
+        
+    
+        
+            
+        
+    
+        
+            
+        
+    
+    <title> 同步工具类 - 信号量和闭锁 | 泛泛之辈 </title>
+
+    <link rel="shortcut icon" href="http://www.lihongkun.com/favicon.jpg"/>
+    <link rel="stylesheet" href="http://www.lihongkun.com/css/bulma.min.css"/>
+    <link rel="stylesheet" href="http://www.lihongkun.com/css/style.css"/>
+</head><body><header>
+    <nav class="navbar is-fixed-top is-primary" role="navigation" aria-label="main navigation">
+        <div class="navbar-brand is-size-4">
+            <a class="navbar-item" href="http://www.lihongkun.com/">
+                    泛泛之辈
+            </a>
+            <a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false" data-target="navbar-menu">
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+            </a>
+        </div>
+        <div id="navbar-menu" class="navbar-menu">
+            <div class="navbar-end">
+                
+                    
+                        <a class="navbar-item" href="/">首页</a>
+                    
+                
+                    
+                        <div class="navbar-item has-dropdown is-hoverable">
+                            <a class="navbar-link">基本功</a>
+                            <div class="navbar-dropdown">
+                                
+                                <a class="navbar-item" href="/categories/concurrent/">并发</a>
+                                
+                                <a class="navbar-item" href="/categories/network/">网络</a>
+                                
+                                <a class="navbar-item" href="/categories/security/">Web安全</a>
+                                
+                                <a class="navbar-item" href="/categories/jvm/">Java虚拟机</a>
+                                
+                            </div>
+                        </div>
+                    
+                
+                    
+                        <div class="navbar-item has-dropdown is-hoverable">
+                            <a class="navbar-link">编程框架</a>
+                            <div class="navbar-dropdown">
+                                
+                                <a class="navbar-item" href="/categories/springframework/">Spring</a>
+                                
+                                <a class="navbar-item" href="/categories/mybatis/">Mybatis</a>
+                                
+                                <a class="navbar-item" href="/categories/springcloud/">SpringCloud</a>
+                                
+                                <a class="navbar-item" href="/categories/common/">常用框架</a>
+                                
+                            </div>
+                        </div>
+                    
+                
+                    
+                        <a class="navbar-item" href="/categories/troubleshooting/">问题排查</a>
+                    
+                
+                    
+                        <a class="navbar-item" href="/categories/design/">设计思路</a>
+                    
+                
+                    
+                        <a class="navbar-item" href="/categories/reading/">读书笔记</a>
+                    
+                
+            </div>
+            </div>
+    </nav>
+</header><main>
+            <div class="container">
+                <div class="columns">
+                <div class="column is-four-fifths">
+                    <article class="post box is-radiusless">
+                        <div class="post-title">
+                            <h2 class="is-size-4">同步工具类 - 信号量和闭锁</h2>
+                        </div>
+                            <div class="post-meta">
+                            <span class="post-time">日期&nbsp;:&nbsp;2018-09-17</span>
+                        </div>
+                        <div class="post-content content">
+                            <p>底层实现是AbstractQueuedSynchronizer的同步工具类有不少,先来聊聊信号量(Semaphore),闭锁(Latch)</p>
+
+<h3 id="信号量">信号量</h3>
+
+<p>计数信号量是用来控制同时访问某个特定资源的<strong>操作数量</strong>,或者同时执行某个指定操作的数量.</p>
+
+<p>主要提供的方法如下</p>
+
+<pre><code>//构造函数,指定许可数量还有是否是公平排队
+public Semaphore(int permits);
+public Semaphore(int permits, boolean fair);
+
+// 获得许可,可以指定数量和是否可被中断
+public void acquire() throws InterruptedException;
+public void acquireUninterruptibly();
+public void acquire(int permits) throws InterruptedException;
+public void acquireUninterruptibly(int permits) ;
+
+// 尝试获得许可,可指定数量,等待时间
+public boolean tryAcquire() ;
+public boolean tryAcquire(long timeout, TimeUnit unit)throws InterruptedException;
+public boolean tryAcquire(int permits) 
+public boolean tryAcquire(int permits, long timeout, TimeUnit unit)throws InterruptedException;
+
+// 释放许可
+public void release(int permits);
+
+// 可用许可数量
+public int availablePermits() ;
+
+// 获取剩余的所有可用许可
+public int drainPermits();
+
+// 减少许可数量 - 构造后发现有些资源不可用
+// 使用此函数减少数量
+protected void reducePermits(int reduction);
+
+// 等待队列
+public final boolean hasQueuedThreads() ;
+public final int getQueueLength();
+protected Collection&lt;Thread&gt; getQueuedThreads();
+</code></pre>
+
+<p>它内部维护着一组许可,在执行某个指定操作时需要先获得许可(acquire),结束后释放许可(release).如果没有许可,那么acquire将阻塞,直到有许可或者中断、超时.如此可以达到控制并发访问量的目的。</p>
+
+<p>它可以用来实现资源池,或者对容器实现边界.二值许可的信号量可以当做互斥体(显式锁)来使用.</p>
+
+<pre><code>public class Pool {
+    private static final int MAX_AVAILABLE = 100;
+    private final Semaphore available = new Semaphore(MAX_AVAILABLE, true);
+
+    public Object getItem() throws InterruptedException {
+        available.acquire();
+        return getNextAvailableItem();
+    }
+
+    public void putItem(Object x) {
+        if (markAsUnused(x))
+            available.release();
+    }
+
+    // Not a particularly efficient data structure; just for demo
+    protected Object[] items = new Object[MAX_AVAILABLE]; 
+    protected boolean[] used = new boolean[MAX_AVAILABLE];
+
+    protected synchronized Object getNextAvailableItem() {
+        for (int i = 0; i &lt; MAX_AVAILABLE; ++i) {
+            if (!used[i]) {
+                used[i] = true;
+                return items[i];
+            }
+        }
+        return null; // not reached
+    }
+
+    protected synchronized boolean markAsUnused(Object item) {
+        for (int i = 0; i &lt; MAX_AVAILABLE; ++i) {
+            if (item == items[i]) {
+                if (used[i]) {
+                    used[i] = false;
+                    return true;
+                } else
+                    return false;
+            }
+        }
+        return false;
+    }
+}
+</code></pre>
+
+<p>这是官方举的一个例子,控制资源池的访问.许可数量为100,也就是资源被访问的最高并发数为100.</p>
+
+<h3 id="闭锁">闭锁</h3>
+
+<p>闭锁可用延迟线程的进度直到其到达某个状态.CountDownLatch可以使一个或者多个线程等待一组事件的发生.它的主要方法如下:</p>
+
+<pre><code>// 初始化 , 计数器必须大于0
+public CountDownLatch(int count) {
+    if (count &lt; 0) throw new IllegalArgumentException(&quot;count &lt; 0&quot;);
+    this.sync = new Sync(count);
+}
+
+//进入等待
+public void await() throws InterruptedException ;
+public boolean await(long timeout, TimeUnit unit) throws InterruptedException 
+
+// 事件发生,递减计数器
+public void countDown() ;
+
+// 当前计数器的值
+public long getCount();
+</code></pre>
+
+<p>闭锁状态包含一个计数器,该计数器被初始化为一个正数,表示需要等待的事件数量. countDown方法递减计数器,表示已经有一个事件已经发生了.而await方法等待计数器到达零,这表示所有的事件都已经发生了.如果计数器非 零,那么await会一直阻塞直到计数器为零或者等待中的线程中断或者等待超时.</p>
+
+<p><strong>示例一</strong></p>
+
+<pre><code>// approach 1
+// 创建连接
+
+ZooKeeper zk = new ZooKeeper(hosts, SESSION_TIMEOUT, new Watcher() {  
+    public void process(WatchedEvent event) {
+    }  
+});   
+
+// 创建子节点 略
+
+// approach 2
+// 创建连接
+CountDownLatch latch = new CountDownLatch(1);
+
+ZooKeeper zk = new ZooKeeper(hosts, SESSION_TIMEOUT, new Watcher() {  
+    public void process(WatchedEvent event) {
+        // 连接建立时,打开latch,唤醒wait在该latch上的线程  
+        if (event.getState() == KeeperState.SyncConnected) {  
+            latch.countDown();  
+        }  
+    }  
+});
+
+latch.await();
+
+// 创建子节点 略
+
+
+</code></pre>
+
+<p>上面一段代码演示了两种方式方式创建zk连接然后立刻创建znode. 方式一会概率性出现创建的节点的时候抛出异常.原因是创建ZooKeeper连接是异步的,如果连接还没有创建成功进行操作则会抛出异常.</p>
+
+<p>方式二就是解决方法.使用闭锁,连接成功了才打开闭锁.执行后续的操作.这是一个典型的闭锁的典型用法.</p>
+
+<p><strong>示例二</strong></p>
+
+<p>再举个等待多个事件的场景.</p>
+
+<p>假设一次广告播放请求需要去请求多家DSP取其中价格高的进行播放,要求在50ms内返回.程序需要多路进行调用,然后取结果进行处理.而且还要设置一个超时时间,没有在指定时间内的返回不进行处理.</p>
+
+<pre><code>private static ExecutorService ES = Executors.newFixedThreadPool(3);
+    
+public static void main(String[] args) throws Exception {
+    
+    final CountDownLatch latch = new CountDownLatch(3);
+    
+    // 请求多家DSP
+    List&lt;Future&lt;Integer&gt;&gt; futureList = new ArrayList&lt;&gt;();
+    for(int i=0;i&lt;3;i++){
+        futureList.add(ES.submit(new DspInvoker(String.valueOf(i), latch)));
+    }
+    
+    //等待执行多家DSP返回,或者超时
+    latch.await(5, TimeUnit.SECONDS);
+    
+    //处理结果
+    for(int i=0;i&lt;3;i++){
+        Future&lt;Integer&gt; future = futureList.get(i);
+        if(future.isDone())
+            System.out.println(future.get());
+    }
+    
+    ES.shutdown();
+}
+
+// DSP请求线程
+private static class DspInvoker implements Callable&lt;Integer&gt;{
+    
+    private String name;
+    
+    private CountDownLatch latch;
+    
+    public DspInvoker(String name,CountDownLatch latch){
+        this.name = name;
+        this.latch = latch;
+    }
+
+    @Override
+    public Integer call() throws Exception {
+        
+        Random rand = new Random();
+        int mills = rand.nextInt(1000)*10;
+        try{
+            Thread.sleep(mills);
+            System.out.println(&quot;I'm &quot;+name+&quot;,will sleep &quot;+mills+&quot; millseconds&quot;);
+            //请求结束,减小闭锁计数
+            latch.countDown();
+        }
+        catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        
+        return mills;
+    }
+}
+</code></pre>
+
+<p>示例代码模拟了3个线程去请求DSP并等待其5s返回并处理结果.</p>
+
+<pre><code>I'm 2,will sleep 1460 millseconds
+I'm 0,will sleep 4000 millseconds
+4000
+1460
+I'm 1,will sleep 9460 millseconds
+</code></pre>
+
+<p>取其中的一次结果看到0和2号线程在规定的时间内返回了结果并且被处理了.而1号线程超时了,结果没有被处理.</p>
+
+<h3 id="小结">小结</h3>
+
+<p>信号量用于控制资源的并发访问数,闭锁让线程等待某个或者某些事件发生才继续执行.</p>
+                        </div>
+                        <div class="columns is-mobile post-meta">
+                            <div class="column is-half-desktop has-text-left is-paddingless"> 
+                                 
+                                更老一篇:<a href="http://www.lihongkun.com/concurrent/abstract_queued_synchronizer/"> AbstractQueuedSynchronizer</a>
+                                
+                            </div>
+                            <div class="column is-half-desktop has-text-right is-paddingless">
+                                
+                                更新一篇:<a href="http://www.lihongkun.com/concurrent/cyclic_barrier/"> 同步工具类 - 栅栏</a>
+                                
+                            </div>
+                            <div class="is-clearfix"></div>
+                        </div>
+                        <script src="https://utteranc.es/client.js"
+                                repo="lihongkun/lihongkun.github.io"
+                                issue-term="title"
+                                theme="github-light"
+                                crossorigin="anonymous"
+                                async>
+                        </script>
+                    </article>
+                </div>
+                <div class="column">    <aside>
+        <h2 class="is-size-4">关于我</h2>
+        <div class="content">
+            Working in advertising platform team. Backend on duty,full stack in my own time.
+        </div>
+        <h2 class="is-size-4">GitHub</h2>
+        <div class="content">
+            <a href="https://github.com/lihongkun" target="_blank">https://github.com/lihongkun</a>
+        </div>
+    </aside></div>
+                </div>
+            </div>
+         </main>    <footer class="footer">
+    
+        <div class="copyright has-text-centered">
+            <a href="https://bulma.io">
+                <img src="http://www.lihongkun.com/images/made-with-bulma.png" alt="Made with Bulma" width="128" height="24">
+            </a>
+            <p>© 泛泛之辈 Power by Hugo v0.55.6 - 闽ICP备15009606号</p>
+        </div>
+    </footer>
+    <script type="text/javascript">
+    document.addEventListener('DOMContentLoaded', () => {
+        
+        const $navbarBurgers = Array.prototype.slice.call(document.querySelectorAll('.navbar-burger'), 0);
+        
+        if ($navbarBurgers.length > 0) {
+            
+            $navbarBurgers.forEach( el => {
+                el.addEventListener('click', () => {
+                
+                const target = el.dataset.target;
+                const $target = document.getElementById(target);
+                
+                el.classList.toggle('is-active');
+                $target.classList.toggle('is-active');
+    
+                });
+            });
+        }
+    });
+    </script></body>
+</html>

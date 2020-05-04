@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html><head>
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+
+    
+    <meta name="author"
+            content=""/>
+
+    
+    <meta name="description" content="在并发不高的场景下是不需要在进行特殊的配置了,但是在并发量比较大的话springboot 对于默认的tomcat连接器参数可能会导致频频的连接拒绝现象.
+"/>
+    
+
+    
+
+    
+    <link rel="canonical" href="http://www.lihongkun.com/springframework/springboot_tomcat_connetor/"/>
+
+    
+
+    
+    
+    
+        
+            
+        
+    
+        
+            
+                
+            
+                
+            
+                
+            
+                
+            
+        
+    
+        
+            
+                
+            
+                
+            
+                
+            
+                
+            
+        
+    
+        
+            
+        
+    
+        
+            
+        
+    
+        
+            
+        
+    
+    <title> tomcat连接器调优 | 泛泛之辈 </title>
+
+    <link rel="shortcut icon" href="http://www.lihongkun.com/favicon.jpg"/>
+    <link rel="stylesheet" href="http://www.lihongkun.com/css/bulma.min.css"/>
+    <link rel="stylesheet" href="http://www.lihongkun.com/css/style.css"/>
+</head><body><header>
+    <nav class="navbar is-fixed-top is-primary" role="navigation" aria-label="main navigation">
+        <div class="navbar-brand is-size-4">
+            <a class="navbar-item" href="http://www.lihongkun.com/">
+                    泛泛之辈
+            </a>
+            <a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false" data-target="navbar-menu">
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+            </a>
+        </div>
+        <div id="navbar-menu" class="navbar-menu">
+            <div class="navbar-end">
+                
+                    
+                        <a class="navbar-item" href="/">首页</a>
+                    
+                
+                    
+                        <div class="navbar-item has-dropdown is-hoverable">
+                            <a class="navbar-link">基本功</a>
+                            <div class="navbar-dropdown">
+                                
+                                <a class="navbar-item" href="/categories/concurrent/">并发</a>
+                                
+                                <a class="navbar-item" href="/categories/network/">网络</a>
+                                
+                                <a class="navbar-item" href="/categories/security/">Web安全</a>
+                                
+                                <a class="navbar-item" href="/categories/jvm/">Java虚拟机</a>
+                                
+                            </div>
+                        </div>
+                    
+                
+                    
+                        <div class="navbar-item has-dropdown is-hoverable">
+                            <a class="navbar-link">编程框架</a>
+                            <div class="navbar-dropdown">
+                                
+                                <a class="navbar-item" href="/categories/springframework/">Spring</a>
+                                
+                                <a class="navbar-item" href="/categories/mybatis/">Mybatis</a>
+                                
+                                <a class="navbar-item" href="/categories/springcloud/">SpringCloud</a>
+                                
+                                <a class="navbar-item" href="/categories/common/">常用框架</a>
+                                
+                            </div>
+                        </div>
+                    
+                
+                    
+                        <a class="navbar-item" href="/categories/troubleshooting/">问题排查</a>
+                    
+                
+                    
+                        <a class="navbar-item" href="/categories/design/">设计思路</a>
+                    
+                
+                    
+                        <a class="navbar-item" href="/categories/reading/">读书笔记</a>
+                    
+                
+            </div>
+            </div>
+    </nav>
+</header><main>
+            <div class="container">
+                <div class="columns">
+                <div class="column is-four-fifths">
+                    <article class="post box is-radiusless">
+                        <div class="post-title">
+                            <h2 class="is-size-4">tomcat连接器调优</h2>
+                        </div>
+                            <div class="post-meta">
+                            <span class="post-time">日期&nbsp;:&nbsp;2018-03-13</span>
+                        </div>
+                        <div class="post-content content">
+                            <p>在并发不高的场景下是不需要在进行特殊的配置了,但是在并发量比较大的话springboot 对于默认的tomcat连接器参数可能会导致频频的连接拒绝现象.</p>
+
+<h3 id="设计架构">设计架构</h3>
+
+<p>找找独立容器的配置,我们其实很容易想到在Server.xml有个Connector的配置.在tomcat的设计架构里面,连接器就是用来接收请求的.</p>
+
+<p><img src="connetor.jpg" alt="image" /></p>
+
+<p>其中Acceptor是一个Socket连接模块,接收到连接以后放入events queue,再由 单线程的Poller 从队列中取出,交由Worker线程池去处理请求.</p>
+
+<h3 id="参数原理">参数原理</h3>
+
+<p>连接器并发连接相关的配置比较重要的三个参数 acceptCount , maxConnection  , maxThread .</p>
+
+<ul>
+<li>maxThread 不难理解,也就是 worker线程池的总数.它决定了容器能同时处理的请求.</li>
+
+<li><p>maxConnection 是连接器所能建立的连接总数,结合上述的图,他是events queue 和 worker活跃线程 之和.</p>
+
+<pre><code>
+// NioEndPoint.java
+//if we have reached max connections, wait
+countUpOrAwaitConnection();
+
+SocketChannel socket = null;
+try {
+// Accept the next incoming connection from the server
+// socket
+socket = serverSock.accept();
+} catch (IOException ioe) {
+// We didn't get a socket
+countDownConnection();
+if (running) {
+    // Introduce delay if necessary
+    errorDelay = handleExceptionWithDelay(errorDelay);
+    // re-throw
+    throw ioe;
+} else {
+    break;
+}
+}
+
+protected void countUpOrAwaitConnection() throws InterruptedException {
+if (maxConnections==-1) return;
+LimitLatch latch = connectionLimitLatch;
+if (latch!=null) latch.countUpOrAwait();
+}
+
+</code></pre></li>
+</ul>
+
+<p>上述代码是 Acceptor 接收socket连接的主要逻辑,在进入accept之前都会进入countUpOrAwaitConnection方法,使用LimitLatch来限制总的连接数一定不会超过maxConnection的数量.</p>
+
+<ul>
+<li>acceptCount ,这个配置参数是比较容易从字面上误解的.字面是接收数量.真正的意义是在 maxConnection 到达上限后,还能建立多少连接.这个需要从tcp原理上来解析.acceptCount在tomcat内部被映射成为backlog,也就是Acceptor里面的Socket参数.这个参数决定了三次握手连接中的 sync queue 和 accept queue的 总大小.</li>
+</ul>
+
+<p><img src="tcp_handshake.jpg" alt="" /></p>
+
+<p>如上图所示,服务器端的 SYN_RCVD状态和ESTABLISHED状态分别维护着一个队列,这个队列的最大值就是backlog.这里操作系统接受连接后,处于ESTABLISHED状态,缓存到accept queue,还没有被应用accept的连接.那么acceptCount可以理解为在maxConnection到达后,容器还会接收到的连接数.</p>
+
+<h3 id="如何配置">如何配置</h3>
+
+<p>三个参数的意义已经很明了, tomcat 默认的 配置是 maxConnection = 10000 , maxThread = 200 , backLog = 150,也就是最大能建立得而连接数是10150,在有大量连接涌入且处理很快,应用QPS非常高的情况下适当调高backLog的数值会有意想不到的效果.至于这几个参数配置成多少,一般是根据业务系统的性质和性能测试结果而来.</p>
+
+<p>我们回过头来看看springboot的通用配置参数里面也只是提供了maxThread的配置.套路还是一样,需要进行定制.</p>
+
+<pre><code>@Bean
+public TomcatEmbeddedServletContainerFactory tomcatEmbeddedServletContainerFactory() {
+    TomcatEmbeddedServletContainerFactory tomcatFactory = new TomcatEmbeddedServletContainerFactory();
+
+    tomcatFactory.setBaseDirectory(baseDirectory);
+    tomcatFactory.setDocumentRoot(documentRoot);
+    
+    tomcatFactory.addConnectorCustomizers(new TomcatConnectorCustomizer() {
+        @Override
+        public void customize(Connector connector) {
+            Http11NioProtocol handler = (Http11NioProtocol) connector.getProtocolHandler();
+            handler.setBacklog(NumberUtils.toInt(acceptCount, 100));
+            handler.setMaxThreads(NumberUtils.toInt(maxThreads, 150));
+        }
+    });
+}
+</code></pre>
+                        </div>
+                        <div class="columns is-mobile post-meta">
+                            <div class="column is-half-desktop has-text-left is-paddingless"> 
+                                 
+                                更老一篇:<a href="http://www.lihongkun.com/springframework/springboot_tomcat_directory/"> Springboot的embeded tomcat目录</a>
+                                
+                            </div>
+                            <div class="column is-half-desktop has-text-right is-paddingless">
+                                
+                                没有了，已经是最新文章
+                                
+                            </div>
+                            <div class="is-clearfix"></div>
+                        </div>
+                        <script src="https://utteranc.es/client.js"
+                                repo="lihongkun/lihongkun.github.io"
+                                issue-term="title"
+                                theme="github-light"
+                                crossorigin="anonymous"
+                                async>
+                        </script>
+                    </article>
+                </div>
+                <div class="column">    <aside>
+        <h2 class="is-size-4">关于我</h2>
+        <div class="content">
+            Working in advertising platform team. Backend on duty,full stack in my own time.
+        </div>
+        <h2 class="is-size-4">GitHub</h2>
+        <div class="content">
+            <a href="https://github.com/lihongkun" target="_blank">https://github.com/lihongkun</a>
+        </div>
+    </aside></div>
+                </div>
+            </div>
+         </main>    <footer class="footer">
+    
+        <div class="copyright has-text-centered">
+            <a href="https://bulma.io">
+                <img src="http://www.lihongkun.com/images/made-with-bulma.png" alt="Made with Bulma" width="128" height="24">
+            </a>
+            <p>© 泛泛之辈 Power by Hugo v0.55.6 - 闽ICP备15009606号</p>
+        </div>
+    </footer>
+    <script type="text/javascript">
+    document.addEventListener('DOMContentLoaded', () => {
+        
+        const $navbarBurgers = Array.prototype.slice.call(document.querySelectorAll('.navbar-burger'), 0);
+        
+        if ($navbarBurgers.length > 0) {
+            
+            $navbarBurgers.forEach( el => {
+                el.addEventListener('click', () => {
+                
+                const target = el.dataset.target;
+                const $target = document.getElementById(target);
+                
+                el.classList.toggle('is-active');
+                $target.classList.toggle('is-active');
+    
+                });
+            });
+        }
+    });
+    </script></body>
+</html>

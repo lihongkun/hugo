@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html><head>
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+
+    
+    <meta name="author"
+            content=""/>
+
+    
+    <meta name="description" content="线上环境某个业务无端卡住,死锁或者CPU使用率突然飙得很高.通常情况下是某些线程下的代码作祟.如何排查到指定线程和指定代码.
+"/>
+    
+
+    
+
+    
+    <link rel="canonical" href="http://www.lihongkun.com/troubleshooting/efficient_locate_high_cpu_program/"/>
+
+    
+
+    
+    
+    
+        
+            
+        
+    
+        
+            
+                
+            
+                
+            
+                
+            
+                
+            
+        
+    
+        
+            
+                
+            
+                
+            
+                
+            
+                
+            
+        
+    
+        
+            
+        
+    
+        
+            
+        
+    
+        
+            
+        
+    
+    <title> 高效定位Java进程高CPU问题 | 泛泛之辈 </title>
+
+    <link rel="shortcut icon" href="http://www.lihongkun.com/favicon.jpg"/>
+    <link rel="stylesheet" href="http://www.lihongkun.com/css/bulma.min.css"/>
+    <link rel="stylesheet" href="http://www.lihongkun.com/css/style.css"/>
+</head><body><header>
+    <nav class="navbar is-fixed-top is-primary" role="navigation" aria-label="main navigation">
+        <div class="navbar-brand is-size-4">
+            <a class="navbar-item" href="http://www.lihongkun.com/">
+                    泛泛之辈
+            </a>
+            <a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false" data-target="navbar-menu">
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+            </a>
+        </div>
+        <div id="navbar-menu" class="navbar-menu">
+            <div class="navbar-end">
+                
+                    
+                        <a class="navbar-item" href="/">首页</a>
+                    
+                
+                    
+                        <div class="navbar-item has-dropdown is-hoverable">
+                            <a class="navbar-link">基本功</a>
+                            <div class="navbar-dropdown">
+                                
+                                <a class="navbar-item" href="/categories/concurrent/">并发</a>
+                                
+                                <a class="navbar-item" href="/categories/network/">网络</a>
+                                
+                                <a class="navbar-item" href="/categories/security/">Web安全</a>
+                                
+                                <a class="navbar-item" href="/categories/jvm/">Java虚拟机</a>
+                                
+                            </div>
+                        </div>
+                    
+                
+                    
+                        <div class="navbar-item has-dropdown is-hoverable">
+                            <a class="navbar-link">编程框架</a>
+                            <div class="navbar-dropdown">
+                                
+                                <a class="navbar-item" href="/categories/springframework/">Spring</a>
+                                
+                                <a class="navbar-item" href="/categories/mybatis/">Mybatis</a>
+                                
+                                <a class="navbar-item" href="/categories/springcloud/">SpringCloud</a>
+                                
+                                <a class="navbar-item" href="/categories/common/">常用框架</a>
+                                
+                            </div>
+                        </div>
+                    
+                
+                    
+                        <a class="navbar-item" href="/categories/troubleshooting/">问题排查</a>
+                    
+                
+                    
+                        <a class="navbar-item" href="/categories/design/">设计思路</a>
+                    
+                
+                    
+                        <a class="navbar-item" href="/categories/reading/">读书笔记</a>
+                    
+                
+            </div>
+            </div>
+    </nav>
+</header><main>
+            <div class="container">
+                <div class="columns">
+                <div class="column is-four-fifths">
+                    <article class="post box is-radiusless">
+                        <div class="post-title">
+                            <h2 class="is-size-4">高效定位Java进程高CPU问题</h2>
+                        </div>
+                            <div class="post-meta">
+                            <span class="post-time">日期&nbsp;:&nbsp;2018-07-23</span>
+                        </div>
+                        <div class="post-content content">
+                            <p>线上环境某个业务无端卡住,死锁或者CPU使用率突然飙得很高.通常情况下是某些线程下的代码作祟.如何排查到指定线程和指定代码.</p>
+
+<p>举个简单的例子我运行了个死循环的代码只是打印出日志.</p>
+
+<pre><code>public static void main(String[] args) throws Exception {
+    while(true){
+        System.out.println(&quot;running...&quot;);
+        Thread.sleep(50);
+    }
+}
+</code></pre>
+
+<h4 id="操作系统命令">操作系统命令</h4>
+
+<p>使用top -Hp $pid得出其中8161线程比较耗费CPU.</p>
+
+<p><img src="top.png" alt="image" /></p>
+
+<p>当然top的观测结果是一直在刷新的.我们也可以是用ps命令来看ps -mp $pid -o THREAD,tid,time 结果如下也是一致的.</p>
+
+<p><img src="top_more.png" alt="image" /></p>
+
+<p>找到了线程号,我们如果观测到它的线程栈呢,这就需要使用到JVM相关的工具了.</p>
+
+<h4 id="jstack">jstack</h4>
+
+<p>jstack 是一个检测线程的jvm工具.设置了环境变量后一般是可以直接执行,jstack $pid.</p>
+
+<pre><code>&quot;main&quot; #1 prio=5 os_prio=0 tid=0x00007fdc1c008800 nid=0x1fe1 waiting on condition [0x00007fdc23829000]
+   java.lang.Thread.State: TIMED_WAITING (sleeping)
+    at java.lang.Thread.sleep(Native Method)
+    at com.lihongkun.example.StackExample.main(StackExample.java:8)
+
+&quot;VM Thread&quot; os_prio=0 tid=0x00007fdc1c0f9000 nid=0x1fe4 runnable 
+
+&quot;GC task thread#0 (ParallelGC)&quot; os_prio=0 tid=0x00007fdc1c01d800 nid=0x1fe2 runnable 
+
+&quot;GC task thread#1 (ParallelGC)&quot; os_prio=0 tid=0x00007fdc1c01f000 nid=0x1fe3 runnable 
+</code></pre>
+
+<p>上面是使用jstack执行出来的结果,能清楚地看出各个线程的执行栈.而其中nid就是每个线程的线程号.main方法所在的线程的16进制线程号是1FE1 ,转为十进制则为8161,如此已经清楚查看出执行最占用CPU的是我们的main方法.</p>
+
+<h4 id="双剑合璧">双剑合璧</h4>
+
+<p>上面的方式需要2个步骤去查看占用CPU高的线程,然后再使用jstack命令来找到相应的线程和对应的代码块.是否可用合并呢?
+答案是肯定的.</p>
+
+<pre><code>pid=$1
+sfile=&quot;/tmp/java.$pid.trace&quot;
+tfile=&quot;/tmp/java.$pid.trace.tmp&quot;
+rm -f $sfile  $tfile
+echo &quot;pid $pid&quot;
+
+jstack $pid &gt; $tfile
+ps -mp $pid -o THREAD,tid,time|awk '{if ($2&gt;0 &amp;&amp; $8 != &quot;-&quot;) print $8,$2}'|while read line;
+do
+        nid=$(echo &quot;$line&quot;|awk '{printf(&quot;0x%x&quot;,$1)}')
+        cpu=$(echo &quot;$line&quot;|awk '{print $2}')
+        echo &quot;nid: $nid, cpu: $cpu %&quot;&gt;&gt;$sfile
+        lines=`grep $nid -A 100 $tfile |grep -n '^$'|head -1|awk -F':' '{print $1}'`
+        ((lines=$lines-1))
+        if [ &quot;$lines&quot; = &quot;-1&quot; ];
+        then
+             grep $nid -A 100 $tfile  &gt;&gt;$sfile
+             echo '' &gt;&gt;$sfile
+        else
+             grep $nid -A $lines $tfile  &gt;&gt;$sfile
+        fi
+done
+rm -f $tfile
+echo &quot;read msg in $sfile&quot;
+###########  end  ############
+</code></pre>
+
+<p>上面的脚本是合并后的只需要一个命令搞定. 执行 sh  xxx.sh $pid结果如下</p>
+
+<pre><code>nid: 0x1fe1, cpu: 0.1 %
+&quot;main&quot; #1 prio=5 os_prio=0 tid=0x00007fdc1c008800 nid=0x1fe1 waiting on condition [0x00007fdc23829000]
+   java.lang.Thread.State: TIMED_WAITING (sleeping)
+    at java.lang.Thread.sleep(Native Method)
+    at com.lihongkun.example.StackExample.main(StackExample.java:8)
+
+nid: 0x1feb, cpu: 0.1 %
+&quot;VM Periodic Task Thread&quot; os_prio=0 tid=0x00007fdc1c144800 nid=0x1feb waiting on condition 
+
+nid: 0x200f, cpu: 1.0 %
+&quot;Attach Listener&quot; #8 daemon prio=9 os_prio=0 tid=0x00007fdbe8001000 nid=0x200f waiting on condition [0x0000000000000000]
+   java.lang.Thread.State: RUNNABLE
+</code></pre>
+
+<p>一般情况下,如果遇到执行效率相关的问题,我都是直接执行上述脚本,迅速找到相关代码,然后做相应的解决.</p>
+
+<p>有位朋友用了一段时间这段脚本以后,推荐的一个代码仓库.类似的原理,相关的脚本更多. <a href="https://github.com/oldratlee/useful-scripts">https://github.com/oldratlee/useful-scripts</a></p>
+                        </div>
+                        <div class="columns is-mobile post-meta">
+                            <div class="column is-half-desktop has-text-left is-paddingless"> 
+                                 
+                                更老一篇:<a href="http://www.lihongkun.com/troubleshooting/java_exec_shell/"> Java执行shell避坑指南</a>
+                                
+                            </div>
+                            <div class="column is-half-desktop has-text-right is-paddingless">
+                                
+                                更新一篇:<a href="http://www.lihongkun.com/troubleshooting/linux_random_dev_blocking/"> 随机数阻塞问题</a>
+                                
+                            </div>
+                            <div class="is-clearfix"></div>
+                        </div>
+                        <script src="https://utteranc.es/client.js"
+                                repo="lihongkun/lihongkun.github.io"
+                                issue-term="title"
+                                theme="github-light"
+                                crossorigin="anonymous"
+                                async>
+                        </script>
+                    </article>
+                </div>
+                <div class="column">    <aside>
+        <h2 class="is-size-4">关于我</h2>
+        <div class="content">
+            Working in advertising platform team. Backend on duty,full stack in my own time.
+        </div>
+        <h2 class="is-size-4">GitHub</h2>
+        <div class="content">
+            <a href="https://github.com/lihongkun" target="_blank">https://github.com/lihongkun</a>
+        </div>
+    </aside></div>
+                </div>
+            </div>
+         </main>    <footer class="footer">
+    
+        <div class="copyright has-text-centered">
+            <a href="https://bulma.io">
+                <img src="http://www.lihongkun.com/images/made-with-bulma.png" alt="Made with Bulma" width="128" height="24">
+            </a>
+            <p>© 泛泛之辈 Power by Hugo v0.55.6 - 闽ICP备15009606号</p>
+        </div>
+    </footer>
+    <script type="text/javascript">
+    document.addEventListener('DOMContentLoaded', () => {
+        
+        const $navbarBurgers = Array.prototype.slice.call(document.querySelectorAll('.navbar-burger'), 0);
+        
+        if ($navbarBurgers.length > 0) {
+            
+            $navbarBurgers.forEach( el => {
+                el.addEventListener('click', () => {
+                
+                const target = el.dataset.target;
+                const $target = document.getElementById(target);
+                
+                el.classList.toggle('is-active');
+                $target.classList.toggle('is-active');
+    
+                });
+            });
+        }
+    });
+    </script></body>
+</html>

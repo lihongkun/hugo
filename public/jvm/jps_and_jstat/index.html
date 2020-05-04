@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html><head>
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+
+    
+    <meta name="author"
+            content=""/>
+
+    
+    <meta name="description" content="简单介绍下两个JVM监控工具 , jps 和 jstat
+"/>
+    
+
+    
+
+    
+    <link rel="canonical" href="http://www.lihongkun.com/jvm/jps_and_jstat/"/>
+
+    
+
+    
+    
+    
+        
+            
+        
+    
+        
+            
+                
+            
+                
+            
+                
+            
+                
+            
+        
+    
+        
+            
+                
+            
+                
+            
+                
+            
+                
+            
+        
+    
+        
+            
+        
+    
+        
+            
+        
+    
+        
+            
+        
+    
+    <title> Java虚拟机监控工具 - jps和jstat | 泛泛之辈 </title>
+
+    <link rel="shortcut icon" href="http://www.lihongkun.com/favicon.jpg"/>
+    <link rel="stylesheet" href="http://www.lihongkun.com/css/bulma.min.css"/>
+    <link rel="stylesheet" href="http://www.lihongkun.com/css/style.css"/>
+</head><body><header>
+    <nav class="navbar is-fixed-top is-primary" role="navigation" aria-label="main navigation">
+        <div class="navbar-brand is-size-4">
+            <a class="navbar-item" href="http://www.lihongkun.com/">
+                    泛泛之辈
+            </a>
+            <a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false" data-target="navbar-menu">
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+            </a>
+        </div>
+        <div id="navbar-menu" class="navbar-menu">
+            <div class="navbar-end">
+                
+                    
+                        <a class="navbar-item" href="/">首页</a>
+                    
+                
+                    
+                        <div class="navbar-item has-dropdown is-hoverable">
+                            <a class="navbar-link">基本功</a>
+                            <div class="navbar-dropdown">
+                                
+                                <a class="navbar-item" href="/categories/concurrent/">并发</a>
+                                
+                                <a class="navbar-item" href="/categories/network/">网络</a>
+                                
+                                <a class="navbar-item" href="/categories/security/">Web安全</a>
+                                
+                                <a class="navbar-item" href="/categories/jvm/">Java虚拟机</a>
+                                
+                            </div>
+                        </div>
+                    
+                
+                    
+                        <div class="navbar-item has-dropdown is-hoverable">
+                            <a class="navbar-link">编程框架</a>
+                            <div class="navbar-dropdown">
+                                
+                                <a class="navbar-item" href="/categories/springframework/">Spring</a>
+                                
+                                <a class="navbar-item" href="/categories/mybatis/">Mybatis</a>
+                                
+                                <a class="navbar-item" href="/categories/springcloud/">SpringCloud</a>
+                                
+                                <a class="navbar-item" href="/categories/common/">常用框架</a>
+                                
+                            </div>
+                        </div>
+                    
+                
+                    
+                        <a class="navbar-item" href="/categories/troubleshooting/">问题排查</a>
+                    
+                
+                    
+                        <a class="navbar-item" href="/categories/design/">设计思路</a>
+                    
+                
+                    
+                        <a class="navbar-item" href="/categories/reading/">读书笔记</a>
+                    
+                
+            </div>
+            </div>
+    </nav>
+</header><main>
+            <div class="container">
+                <div class="columns">
+                <div class="column is-four-fifths">
+                    <article class="post box is-radiusless">
+                        <div class="post-title">
+                            <h2 class="is-size-4">Java虚拟机监控工具 - jps和jstat</h2>
+                        </div>
+                            <div class="post-meta">
+                            <span class="post-time">日期&nbsp;:&nbsp;2018-05-28</span>
+                        </div>
+                        <div class="post-content content">
+                            <p>简单介绍下两个JVM监控工具 , jps 和 jstat</p>
+
+<h3 id="jps">jps</h3>
+
+<p>查找当前用户的Java进程,通常当你不知道服务器上有哪些java进行的时候,直接输入jps或者带命令选项,就能直接查询出来了.</p>
+
+<pre><code>-l：输出完全的包名,应用主类名,jar的完全路径名； 
+-v：输出jvm参数
+</code></pre>
+
+<p>JVM启动的时候都是使用jdk来启动,使用系统命令如ps -ef|grep java,这种场景下使用jps确实是鸡肋.但是很多情况下,启动的进程比较多,不会直接使用jdk来启动,而是创建一些比较有语义性的软链,使用这个有语义的软链来启动应用.</p>
+
+<pre><code>${JAVA_HOME}/java xxx.jar
+
+// 变为软链启动
+
+
+ln -s ${JAVA_HOME}/java my_process_name
+
+./my_process_name xxx.jar
+
+</code></pre>
+
+<p>例如上面的方式,使用系统的命令ps -ef|grep java 是查找不出java进行的,此时jps能够准确找到.</p>
+
+<h3 id="jstat">jstat</h3>
+
+<p>全称是Java Virtual Machine Statistics Monitoring Tool,通常使用他来查看类加载和卸载情况JVM各个分代的容量已经使用容量,GC原因和时间.</p>
+
+<pre><code>Usage: jstat -help|-options
+       jstat -&lt;option&gt; [-t] [-h&lt;lines&gt;] &lt;vmid&gt; [&lt;interval&gt; [&lt;count&gt;]]
+       
+// 使用方式
+
+jstat -gcutil 25477 1000 500
+
+</code></pre>
+
+<p>jstat -help 可以看到看到命令行的使用方式.上面示例gcutil 就是options,即要使用的功能;25477是进程号,也就是vmid;1000是频率,即1000,每1000ms输出一次监控结果;500为执行次数,即count</p>
+
+<p>这个选项比较多</p>
+
+<h4 id="class">class</h4>
+
+<p>类加载情况的统计</p>
+
+<pre><code>jstat -class 2600
+
+Loaded  Bytes  Unloaded  Bytes     Time
+   400   830.9        0     0.0       0.11
+</code></pre>
+
+<ul>
+<li>Loaded 加载的类数量.</li>
+<li>Bytes 加载类所耗费的空间,单位KB.</li>
+<li>Unloaded 卸载的类数控.</li>
+<li>Bytes 卸载类释放的空间,单位KB</li>
+<li>Time 加载和卸载所花的时间.</li>
+</ul>
+
+<h4 id="compiler">compiler</h4>
+
+<p>即时编译器编译情况的统计</p>
+
+<pre><code>jstat -compiler  2600
+
+Compiled Failed Invalid   Time   FailedType FailedMethod
+      19      0       0     0.01          0
+</code></pre>
+
+<ul>
+<li>Compiled  编译执行次数</li>
+<li>Failed 编译任务失败词素</li>
+<li>Invalid 无效编译任务次数</li>
+<li>Time 编译任务花费的时间</li>
+<li>FailedType 最后一次编译失败的编译类型</li>
+<li>FailedMethod 最后一次编译失败的类名及方法名</li>
+</ul>
+
+<h4 id="gc">gc</h4>
+
+<p>JVM中堆的垃圾收集情况的统计,主要是当前的容量和GC的情况</p>
+
+<pre><code>S0C    S1C    S0U    S1U      EC       EU        OC         OU       MC     MU    CCSC   CCSU   YGC     YGCT    FGC    FGCT     GCT
+5120.0 5120.0  0.0    0.0   33280.0   5325.4   87552.0      0.0     4480.0 776.9  384.0   75.8       0    0.000   0      0.000    0.000
+</code></pre>
+
+<ul>
+<li>S0C 新生代中Survivor space中S0当前容量的大小（KB）</li>
+<li>S1C 新生代中Survivor space中S1当前容量的大小（KB）</li>
+<li>S0U 新生代中Survivor space中S0容量使用的大小（KB）</li>
+<li>S1U 新生代中Survivor space中S1容量使用的大小（KB）</li>
+<li>EC Eden space当前容量的大小（KB）</li>
+<li>EU Eden space容量使用的大小（KB）</li>
+<li>OC Old space当前容量的大小（KB）</li>
+<li>OU Old space使用容量的大小（KB）</li>
+<li>PC Permanent space当前容量的大小（KB）</li>
+<li>PU Permanent space使用容量的大小（KB）</li>
+<li>YGC 从应用程序启动到采样时发生 Young GC 的次数</li>
+<li>YGCT 从应用程序启动到采样时 Young GC 所用的时间(秒)</li>
+<li>FGC 从应用程序启动到采样时发生 Full GC 的次数</li>
+<li>FGCT 从应用程序启动到采样时 Full GC 所用的时间(秒)</li>
+<li>GCT 从应用程序启动到采样时用于垃圾回收的总时间(单位秒)，它的值等于YGC+FGC</li>
+</ul>
+
+<h4 id="gccause">gccause</h4>
+
+<pre><code>jstat -gccause 8524 1000 1000
+  S0     S1     E      O      M     CCS    YGC     YGCT    FGC    FGCT     GCT    LGCC                 GCC              
+  0.00   0.00  22.00   0.62  53.34  53.68    392    0.134     0    0.000    0.134 Allocation Failure   No GC            
+  0.00   0.00   0.00   0.62  53.34  53.68    418    0.142     0    0.000    0.142 Allocation Failure   No GC 
+</code></pre>
+
+<ul>
+<li>LGCC 最后一次垃圾收集原因,上述示例为分配失败</li>
+<li>GCC 当前垃圾收集原因</li>
+</ul>
+
+<h4 id="gc其他">gc其他</h4>
+
+<p>其他的gc options 还包括  gccapacity , gccause ,gcnew ,gcnewcapacity ,gcold ,gcoldcapacity,gcpermcapacity ,gcutil 基本上都是gc的分代情况和耗费时间,具体不赘述可以查看手册</p>
+
+<p><a href="https://docs.oracle.com/javase/7/docs/technotes/tools/share/jstat.html">https://docs.oracle.com/javase/7/docs/technotes/tools/share/jstat.html</a></p>
+                        </div>
+                        <div class="columns is-mobile post-meta">
+                            <div class="column is-half-desktop has-text-left is-paddingless"> 
+                                 
+                                更老一篇:<a href="http://www.lihongkun.com/jvm/garbage_collection/"> Java垃圾收集简介</a>
+                                
+                            </div>
+                            <div class="column is-half-desktop has-text-right is-paddingless">
+                                
+                                更新一篇:<a href="http://www.lihongkun.com/jvm/jmap/"> Java虚拟机监控工具 - jmap</a>
+                                
+                            </div>
+                            <div class="is-clearfix"></div>
+                        </div>
+                        <script src="https://utteranc.es/client.js"
+                                repo="lihongkun/lihongkun.github.io"
+                                issue-term="title"
+                                theme="github-light"
+                                crossorigin="anonymous"
+                                async>
+                        </script>
+                    </article>
+                </div>
+                <div class="column">    <aside>
+        <h2 class="is-size-4">关于我</h2>
+        <div class="content">
+            Working in advertising platform team. Backend on duty,full stack in my own time.
+        </div>
+        <h2 class="is-size-4">GitHub</h2>
+        <div class="content">
+            <a href="https://github.com/lihongkun" target="_blank">https://github.com/lihongkun</a>
+        </div>
+    </aside></div>
+                </div>
+            </div>
+         </main>    <footer class="footer">
+    
+        <div class="copyright has-text-centered">
+            <a href="https://bulma.io">
+                <img src="http://www.lihongkun.com/images/made-with-bulma.png" alt="Made with Bulma" width="128" height="24">
+            </a>
+            <p>© 泛泛之辈 Power by Hugo v0.55.6 - 闽ICP备15009606号</p>
+        </div>
+    </footer>
+    <script type="text/javascript">
+    document.addEventListener('DOMContentLoaded', () => {
+        
+        const $navbarBurgers = Array.prototype.slice.call(document.querySelectorAll('.navbar-burger'), 0);
+        
+        if ($navbarBurgers.length > 0) {
+            
+            $navbarBurgers.forEach( el => {
+                el.addEventListener('click', () => {
+                
+                const target = el.dataset.target;
+                const $target = document.getElementById(target);
+                
+                el.classList.toggle('is-active');
+                $target.classList.toggle('is-active');
+    
+                });
+            });
+        }
+    });
+    </script></body>
+</html>

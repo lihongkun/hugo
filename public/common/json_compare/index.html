@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html><head>
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+
+    
+    <meta name="author"
+            content=""/>
+
+    
+    <meta name="description" content="JSON（JavaScript Object Notation，JavaScript对象表示法，读作/ˈdʒeɪsən/）是一种由道格拉斯·克罗克福特构想和设计、轻量级的数据交换语言，该语言以易于让人阅读的文字为基础，用来传输由属性值或者序列性的值组成的数据对象。很多接口协议中都默认以它为序列化协议，如SpringCloud里面都是以HTTP&#43;JSON的方式来提供服务。
+"/>
+    
+
+    
+
+    
+    <link rel="canonical" href="http://www.lihongkun.com/common/json_compare/"/>
+
+    
+
+    
+    
+    
+        
+            
+        
+    
+        
+            
+                
+            
+                
+            
+                
+            
+                
+            
+        
+    
+        
+            
+                
+            
+                
+            
+                
+            
+                
+            
+        
+    
+        
+            
+        
+    
+        
+            
+        
+    
+        
+            
+        
+    
+    <title> 常见JSON序列化库性能比较 | 泛泛之辈 </title>
+
+    <link rel="shortcut icon" href="http://www.lihongkun.com/favicon.jpg"/>
+    <link rel="stylesheet" href="http://www.lihongkun.com/css/bulma.min.css"/>
+    <link rel="stylesheet" href="http://www.lihongkun.com/css/style.css"/>
+</head><body><header>
+    <nav class="navbar is-fixed-top is-primary" role="navigation" aria-label="main navigation">
+        <div class="navbar-brand is-size-4">
+            <a class="navbar-item" href="http://www.lihongkun.com/">
+                    泛泛之辈
+            </a>
+            <a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false" data-target="navbar-menu">
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+            </a>
+        </div>
+        <div id="navbar-menu" class="navbar-menu">
+            <div class="navbar-end">
+                
+                    
+                        <a class="navbar-item" href="/">首页</a>
+                    
+                
+                    
+                        <div class="navbar-item has-dropdown is-hoverable">
+                            <a class="navbar-link">基本功</a>
+                            <div class="navbar-dropdown">
+                                
+                                <a class="navbar-item" href="/categories/concurrent/">并发</a>
+                                
+                                <a class="navbar-item" href="/categories/network/">网络</a>
+                                
+                                <a class="navbar-item" href="/categories/security/">Web安全</a>
+                                
+                                <a class="navbar-item" href="/categories/jvm/">Java虚拟机</a>
+                                
+                            </div>
+                        </div>
+                    
+                
+                    
+                        <div class="navbar-item has-dropdown is-hoverable">
+                            <a class="navbar-link">编程框架</a>
+                            <div class="navbar-dropdown">
+                                
+                                <a class="navbar-item" href="/categories/springframework/">Spring</a>
+                                
+                                <a class="navbar-item" href="/categories/mybatis/">Mybatis</a>
+                                
+                                <a class="navbar-item" href="/categories/springcloud/">SpringCloud</a>
+                                
+                                <a class="navbar-item" href="/categories/common/">常用框架</a>
+                                
+                            </div>
+                        </div>
+                    
+                
+                    
+                        <a class="navbar-item" href="/categories/troubleshooting/">问题排查</a>
+                    
+                
+                    
+                        <a class="navbar-item" href="/categories/design/">设计思路</a>
+                    
+                
+                    
+                        <a class="navbar-item" href="/categories/reading/">读书笔记</a>
+                    
+                
+            </div>
+            </div>
+    </nav>
+</header><main>
+            <div class="container">
+                <div class="columns">
+                <div class="column is-four-fifths">
+                    <article class="post box is-radiusless">
+                        <div class="post-title">
+                            <h2 class="is-size-4">常见JSON序列化库性能比较</h2>
+                        </div>
+                            <div class="post-meta">
+                            <span class="post-time">日期&nbsp;:&nbsp;2019-08-18</span>
+                        </div>
+                        <div class="post-content content">
+                            <p>JSON（JavaScript Object Notation，JavaScript对象表示法，读作/ˈdʒeɪsən/）是一种由道格拉斯·克罗克福特构想和设计、轻量级的数据交换语言，该语言以易于让人阅读的文字为基础，用来传输由属性值或者序列性的值组成的数据对象。很多接口协议中都默认以它为序列化协议，如SpringCloud里面都是以HTTP+JSON的方式来提供服务。</p>
+
+<p>在一些接口性能要求高的场景下慎重地选择一个JSON序列化的库是比较必要。最近一次压测中，头部的CPU热点 数据发现，有6%的CPU时间发生在协议的JSON序列化上面，5%CPU时间花在某些必要字段的JSON构建上面。接口耗时跟JSON序列化强相关，显然如果通过选用更合适的序列化库来实现或者选用其他更高效的序列化协议，可以降低接口的时间。于是进行了下列实验。</p>
+
+<p>待序列化的对象为DemoResponse</p>
+
+<pre><code>public class DemoEntity {
+
+    private int id;
+
+    private String name;
+
+    private String category;
+
+    private Long price;
+
+    private Long appId;
+
+    private Long ctr;
+}
+
+public class DemoResponse {
+
+    private int code;
+
+    private List&lt;DemoEntity&gt; data;
+}
+
+// 初始化数据
+public DemoResponse initDemoResponse(){
+    List&lt;DemoEntity&gt; data = new ArrayList&lt;DemoEntity&gt;();
+
+    for (long index = 0; index &lt; DATA_SIZE; index++) {
+        DemoEntity entity = new DemoEntity();
+        entity.setAppId(index);
+        entity.setCategory(String.valueOf(index));
+        entity.setCtr(index);
+        entity.setId((int) index);
+        entity.setName(String.valueOf(index));
+        entity.setPrice(index);
+        data.add(entity);
+    }
+
+    DemoResponse response = new DemoResponse();
+    response.setCode((int) DATA_SIZE);
+    response.setData(data);
+}
+</code></pre>
+
+<p>分别使用fastjson，gson，jackson和裸写的序列方式来进行耗时的比较。首先需要引入对应的库，使用的都是比较新的版本。</p>
+
+<pre><code>&lt;dependency&gt;
+    &lt;groupId&gt;com.google.code.gson&lt;/groupId&gt;
+    &lt;artifactId&gt;gson&lt;/artifactId&gt;
+    &lt;version&gt;2.8.5&lt;/version&gt;
+&lt;/dependency&gt;
+&lt;dependency&gt;
+    &lt;groupId&gt;com.alibaba&lt;/groupId&gt;
+    &lt;artifactId&gt;fastjson&lt;/artifactId&gt;
+    &lt;version&gt;1.2.50&lt;/version&gt;
+&lt;/dependency&gt;
+&lt;dependency&gt;
+    &lt;groupId&gt;com.fasterxml.jackson.core&lt;/groupId&gt;
+    &lt;artifactId&gt;jackson-databind&lt;/artifactId&gt;
+    &lt;version&gt;2.9.8&lt;/version&gt;
+&lt;/dependency&gt;
+</code></pre>
+
+<p>分别对其进行LOOP_SIZE次的循环，然后输出序列化的总时间。</p>
+
+<pre><code>public class JsonTest {
+
+    private static final long DATA_SIZE = 200;
+
+    private static final int LOOP_SIZE = 10000;
+
+    public static void main(String[] args) throws JsonProcessingException {
+
+        DemoResponse response = initDemoResponse();
+
+        long timeWatch = System.currentTimeMillis();
+        for(int i=0;i&lt;LOOP_SIZE;i++){
+            JSON.toJSONString(response);
+        }
+        System.out.println(&quot;fastjson : &quot;+(System.currentTimeMillis() - timeWatch));
+
+        Gson gson = new Gson();
+
+        timeWatch = System.currentTimeMillis();
+        for(int i=0;i&lt;LOOP_SIZE;i++){
+            gson.toJson(response) ;
+        }
+        System.out.println(&quot;gson : &quot;+(System.currentTimeMillis() - timeWatch));
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        timeWatch = System.currentTimeMillis();
+        for(int i=0;i&lt;LOOP_SIZE;i++){
+            objectMapper.writeValueAsString(response);
+        }
+        System.out.println(&quot;jackson : &quot;+(System.currentTimeMillis() - timeWatch));
+
+        timeWatch = System.currentTimeMillis();
+        for(int i=0;i&lt;LOOP_SIZE;i++){
+            buildResponseJson(response) ;
+        }
+        System.out.println(&quot;raw : &quot;+(System.currentTimeMillis() - timeWatch));
+    }
+}
+</code></pre>
+
+<p>LOOP_SIZE为1万的时候，实验值如下：</p>
+
+<table>
+<thead>
+<tr>
+<th>DATA_SIZE</th>
+<th>raw</th>
+<th>gson</th>
+<th>fastjson</th>
+<th>jackson</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td>10</td>
+<td>250ms</td>
+<td>411ms</td>
+<td>481ms</td>
+<td>260ms</td>
+</tr>
+
+<tr>
+<td>50</td>
+<td>311ms</td>
+<td>1264ms</td>
+<td>782ms</td>
+<td>330ms</td>
+</tr>
+
+<tr>
+<td>100</td>
+<td>500ms</td>
+<td>1735ms</td>
+<td>900ms</td>
+<td>527ms</td>
+</tr>
+
+<tr>
+<td>200</td>
+<td>898ms</td>
+<td>2700ms</td>
+<td>1468ms</td>
+<td>744ms</td>
+</tr>
+
+<tr>
+<td>300</td>
+<td>1347ms</td>
+<td>3324ms</td>
+<td>1841ms</td>
+<td>1109ms</td>
+</tr>
+</tbody>
+</table>
+
+<p>从上面的数据可以很容易看出，gson是三个里面性能最差的一个，jackson表现跟裸写的接近。裸写的JSON序列化在数据量增大的时候性能表现就下降了，鉴于可维护性等方面的考虑，选用jackson还是比较合适。</p>
+                        </div>
+                        <div class="columns is-mobile post-meta">
+                            <div class="column is-half-desktop has-text-left is-paddingless"> 
+                                 
+                                更老一篇:<a href="http://www.lihongkun.com/common/lombok/"> 使用Lombok简化代码</a>
+                                
+                            </div>
+                            <div class="column is-half-desktop has-text-right is-paddingless">
+                                
+                                更新一篇:<a href="http://www.lihongkun.com/common/protobuf_vs_json/"> protobuf序列化协议</a>
+                                
+                            </div>
+                            <div class="is-clearfix"></div>
+                        </div>
+                        <script src="https://utteranc.es/client.js"
+                                repo="lihongkun/lihongkun.github.io"
+                                issue-term="title"
+                                theme="github-light"
+                                crossorigin="anonymous"
+                                async>
+                        </script>
+                    </article>
+                </div>
+                <div class="column">    <aside>
+        <h2 class="is-size-4">关于我</h2>
+        <div class="content">
+            Working in advertising platform team. Backend on duty,full stack in my own time.
+        </div>
+        <h2 class="is-size-4">GitHub</h2>
+        <div class="content">
+            <a href="https://github.com/lihongkun" target="_blank">https://github.com/lihongkun</a>
+        </div>
+    </aside></div>
+                </div>
+            </div>
+         </main>    <footer class="footer">
+    
+        <div class="copyright has-text-centered">
+            <a href="https://bulma.io">
+                <img src="http://www.lihongkun.com/images/made-with-bulma.png" alt="Made with Bulma" width="128" height="24">
+            </a>
+            <p>© 泛泛之辈 Power by Hugo v0.55.6 - 闽ICP备15009606号</p>
+        </div>
+    </footer>
+    <script type="text/javascript">
+    document.addEventListener('DOMContentLoaded', () => {
+        
+        const $navbarBurgers = Array.prototype.slice.call(document.querySelectorAll('.navbar-burger'), 0);
+        
+        if ($navbarBurgers.length > 0) {
+            
+            $navbarBurgers.forEach( el => {
+                el.addEventListener('click', () => {
+                
+                const target = el.dataset.target;
+                const $target = document.getElementById(target);
+                
+                el.classList.toggle('is-active');
+                $target.classList.toggle('is-active');
+    
+                });
+            });
+        }
+    });
+    </script></body>
+</html>

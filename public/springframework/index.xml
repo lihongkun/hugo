@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Springframeworks on 泛泛之辈</title>
+    <link>http://www.lihongkun.com/springframework/</link>
+    <description>Recent content in Springframeworks on 泛泛之辈</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-CN</language>
+    <lastBuildDate>Tue, 13 Mar 2018 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="http://www.lihongkun.com/springframework/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>tomcat连接器调优</title>
+      <link>http://www.lihongkun.com/springframework/springboot_tomcat_connetor/</link>
+      <pubDate>Tue, 13 Mar 2018 00:00:00 +0000</pubDate>
+      
+      <guid>http://www.lihongkun.com/springframework/springboot_tomcat_connetor/</guid>
+      <description>&lt;p&gt;在并发不高的场景下是不需要在进行特殊的配置了,但是在并发量比较大的话springboot 对于默认的tomcat连接器参数可能会导致频频的连接拒绝现象.&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Springboot的embeded tomcat目录</title>
+      <link>http://www.lihongkun.com/springframework/springboot_tomcat_directory/</link>
+      <pubDate>Thu, 08 Mar 2018 00:00:00 +0000</pubDate>
+      
+      <guid>http://www.lihongkun.com/springframework/springboot_tomcat_directory/</guid>
+      <description>&lt;p&gt;Springboot官方使用web的配置内嵌了tomcat , 其目录在正式环境下存在着诸多问题.&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Springboot使用logback的坑点</title>
+      <link>http://www.lihongkun.com/springframework/springboot_logback/</link>
+      <pubDate>Thu, 01 Mar 2018 00:00:00 +0000</pubDate>
+      
+      <guid>http://www.lihongkun.com/springframework/springboot_logback/</guid>
+      <description>&lt;p&gt;尽管SpringBoot能够在application.properties来配置一些日志相关的内容,但是针对一个比较复杂,或者是有着自己运维体系的应用,这是远远不够用的.所以拓展自己的日志配置文件是必须的,官方推荐的是使用logback-spring.xml直接覆盖&lt;/p&gt;</description>
+    </item>
+    
+  </channel>
+</rss>

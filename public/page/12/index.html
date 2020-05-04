@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html><head>
+	<meta name="generator" content="Hugo 0.55.6" />
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+
+    
+    <meta name="author"
+            content=""/>
+
+    
+
+    
+
+    
+    <link rel="canonical" href="http://www.lihongkun.com/"/>
+
+    
+    <link rel="alternate" type="application/rss&#43;xml" href="http://www.lihongkun.com/index.xml">
+    
+
+    
+    
+    
+        
+            
+                
+            
+        
+    
+        
+            
+                
+            
+                
+            
+                
+            
+                
+            
+        
+    
+        
+            
+                
+            
+                
+            
+                
+            
+                
+            
+        
+    
+        
+            
+        
+    
+        
+            
+        
+    
+        
+            
+        
+    
+    <title>泛泛之辈</title>
+
+    <link rel="shortcut icon" href="http://www.lihongkun.com/favicon.jpg"/>
+    <link rel="stylesheet" href="http://www.lihongkun.com/css/bulma.min.css"/>
+    <link rel="stylesheet" href="http://www.lihongkun.com/css/style.css"/>
+</head><body><header>
+    <nav class="navbar is-fixed-top is-primary" role="navigation" aria-label="main navigation">
+        <div class="navbar-brand is-size-4">
+            <a class="navbar-item" href="http://www.lihongkun.com/">
+                    泛泛之辈
+            </a>
+            <a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false" data-target="navbar-menu">
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+            </a>
+        </div>
+        <div id="navbar-menu" class="navbar-menu">
+            <div class="navbar-end">
+                
+                    
+                        <a class="navbar-item" href="/">首页</a>
+                    
+                
+                    
+                        <div class="navbar-item has-dropdown is-hoverable">
+                            <a class="navbar-link">基本功</a>
+                            <div class="navbar-dropdown">
+                                
+                                <a class="navbar-item" href="/categories/concurrent/">并发</a>
+                                
+                                <a class="navbar-item" href="/categories/network/">网络</a>
+                                
+                                <a class="navbar-item" href="/categories/security/">Web安全</a>
+                                
+                                <a class="navbar-item" href="/categories/jvm/">Java虚拟机</a>
+                                
+                            </div>
+                        </div>
+                    
+                
+                    
+                        <div class="navbar-item has-dropdown is-hoverable">
+                            <a class="navbar-link">编程框架</a>
+                            <div class="navbar-dropdown">
+                                
+                                <a class="navbar-item" href="/categories/springframework/">Spring</a>
+                                
+                                <a class="navbar-item" href="/categories/mybatis/">Mybatis</a>
+                                
+                                <a class="navbar-item" href="/categories/springcloud/">SpringCloud</a>
+                                
+                                <a class="navbar-item" href="/categories/common/">常用框架</a>
+                                
+                            </div>
+                        </div>
+                    
+                
+                    
+                        <a class="navbar-item" href="/categories/troubleshooting/">问题排查</a>
+                    
+                
+                    
+                        <a class="navbar-item" href="/categories/design/">设计思路</a>
+                    
+                
+                    
+                        <a class="navbar-item" href="/categories/reading/">读书笔记</a>
+                    
+                
+            </div>
+            </div>
+    </nav>
+</header><main>
+            <div class="container">
+                <div class="columns">
+                <div class="column is-four-fifths"><section class="posts">
+
+<article class="post box is-radiusless">
+    <div class="post-title">
+        <a class="post-title-link" href="/jvm/java_intern/"><h2 class="is-size-4 has-text-dark">Java字符串常量调优</h2></a>
+    </div>
+    <div class="post-meta">
+        <span class="post-time">日期 : 2018-03-26</span>
+    </div>
+    <div class="post-excerpt content">
+        <p>Java中的常量池,实际上分为两种形态:静态常量池和运行时常量池.</p>
+
+<p><strong>静态常量池</strong>,即*.class文件中的常量池,class文件中的常量池不仅仅包含字符串(数字)字面量，还包含类、方法的信息，占用class文件绝大部分空间.</p>
+
+<p><strong>运行时常量池</strong>,则是jvm虚拟机在完成类装载操作后,将class文件中的常量池载入到内存中,并保存在方法区中,我们常说的常量池,就是指方法区中的运行时常量池.</p>
+
+<p>运行时常量池相对于Class文件常量池的另外一个重要特征是具备动态性,Java语言并不要求常量一定只有编译期才能产生,也就是并非预置入Class文件中常量池的内容才能进入方法区运行时常量池,运行期间也可能将新的常量放入池中,这种特性被开发人员利用比较多的就是String类的intern()方法.</p>
+    </div>
+    <a href="/jvm/java_intern/">阅读全文>></a>
+    </article>
+
+<article class="post box is-radiusless">
+    <div class="post-title">
+        <a class="post-title-link" href="/springframework/springboot_tomcat_connetor/"><h2 class="is-size-4 has-text-dark">tomcat连接器调优</h2></a>
+    </div>
+    <div class="post-meta">
+        <span class="post-time">日期 : 2018-03-13</span>
+    </div>
+    <div class="post-excerpt content">
+        <p>在并发不高的场景下是不需要在进行特殊的配置了,但是在并发量比较大的话springboot 对于默认的tomcat连接器参数可能会导致频频的连接拒绝现象.</p>
+    </div>
+    <a href="/springframework/springboot_tomcat_connetor/">阅读全文>></a>
+    </article>
+
+<article class="post box is-radiusless">
+    <div class="post-title">
+        <a class="post-title-link" href="/springframework/springboot_tomcat_directory/"><h2 class="is-size-4 has-text-dark">Springboot的embeded tomcat目录</h2></a>
+    </div>
+    <div class="post-meta">
+        <span class="post-time">日期 : 2018-03-08</span>
+    </div>
+    <div class="post-excerpt content">
+        <p>Springboot官方使用web的配置内嵌了tomcat , 其目录在正式环境下存在着诸多问题.</p>
+    </div>
+    <a href="/springframework/springboot_tomcat_directory/">阅读全文>></a>
+    </article>
+
+<article class="post box is-radiusless">
+    <div class="post-title">
+        <a class="post-title-link" href="/security/sql_injection/"><h2 class="is-size-4 has-text-dark">SQL注入漏洞</h2></a>
+    </div>
+    <div class="post-meta">
+        <span class="post-time">日期 : 2018-03-05</span>
+    </div>
+    <div class="post-excerpt content">
+        <p>SQL注入是最高危的漏洞之一,它和命令执行漏洞一样是直接危害应用本身,可能导致数据库内容直接泄露或者被删除等.</p>
+    </div>
+    <a href="/security/sql_injection/">阅读全文>></a>
+    </article>
+
+<article class="post box is-radiusless">
+    <div class="post-title">
+        <a class="post-title-link" href="/springframework/springboot_logback/"><h2 class="is-size-4 has-text-dark">Springboot使用logback的坑点</h2></a>
+    </div>
+    <div class="post-meta">
+        <span class="post-time">日期 : 2018-03-01</span>
+    </div>
+    <div class="post-excerpt content">
+        <p>尽管SpringBoot能够在application.properties来配置一些日志相关的内容,但是针对一个比较复杂,或者是有着自己运维体系的应用,这是远远不够用的.所以拓展自己的日志配置文件是必须的,官方推荐的是使用logback-spring.xml直接覆盖</p>
+    </div>
+    <a href="/springframework/springboot_logback/">阅读全文>></a>
+    </article>
+
+</section>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<nav class="page-nav">
+    
+    <a href="/page/11/" class="extend prev">上一页</a>
+    
+
+    
+
+      
+
+        
+
+        
+          
+        
+
+        
+
+        
+
+        
+
+        
+
+      
+
+      
+      
+          <a href="/" class="page-number">1</a>
+      
+
+    
+
+      
+
+        
+
+        
+
+        
+          
+            <span class="space">...</span>
+          
+        
+
+        
+
+        
+
+        
+
+      
+
+      
+      
+
+    
+
+      
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+      
+
+      
+      
+
+    
+
+      
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+      
+
+      
+      
+
+    
+
+      
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+      
+
+      
+      
+
+    
+
+      
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+      
+
+      
+      
+
+    
+
+      
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+      
+
+      
+      
+
+    
+
+      
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+      
+
+      
+      
+
+    
+
+      
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+      
+
+      
+      
+
+    
+
+      
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+      
+
+      
+      
+
+    
+
+      
+
+        
+
+        
+
+        
+
+        
+          
+        
+
+        
+
+        
+
+      
+
+      
+      
+          <a href="/page/11/" class="page-number">11</a>
+      
+
+    
+
+      
+
+        
+
+        
+
+        
+
+        
+          
+        
+
+        
+          
+        
+
+        
+
+      
+
+      
+      
+          <a href="/page/12/" class="page-number current">12</a>
+      
+
+    
+
+      
+
+        
+
+        
+
+        
+
+        
+          
+        
+
+        
+
+        
+          
+        
+
+      
+
+      
+      
+          <a href="/page/13/" class="page-number">13</a>
+      
+
+        
+
+
+    
+      <a href="/page/13/" class="extend next">下一页</a>
+    
+
+</nav>
+</div>
+                <div class="column">    <aside>
+        <h2 class="is-size-4">关于我</h2>
+        <div class="content">
+            Working in advertising platform team. Backend on duty,full stack in my own time.
+        </div>
+        <h2 class="is-size-4">GitHub</h2>
+        <div class="content">
+            <a href="https://github.com/lihongkun" target="_blank">https://github.com/lihongkun</a>
+        </div>
+    </aside></div>
+                </div>
+            </div>
+         </main>    <footer class="footer">
+    
+        <div class="copyright has-text-centered">
+            <a href="https://bulma.io">
+                <img src="http://www.lihongkun.com/images/made-with-bulma.png" alt="Made with Bulma" width="128" height="24">
+            </a>
+            <p>© 泛泛之辈 Power by Hugo v0.55.6 - 闽ICP备15009606号</p>
+        </div>
+    </footer>
+    <script type="text/javascript">
+    document.addEventListener('DOMContentLoaded', () => {
+        
+        const $navbarBurgers = Array.prototype.slice.call(document.querySelectorAll('.navbar-burger'), 0);
+        
+        if ($navbarBurgers.length > 0) {
+            
+            $navbarBurgers.forEach( el => {
+                el.addEventListener('click', () => {
+                
+                const target = el.dataset.target;
+                const $target = document.getElementById(target);
+                
+                el.classList.toggle('is-active');
+                $target.classList.toggle('is-active');
+    
+                });
+            });
+        }
+    });
+    </script></body>
+</html>

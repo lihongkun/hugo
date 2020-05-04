@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html><head>
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+
+    
+    <meta name="author"
+            content=""/>
+
+    
+    <meta name="description" content="加权重随机是一个比较常见的计算方式，比如 负载均衡算法中的一种、随机抽奖、广告系统流量分配等等。这种算法的实现方式比较成熟。
+"/>
+    
+
+    
+
+    
+    <link rel="canonical" href="https://www.lihongkun.com/common/weight_random/"/>
+
+    
+
+    
+    
+    
+        
+            
+        
+    
+        
+            
+                
+            
+                
+            
+                
+            
+                
+            
+        
+    
+        
+            
+                
+            
+                
+            
+                
+            
+                
+            
+        
+    
+        
+            
+        
+    
+        
+            
+        
+    
+        
+            
+        
+    
+    <title> 加权随机算法 | 泛泛之辈 </title>
+
+    <link rel="shortcut icon" href="https://www.lihongkun.com/favicon.jpg"/>
+    <link rel="stylesheet" href="https://www.lihongkun.com/css/bulma.min.css"/>
+    <link rel="stylesheet" href="https://www.lihongkun.com/css/style.css"/>
+</head><body><header>
+    <nav class="navbar is-fixed-top is-primary" role="navigation" aria-label="main navigation">
+        <div class="navbar-brand is-size-4">
+            <a class="navbar-item" href="https://www.lihongkun.com/">
+                    泛泛之辈
+            </a>
+            <a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false" data-target="navbar-menu">
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+            </a>
+        </div>
+        <div id="navbar-menu" class="navbar-menu">
+            <div class="navbar-end">
+                
+                    
+                        <a class="navbar-item" href="/">首页</a>
+                    
+                
+                    
+                        <div class="navbar-item has-dropdown is-hoverable">
+                            <a class="navbar-link">基本功</a>
+                            <div class="navbar-dropdown">
+                                
+                                <a class="navbar-item" href="/categories/concurrent/">并发</a>
+                                
+                                <a class="navbar-item" href="/categories/network/">网络</a>
+                                
+                                <a class="navbar-item" href="/categories/security/">Web安全</a>
+                                
+                                <a class="navbar-item" href="/categories/jvm/">Java虚拟机</a>
+                                
+                            </div>
+                        </div>
+                    
+                
+                    
+                        <div class="navbar-item has-dropdown is-hoverable">
+                            <a class="navbar-link">编程框架</a>
+                            <div class="navbar-dropdown">
+                                
+                                <a class="navbar-item" href="/categories/springframework/">Spring</a>
+                                
+                                <a class="navbar-item" href="/categories/mybatis/">Mybatis</a>
+                                
+                                <a class="navbar-item" href="/categories/springcloud/">SpringCloud</a>
+                                
+                                <a class="navbar-item" href="/categories/common/">常用框架</a>
+                                
+                            </div>
+                        </div>
+                    
+                
+                    
+                        <a class="navbar-item" href="/categories/troubleshooting/">问题排查</a>
+                    
+                
+                    
+                        <a class="navbar-item" href="/categories/design/">设计思路</a>
+                    
+                
+                    
+                        <a class="navbar-item" href="/categories/reading/">读书笔记</a>
+                    
+                
+            </div>
+            </div>
+    </nav>
+</header><main>
+            <div class="container">
+                <div class="columns">
+                <div class="column is-four-fifths">
+                    <article class="post box is-radiusless">
+                        <div class="post-title">
+                            <h2 class="is-size-4">加权随机算法</h2>
+                        </div>
+                            <div class="post-meta">
+                            <span class="post-time">日期&nbsp;:&nbsp;2019-11-17</span>
+                        </div>
+                        <div class="post-content content">
+                            <p>加权重随机是一个比较常见的计算方式，比如 负载均衡算法中的一种、随机抽奖、广告系统流量分配等等。这种算法的实现方式比较成熟。</p>
+
+<h4 id="思路">思路</h4>
+
+<p><strong>场景</strong>  集合{1,2,3,4,5,6} 对应的权重值是 {10,30,15,5,13,27} 。</p>
+
+<p><strong>思路</strong></p>
+
+<p><img src="lottery.jpg" alt="" /></p>
+
+<p>如上图所示1~6的权重放到一个数轴上面，后面的权重值为前面权重值得累加。如2这个元素的权重期间为[10,10+30)。随机一个100以内的任意数R，R的数值落在哪个范围则表示随机到集合中哪个元素。</p>
+
+<p>此方式需要去遍历集合来确定随机数R落在哪个区间，时间复杂度是O(n)，无额外使用空间。</p>
+
+<p>在一些集合不变又很长的，但是对效率要求比较高的情况下，可以使用额外的数据结构如二叉树来避免集合的遍历。</p>
+
+<h4 id="实现">实现</h4>
+
+<p>此处使用TreeMap来实现一个随机值查找区间不需要遍历集合的例子。</p>
+
+<pre><code>public class Lottery {
+
+    /**
+     * key为元素的累计权重值,value为集合元素
+     */
+    private TreeMap&lt;Integer, Integer&gt; treeMap;
+
+    /**
+     * 命中统计,key为集合元素.value为统计值
+     */
+    private ConcurrentHashMap&lt;Integer, AtomicInteger&gt; statMap;
+
+    /**
+     * 集合元素的总权重
+     */
+    private int totalWeight;
+
+    /**
+     * 随机权重构造函数
+     *
+     * @param weightMap
+     */
+    public Lottery(Map&lt;Integer, Integer&gt; weightMap) {
+        treeMap = new TreeMap&lt;&gt;();
+        statMap = new ConcurrentHashMap&lt;&gt;();
+
+        Set&lt;Map.Entry&lt;Integer, Integer&gt;&gt; entrySet = weightMap.entrySet();
+        for (Map.Entry&lt;Integer, Integer&gt; entry : entrySet) {
+            totalWeight += entry.getValue();
+            treeMap.put(totalWeight, entry.getKey());
+            statMap.put(entry.getKey(), new AtomicInteger(0));
+        }
+    }
+
+    public ConcurrentHashMap&lt;Integer, AtomicInteger&gt; getStatMap() {
+        return statMap;
+    }
+
+    public int getTotalWeight() {
+        return totalWeight;
+    }
+
+    public Map.Entry&lt;Integer, Integer&gt; getRandom() {
+        ThreadLocalRandom threadLocalRandom = ThreadLocalRandom.current();
+        Map.Entry&lt;Integer, Integer&gt; entry = treeMap.tailMap(threadLocalRandom.nextInt(totalWeight), false).firstEntry();
+        statMap.get(entry.getValue()).incrementAndGet();
+        return entry;
+    }
+}
+</code></pre>
+
+<p>上述类中只需要传入weightMap ，k是待选集合，v是集合元素的权重。构造函数中计算了一个 treeMap，k是每个集合元素的累计权重，v是对应的集合元素，也就是构造了图中的结构。treeMap加速了累计权重的遍历过程。</p>
+
+<p>使用如下程序进行测试</p>
+
+<pre><code>public static void main(String[] args) throws Exception {
+    Map&lt;Integer, Integer&gt; lotteryMap = new HashMap&lt;&gt;(10);
+    lotteryMap.put(1, 10);
+    lotteryMap.put(2, 30);
+    lotteryMap.put(3, 15);
+    lotteryMap.put(4, 5);
+    lotteryMap.put(5, 13);
+    lotteryMap.put(6, 27);
+
+    // 构造好加权集合
+    Lottery lottery = new Lottery(lotteryMap);
+
+    // 执行随机函数，并统计命中值
+    ExecutorService executorService = Executors.newFixedThreadPool(5);
+    int threadNum = 5;
+    int loopNum = 100000;
+    Future[] futures = new Future[threadNum];
+    for (int i = 0; i &lt; threadNum; i++) {
+        futures[i] = executorService.submit((Callable&lt;Void&gt;) () -&gt; {
+            for (int cnt = 0; cnt &lt; loopNum; cnt++) {
+                lottery.getRandom();
+            }
+            return null;
+        });
+    }
+
+    for (Future future : futures) {
+        future.get();
+    }
+
+    executorService.shutdown();
+
+    int total = loopNum * threadNum;
+    for (Map.Entry&lt;Integer, AtomicInteger&gt; entry : lottery.getStatMap().entrySet()) {
+        System.out.println(&quot;id : &quot; + entry.getKey() + &quot; --&gt; &quot; + new BigDecimal(entry.getValue().get()).divide(new BigDecimal(total), 6, RoundingMode.HALF_UP));
+    }
+</code></pre>
+
+<p>输出多次的结果基本上跟指定的权重是一致的。</p>
+
+<pre><code>id : 1 --&gt; 0.100066
+id : 2 --&gt; 0.299118
+id : 3 --&gt; 0.149764
+id : 4 --&gt; 0.050484
+id : 5 --&gt; 0.130372
+id : 6 --&gt; 0.270196
+</code></pre>
+                        </div>
+                        <div class="columns is-mobile post-meta">
+                            <div class="column is-half-desktop has-text-left is-paddingless"> 
+                                 
+                                更老一篇:<a href="https://www.lihongkun.com/common/thirft/"> thrift序列化协议</a>
+                                
+                            </div>
+                            <div class="column is-half-desktop has-text-right is-paddingless">
+                                
+                                没有了，已经是最新文章
+                                
+                            </div>
+                            <div class="is-clearfix"></div>
+                        </div>
+                        <script src="https://utteranc.es/client.js"
+                                repo="lihongkun/lihongkun.github.io"
+                                issue-term="title"
+                                theme="github-light"
+                                crossorigin="anonymous"
+                                async>
+                        </script>
+                    </article>
+                </div>
+                <div class="column">    <aside>
+        <h2 class="is-size-4">关于我</h2>
+        <div class="content">
+            Working in advertising platform team. Backend on duty,full stack in my own time.
+        </div>
+        <h2 class="is-size-4">GitHub</h2>
+        <div class="content">
+            <a href="https://github.com/lihongkun" target="_blank">https://github.com/lihongkun</a>
+        </div>
+    </aside></div>
+                </div>
+            </div>
+         </main>    <footer class="footer">
+    
+        <div class="copyright has-text-centered">
+            <a href="https://bulma.io">
+                <img src="https://www.lihongkun.com/images/made-with-bulma.png" alt="Made with Bulma" width="128" height="24">
+            </a>
+            <p>© 泛泛之辈 Power by Hugo v0.55.6 - 闽ICP备15009606号</p>
+        </div>
+    </footer>
+    <script type="text/javascript">
+    document.addEventListener('DOMContentLoaded', () => {
+        
+        const $navbarBurgers = Array.prototype.slice.call(document.querySelectorAll('.navbar-burger'), 0);
+        
+        if ($navbarBurgers.length > 0) {
+            
+            $navbarBurgers.forEach( el => {
+                el.addEventListener('click', () => {
+                
+                const target = el.dataset.target;
+                const $target = document.getElementById(target);
+                
+                el.classList.toggle('is-active');
+                $target.classList.toggle('is-active');
+    
+                });
+            });
+        }
+    });
+    
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?1d22cdd561d5653151fb31477d5aafff";
+      var s = document.getElementsByTagName("script")[0]; 
+      s.parentNode.insertBefore(hm, s);
+    })();
+    </script></body>
+</html>

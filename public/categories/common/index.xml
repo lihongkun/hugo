@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>common on 泛泛之辈</title>
+    <link>http://www.lihongkun.com/categories/common/</link>
+    <description>Recent content in common on 泛泛之辈</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-CN</language>
+    <lastBuildDate>Sun, 12 Apr 2020 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="http://www.lihongkun.com/categories/common/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>微基准测试框架JMH</title>
+      <link>http://www.lihongkun.com/common/jmh/</link>
+      <pubDate>Sun, 12 Apr 2020 00:00:00 +0000</pubDate>
+      
+      <guid>http://www.lihongkun.com/common/jmh/</guid>
+      <description>&lt;p&gt;JMH（Java Microbenchmark Harness），是一个针对Java或者JVM上语言的基准测试工具。它可以比较轻松地创建基准测试。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Logback日志框架</title>
+      <link>http://www.lihongkun.com/common/logback/</link>
+      <pubDate>Sat, 22 Feb 2020 00:00:00 +0000</pubDate>
+      
+      <guid>http://www.lihongkun.com/common/logback/</guid>
+      <description>&lt;p&gt;Logback是一个日志实现框架，它实现了SLF4J 。它们二者出自同一作者之手，也是时下比较普及的一个组合。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Java日志门面系统</title>
+      <link>http://www.lihongkun.com/common/slf4j/</link>
+      <pubDate>Sat, 08 Feb 2020 00:00:00 +0000</pubDate>
+      
+      <guid>http://www.lihongkun.com/common/slf4j/</guid>
+      <description>&lt;p&gt;一个线上程序的运行情况监测，日志扮演着极其重要的角色。Java发展了20年，日志系统也是百家争鸣，不同历史时期出现的开源组件往往有着不同的日志实现，应用的整合难度陡升。所幸Simple Logging Facade for Java（SLF4J）对各种日志框架进行了抽象。如其名字，它对开发者提供了统一的门面，允许开发者在部署时插入所需的日志框架。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>序列化库选型</title>
+      <link>http://www.lihongkun.com/common/serialization/</link>
+      <pubDate>Sat, 28 Dec 2019 00:00:00 +0000</pubDate>
+      
+      <guid>http://www.lihongkun.com/common/serialization/</guid>
+      <description>&lt;p&gt;序列化和反序列化在线上系统中是一个绕不开的话题，通常作为RPC框架中的一部分而被很多人所忽略。然而它经常成为系统设计或者性能影响因素的一个重要环节。业界有许许多多的序列化库，我们应该如何进行选型，下面我们来简单探讨一下&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Serializable和Hession</title>
+      <link>http://www.lihongkun.com/common/serializable_and_hession/</link>
+      <pubDate>Sat, 07 Dec 2019 00:00:00 +0000</pubDate>
+      
+      <guid>http://www.lihongkun.com/common/serializable_and_hession/</guid>
+      <description>&lt;p&gt;Serializable是Java提供的原生序列化方式，它提供了配套的ObjectOutputStream和ObjectIutputStream来处理Java对象的序列化读写，解析效率性能比较高，但是消耗的存储却捉襟见肘。很多框架中仅仅作为一个基础实现，但是基本无人使用。比如 Dubbo 框架中并不是使用它作为默认的序列化方式，而是使用hession。下面看看这两种序列化方式的优劣。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Kryo序列化器</title>
+      <link>http://www.lihongkun.com/common/kryo/</link>
+      <pubDate>Wed, 04 Dec 2019 00:00:00 +0000</pubDate>
+      
+      <guid>http://www.lihongkun.com/common/kryo/</guid>
+      <description>&lt;p&gt;Kryo是一个快速高效的java二进制对象图序列化框架。该项目的目标是高解析效率、高压缩率和易于使用的API。无论是文件、数据库还是网络上的对象，在需要持久化的场景中，该项目可以进入考虑的范围。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Avro序列化器</title>
+      <link>http://www.lihongkun.com/common/avro/</link>
+      <pubDate>Sun, 01 Dec 2019 00:00:00 +0000</pubDate>
+      
+      <guid>http://www.lihongkun.com/common/avro/</guid>
+      <description>&lt;p&gt;Apache Avro（以下简称 Avro）是一种与编程语言无关的序列化格式。Avro 数据通过与语言无关的 schema 来定义。schema 通过 JSON 来描述，数据被序列化成二进制文件或 JSON 文件，不过一般会使用二进制文件。在大数据体系下，比较注重存储的压缩率，反而对效率并没有要求得很苛刻。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>thrift序列化协议</title>
+      <link>http://www.lihongkun.com/common/thirft/</link>
+      <pubDate>Mon, 23 Sep 2019 00:00:00 +0000</pubDate>
+      
+      <guid>http://www.lihongkun.com/common/thirft/</guid>
+      <description>&lt;p&gt;Apache Thrift 脱胎于 Facebook ，是一种高效的、支持多种编程语言的远程服务调用的框架。它的序列化协议同样可用于通讯协议、数据存储等领域的语言无关、平台无关、可扩展的序列化结构数据格式。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>protobuf序列化协议</title>
+      <link>http://www.lihongkun.com/common/protobuf_vs_json/</link>
+      <pubDate>Tue, 20 Aug 2019 00:00:00 +0000</pubDate>
+      
+      <guid>http://www.lihongkun.com/common/protobuf_vs_json/</guid>
+      <description>&lt;p&gt;Protocol Buffers 是一种轻便高效的结构化数据存储格式，可以用于结构化数据串行化，或者说序列化。它很适合做数据存储或 RPC 数据交换格式。可用于通讯协议、数据存储等领域的语言无关、平台无关、可扩展的序列化结构数据格式。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>常见JSON序列化库性能比较</title>
+      <link>http://www.lihongkun.com/common/json_compare/</link>
+      <pubDate>Sun, 18 Aug 2019 00:00:00 +0000</pubDate>
+      
+      <guid>http://www.lihongkun.com/common/json_compare/</guid>
+      <description>&lt;p&gt;JSON（JavaScript Object Notation，JavaScript对象表示法，读作/ˈdʒeɪsən/）是一种由道格拉斯·克罗克福特构想和设计、轻量级的数据交换语言，该语言以易于让人阅读的文字为基础，用来传输由属性值或者序列性的值组成的数据对象。很多接口协议中都默认以它为序列化协议，如SpringCloud里面都是以HTTP+JSON的方式来提供服务。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>使用Lombok简化代码</title>
+      <link>http://www.lihongkun.com/common/lombok/</link>
+      <pubDate>Sun, 14 Jul 2019 00:00:00 +0000</pubDate>
+      
+      <guid>http://www.lihongkun.com/common/lombok/</guid>
+      <description>&lt;p&gt;POJO等一系列的java bean最让人诟病的是他们有很多重复的工作存在。比如里面的属性要暴露出去需要写很多的Getter和Setter方法。完全是体力活。Lombok是一个开源库，能够改善这种现状。&lt;/p&gt;</description>
+    </item>
+    
+  </channel>
+</rss>

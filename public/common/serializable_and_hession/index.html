@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html><head>
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+
+    
+    <meta name="author"
+            content=""/>
+
+    
+    <meta name="description" content="Serializable是Java提供的原生序列化方式，它提供了配套的ObjectOutputStream和ObjectIutputStream来处理Java对象的序列化读写，解析效率性能比较高，但是消耗的存储却捉襟见肘。很多框架中仅仅作为一个基础实现，但是基本无人使用。比如 Dubbo 框架中并不是使用它作为默认的序列化方式，而是使用hession。下面看看这两种序列化方式的优劣。
+"/>
+    
+
+    
+
+    
+    <link rel="canonical" href="http://www.lihongkun.com/common/serializable_and_hession/"/>
+
+    
+
+    
+    
+    
+        
+            
+        
+    
+        
+            
+                
+            
+                
+            
+                
+            
+                
+            
+        
+    
+        
+            
+                
+            
+                
+            
+                
+            
+                
+            
+        
+    
+        
+            
+        
+    
+        
+            
+        
+    
+        
+            
+        
+    
+    <title> Serializable和Hession | 泛泛之辈 </title>
+
+    <link rel="shortcut icon" href="http://www.lihongkun.com/favicon.jpg"/>
+    <link rel="stylesheet" href="http://www.lihongkun.com/css/bulma.min.css"/>
+    <link rel="stylesheet" href="http://www.lihongkun.com/css/style.css"/>
+</head><body><header>
+    <nav class="navbar is-fixed-top is-primary" role="navigation" aria-label="main navigation">
+        <div class="navbar-brand is-size-4">
+            <a class="navbar-item" href="http://www.lihongkun.com/">
+                    泛泛之辈
+            </a>
+            <a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false" data-target="navbar-menu">
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+            </a>
+        </div>
+        <div id="navbar-menu" class="navbar-menu">
+            <div class="navbar-end">
+                
+                    
+                        <a class="navbar-item" href="/">首页</a>
+                    
+                
+                    
+                        <div class="navbar-item has-dropdown is-hoverable">
+                            <a class="navbar-link">基本功</a>
+                            <div class="navbar-dropdown">
+                                
+                                <a class="navbar-item" href="/categories/concurrent/">并发</a>
+                                
+                                <a class="navbar-item" href="/categories/network/">网络</a>
+                                
+                                <a class="navbar-item" href="/categories/security/">Web安全</a>
+                                
+                                <a class="navbar-item" href="/categories/jvm/">Java虚拟机</a>
+                                
+                            </div>
+                        </div>
+                    
+                
+                    
+                        <div class="navbar-item has-dropdown is-hoverable">
+                            <a class="navbar-link">编程框架</a>
+                            <div class="navbar-dropdown">
+                                
+                                <a class="navbar-item" href="/categories/springframework/">Spring</a>
+                                
+                                <a class="navbar-item" href="/categories/mybatis/">Mybatis</a>
+                                
+                                <a class="navbar-item" href="/categories/springcloud/">SpringCloud</a>
+                                
+                                <a class="navbar-item" href="/categories/common/">常用框架</a>
+                                
+                            </div>
+                        </div>
+                    
+                
+                    
+                        <a class="navbar-item" href="/categories/troubleshooting/">问题排查</a>
+                    
+                
+                    
+                        <a class="navbar-item" href="/categories/design/">设计思路</a>
+                    
+                
+                    
+                        <a class="navbar-item" href="/categories/reading/">读书笔记</a>
+                    
+                
+            </div>
+            </div>
+    </nav>
+</header><main>
+            <div class="container">
+                <div class="columns">
+                <div class="column is-four-fifths">
+                    <article class="post box is-radiusless">
+                        <div class="post-title">
+                            <h2 class="is-size-4">Serializable和Hession</h2>
+                        </div>
+                            <div class="post-meta">
+                            <span class="post-time">日期&nbsp;:&nbsp;2019-12-07</span>
+                        </div>
+                        <div class="post-content content">
+                            <p>Serializable是Java提供的原生序列化方式，它提供了配套的ObjectOutputStream和ObjectIutputStream来处理Java对象的序列化读写，解析效率性能比较高，但是消耗的存储却捉襟见肘。很多框架中仅仅作为一个基础实现，但是基本无人使用。比如 Dubbo 框架中并不是使用它作为默认的序列化方式，而是使用hession。下面看看这两种序列化方式的优劣。</p>
+
+<h3 id="serializable">Serializable</h3>
+
+<p>Java原生支持，无需引入任何依赖。</p>
+
+<pre><code>DemoResponse demoResponse = InitializeUtils.initDemoResponse();
+
+// 执行效率
+ObjectOutputStream objectOutputStream = new ObjectOutputStream(new ByteArrayOutputStream());
+long timeWatch = System.currentTimeMillis();
+for (int i = 0; i &lt; Constants.LOOP_SIZE; i++) {
+    objectOutputStream.writeObject(demoResponse);
+}
+objectOutputStream.flush();
+System.out.println(System.currentTimeMillis() - timeWatch);
+
+// 存储空间
+objectOutputStream = new ObjectOutputStream(new GZIPOutputStream(new FileOutputStream(&quot;native.txt&quot;)));
+objectOutputStream.writeObject(demoResponse);
+objectOutputStream.flush();
+objectOutputStream.close();
+</code></pre>
+
+<p>针对DemoResponse下的data的列表元素数量设置不同的值，尝试对其进行序列化1万次，对比结果如下表</p>
+
+<table>
+<thead>
+<tr>
+<th>DATA_SIZE</th>
+<th>jackson</th>
+<th>protobuf</th>
+<th>serializable</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td>10</td>
+<td>260 ms</td>
+<td>156 ms</td>
+<td>47ms</td>
+</tr>
+
+<tr>
+<td>50</td>
+<td>330 ms</td>
+<td>219 ms</td>
+<td>47ms</td>
+</tr>
+
+<tr>
+<td>100</td>
+<td>527 ms</td>
+<td>296 ms</td>
+<td>47ms</td>
+</tr>
+
+<tr>
+<td>200</td>
+<td>744 ms</td>
+<td>437 ms</td>
+<td>47ms</td>
+</tr>
+
+<tr>
+<td>300</td>
+<td>1109 ms</td>
+<td>562 ms</td>
+<td>47ms</td>
+</tr>
+</tbody>
+</table>
+
+<p>单个对象的增大对其影响并不是很大，解析效率比较稳定。而其单次序列化出的对象大小是4KB，大约是JSON序列化的4倍多。</p>
+
+<h4 id="hession">Hession</h4>
+
+<p>hesssion具备了原生序列化的效率，又减少了序列化后的对象大小，经常被用于RPC框架之中。</p>
+
+<pre><code>&lt;dependency&gt;
+    &lt;groupId&gt;com.caucho&lt;/groupId&gt;
+    &lt;artifactId&gt;hessian&lt;/artifactId&gt;
+    &lt;version&gt;4.0.63&lt;/version&gt;
+&lt;/dependency&gt;
+</code></pre>
+
+<p>首先需要引入依赖，它可以直接使用原生对象直接进行序列化，无需依赖其他插件或者生成对象。完全是运行时行为。使用同样的数据进行测试，代码如下：</p>
+
+<pre><code>DemoResponse demoResponse = InitializeUtils.initDemoResponse();
+
+// 执行效率
+HessianOutput hessianOutput = new HessianOutput(new ByteArrayOutputStream());
+long timeWatch = System.currentTimeMillis();
+for (int i = 0; i &lt; Constants.LOOP_SIZE; i++) {
+    hessianOutput.writeObject(demoResponse);
+}
+System.out.println(System.currentTimeMillis() - timeWatch);
+// 存储空间
+hessianOutput = new HessianOutput(new GZIPOutputStream(new FileOutputStream(&quot;hession.txt&quot;)));
+hessianOutput.writeObject(demoResponse);
+hessianOutput.flush();
+hessianOutput.close();
+</code></pre>
+
+<p>针对DemoResponse下的data的列表元素数量设置不同的值，尝试对其进行序列化1万次，对比结果如下表</p>
+
+<table>
+<thead>
+<tr>
+<th>DATA_SIZE</th>
+<th>jackson</th>
+<th>protobuf</th>
+<th>hession</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td>10</td>
+<td>260 ms</td>
+<td>156 ms</td>
+<td>15ms</td>
+</tr>
+
+<tr>
+<td>50</td>
+<td>330 ms</td>
+<td>219 ms</td>
+<td>16ms</td>
+</tr>
+
+<tr>
+<td>100</td>
+<td>527 ms</td>
+<td>296 ms</td>
+<td>16ms</td>
+</tr>
+
+<tr>
+<td>200</td>
+<td>744 ms</td>
+<td>437 ms</td>
+<td>16ms</td>
+</tr>
+
+<tr>
+<td>300</td>
+<td>1109 ms</td>
+<td>562 ms</td>
+<td>18ms</td>
+</tr>
+</tbody>
+</table>
+
+<p>其解析效率比serializable好一些，同时其序列化后的对象大小也比serializable的4KB小很多，为1KB。</p>
+
+<p>serializable和hession的解析效率虽然非常高效，但是其序列化后对象的大小相较于protobuf等其他序列化方式却大的比较多。</p>
+                        </div>
+                        <div class="columns is-mobile post-meta">
+                            <div class="column is-half-desktop has-text-left is-paddingless"> 
+                                 
+                                更老一篇:<a href="http://www.lihongkun.com/common/kryo/"> Kryo序列化器</a>
+                                
+                            </div>
+                            <div class="column is-half-desktop has-text-right is-paddingless">
+                                
+                                更新一篇:<a href="http://www.lihongkun.com/common/serialization/"> 序列化库选型</a>
+                                
+                            </div>
+                            <div class="is-clearfix"></div>
+                        </div>
+                        <script src="https://utteranc.es/client.js"
+                                repo="lihongkun/lihongkun.github.io"
+                                issue-term="title"
+                                theme="github-light"
+                                crossorigin="anonymous"
+                                async>
+                        </script>
+                    </article>
+                </div>
+                <div class="column">    <aside>
+        <h2 class="is-size-4">关于我</h2>
+        <div class="content">
+            Working in advertising platform team. Backend on duty,full stack in my own time.
+        </div>
+        <h2 class="is-size-4">GitHub</h2>
+        <div class="content">
+            <a href="https://github.com/lihongkun" target="_blank">https://github.com/lihongkun</a>
+        </div>
+    </aside></div>
+                </div>
+            </div>
+         </main>    <footer class="footer">
+    
+        <div class="copyright has-text-centered">
+            <a href="https://bulma.io">
+                <img src="http://www.lihongkun.com/images/made-with-bulma.png" alt="Made with Bulma" width="128" height="24">
+            </a>
+            <p>© 泛泛之辈 Power by Hugo v0.55.6 - 闽ICP备15009606号</p>
+        </div>
+    </footer>
+    <script type="text/javascript">
+    document.addEventListener('DOMContentLoaded', () => {
+        
+        const $navbarBurgers = Array.prototype.slice.call(document.querySelectorAll('.navbar-burger'), 0);
+        
+        if ($navbarBurgers.length > 0) {
+            
+            $navbarBurgers.forEach( el => {
+                el.addEventListener('click', () => {
+                
+                const target = el.dataset.target;
+                const $target = document.getElementById(target);
+                
+                el.classList.toggle('is-active');
+                $target.classList.toggle('is-active');
+    
+                });
+            });
+        }
+    });
+    </script></body>
+</html>

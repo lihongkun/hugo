@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html><head>
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+
+    
+    <meta name="author"
+            content=""/>
+
+    
+    <meta name="description" content="Java的世界里，几乎所有项目的包管理都是使用了Maven，或者在其之上演进的组件。大型项目比如有成百上千个工程，依赖的包比较多，如果没有统一的版本管理，很容易就失控了。
+"/>
+    
+
+    
+
+    
+    <link rel="canonical" href="http://www.lihongkun.com/design/bom/"/>
+
+    
+
+    
+    
+    
+        
+            
+        
+    
+        
+            
+                
+            
+                
+            
+                
+            
+                
+            
+        
+    
+        
+            
+                
+            
+                
+            
+                
+            
+                
+            
+        
+    
+        
+            
+        
+    
+        
+            
+        
+    
+        
+            
+        
+    
+    <title> 大型项目的依赖包管理 | 泛泛之辈 </title>
+
+    <link rel="shortcut icon" href="http://www.lihongkun.com/favicon.jpg"/>
+    <link rel="stylesheet" href="http://www.lihongkun.com/css/bulma.min.css"/>
+    <link rel="stylesheet" href="http://www.lihongkun.com/css/style.css"/>
+</head><body><header>
+    <nav class="navbar is-fixed-top is-primary" role="navigation" aria-label="main navigation">
+        <div class="navbar-brand is-size-4">
+            <a class="navbar-item" href="http://www.lihongkun.com/">
+                    泛泛之辈
+            </a>
+            <a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false" data-target="navbar-menu">
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+            </a>
+        </div>
+        <div id="navbar-menu" class="navbar-menu">
+            <div class="navbar-end">
+                
+                    
+                        <a class="navbar-item" href="/">首页</a>
+                    
+                
+                    
+                        <div class="navbar-item has-dropdown is-hoverable">
+                            <a class="navbar-link">基本功</a>
+                            <div class="navbar-dropdown">
+                                
+                                <a class="navbar-item" href="/categories/concurrent/">并发</a>
+                                
+                                <a class="navbar-item" href="/categories/network/">网络</a>
+                                
+                                <a class="navbar-item" href="/categories/security/">Web安全</a>
+                                
+                                <a class="navbar-item" href="/categories/jvm/">Java虚拟机</a>
+                                
+                            </div>
+                        </div>
+                    
+                
+                    
+                        <div class="navbar-item has-dropdown is-hoverable">
+                            <a class="navbar-link">编程框架</a>
+                            <div class="navbar-dropdown">
+                                
+                                <a class="navbar-item" href="/categories/springframework/">Spring</a>
+                                
+                                <a class="navbar-item" href="/categories/mybatis/">Mybatis</a>
+                                
+                                <a class="navbar-item" href="/categories/springcloud/">SpringCloud</a>
+                                
+                                <a class="navbar-item" href="/categories/common/">常用框架</a>
+                                
+                            </div>
+                        </div>
+                    
+                
+                    
+                        <a class="navbar-item" href="/categories/troubleshooting/">问题排查</a>
+                    
+                
+                    
+                        <a class="navbar-item" href="/categories/design/">设计思路</a>
+                    
+                
+                    
+                        <a class="navbar-item" href="/categories/reading/">读书笔记</a>
+                    
+                
+            </div>
+            </div>
+    </nav>
+</header><main>
+            <div class="container">
+                <div class="columns">
+                <div class="column is-four-fifths">
+                    <article class="post box is-radiusless">
+                        <div class="post-title">
+                            <h2 class="is-size-4">大型项目的依赖包管理</h2>
+                        </div>
+                            <div class="post-meta">
+                            <span class="post-time">日期&nbsp;:&nbsp;2020-04-25</span>
+                        </div>
+                        <div class="post-content content">
+                            <p>Java的世界里，几乎所有项目的包管理都是使用了Maven，或者在其之上演进的组件。大型项目比如有成百上千个工程，依赖的包比较多，如果没有统一的版本管理，很容易就失控了。</p>
+
+<h3 id="依赖包版本冲突">依赖包版本冲突</h3>
+
+<p>项目中pom.xml来管理依赖包，会遵循一个最短路径依赖。先看一个Case</p>
+
+<pre><code>&lt;dependencies&gt;
+    &lt;dependency&gt;
+        &lt;groupId&gt;com.dangdang&lt;/groupId&gt;
+        &lt;artifactId&gt;elastic-job-lite-spring&lt;/artifactId&gt;
+        &lt;version&gt;2.1.5&lt;/version&gt;
+    &lt;/dependency&gt;
+    &lt;dependency&gt;
+        &lt;groupId&gt;com.lihongkun.labs&lt;/groupId&gt;
+        &lt;artifactId&gt;jmh&lt;/artifactId&gt;
+        &lt;version&gt;1.0-SNAPSHOT&lt;/version&gt;
+    &lt;/dependency&gt;
+&lt;/dependencies&gt;
+</code></pre>
+
+<p>如上代码，项目中依赖了两个jar包，他们各自的依赖如下图</p>
+
+<p><img src="dependency.jpg" alt="" /></p>
+
+<p>可以看到这两个包的依赖树如图，其中的gson包版本是不一致的。按照最短路径原则的化2.2.2版本的包它的路径是比较短的。所以选择了2.2.2版本。我们可以使用 mvn dependency:tree命令来看最后选择的依赖。</p>
+
+<p><img src="dependency_tree.jpg" alt="" /></p>
+
+<p>这种情况下，会导致应用无法启动。因为elasticjob的使用强依赖于2.6.1，而其中使用的功能在2.2.2不存在。解决这种版本冲突比较简单，直接使用更短的路径依赖去覆盖，即在本项目中显式指定依赖和版本。但是当项目比较多的时候，坏处就显而易见了。</p>
+
+<h3 id="依赖包版本管理">依赖包版本管理</h3>
+
+<p>BOM（Bill of Materials）是由Maven提供的功能,它通过定义一整套相互兼容的jar包版本集合，使用时只需要依赖该BOM文件，即可放心的使用需要的依赖jar包，且无需再指定版本号。BOM的维护方负责版本升级，并保证BOM中定义的jar包版本之间的兼容性。</p>
+
+<h4 id="如何使用">如何使用</h4>
+
+<p>典型的应用如 使用Spring框架时，直接引入其bom进行包依赖管理。在使用具体的包时则不需要再进行包版本的声明。</p>
+
+<pre><code>&lt;dependencyManagement&gt;
+   &lt;dependencies&gt;
+     &lt;dependency&gt;
+        &lt;groupId&gt;org.springframework&lt;/groupId&gt;
+        &lt;artifactId&gt;spring-framework-bom&lt;/artifactId&gt;
+        &lt;version&gt;4.3.1.RELEASE&lt;/version&gt;
+        &lt;type&gt;pom&lt;/type&gt;
+        &lt;scope&gt;import&lt;/scope&gt;
+     &lt;/dependency&gt;
+   &lt;/dependencies&gt;
+&lt;/dependencyManagement&gt;
+
+&lt;dependencies&gt;
+    &lt;dependency&gt;
+        &lt;groupId&gt;org.springframework&lt;/groupId&gt;
+        &lt;artifactId&gt;spring-context&lt;/artifactId&gt;
+    &lt;/dependency&gt;
+    &lt;dependency&gt;
+        &lt;groupId&gt;org.springframework&lt;/groupId&gt;
+        &lt;artifactId&gt;spring-web&lt;/artifactId&gt;
+    &lt;/dependency&gt;
+&lt;dependencies&gt;
+</code></pre>
+
+<h4 id="如何自定义">如何自定义</h4>
+
+<p>既然有这样好处，那么我们在平时项目的管理中如何编写BOM。建议是整个部门或者大的项目由一个统一的BOM进行管理。</p>
+
+<pre><code>&lt;groupId&gt;com.lihongkun.labs&lt;/groupId&gt;
+&lt;artifactId&gt;bom&lt;/artifactId&gt;
+&lt;version&gt;1.0&lt;/version&gt;
+&lt;packaging&gt;pom&lt;/packaging&gt;
+
+&lt;dependencyManagement&gt;
+    &lt;!--声明依赖和版本--&gt;
+    &lt;dependencies&gt;
+        &lt;dependency&gt;
+            &lt;groupId&gt;com.alibaba&lt;/groupId&gt;
+            &lt;artifactId&gt;druid&lt;/artifactId&gt;
+            &lt;version&gt;1.1.12&lt;/version&gt;
+        &lt;/dependency&gt;
+        &lt;dependency&gt;
+            &lt;groupId&gt;com.alibaba&lt;/groupId&gt;
+            &lt;artifactId&gt;fastjson&lt;/artifactId&gt;
+            &lt;version&gt;1.2.29&lt;/version&gt;
+        &lt;/dependency&gt;
+    &lt;dependencies&gt;
+&lt;/dependencyManagement&gt;
+</code></pre>
+
+<p>编写方式同平时进行包依赖引入的时候没什么差别。只是所有的依赖都是使用dependencyManagement整个包含起来。</p>
+
+<pre><code>&lt;!--引入bom进行依赖管理--&gt;
+&lt;dependencyManagement&gt;
+   &lt;dependencies&gt;
+     &lt;dependency&gt;
+        &lt;groupId&gt;com.lihongkun.labs&lt;/groupId&gt;
+        &lt;artifactId&gt;bom&lt;/artifactId&gt;
+        &lt;version&gt;1.0&lt;/version&gt;
+        &lt;type&gt;pom&lt;/type&gt;
+        &lt;scope&gt;import&lt;/scope&gt;
+     &lt;/dependency&gt;
+   &lt;/dependencies&gt;
+&lt;/dependencyManagement&gt;
+
+&lt;!--声明本项目所需要的依赖--&gt;
+&lt;dependencies&gt;
+    &lt;dependency&gt;
+        &lt;groupId&gt;com.alibaba&lt;/groupId&gt;
+        &lt;artifactId&gt;druid&lt;/artifactId&gt;
+    &lt;/dependency&gt;
+    &lt;dependency&gt;
+        &lt;groupId&gt;com.alibaba&lt;/groupId&gt;
+        &lt;artifactId&gt;fastjson&lt;/artifactId&gt;
+        &lt;!--指定版本号进行覆盖--&gt;
+        &lt;version&gt;1.2.66&lt;/version&gt;
+    &lt;/dependency&gt;
+&lt;dependencies&gt;
+</code></pre>
+
+<p>使用了上述方式即可直接对其中声明的包进行统一的版本管理。如上述代码，fastjson在本项目中需要进行一个单独升级，那么可以直接指定版本号进行覆盖。框架虽然留下了这种灵活性，但是实际使用中最好是进行统一管理。</p>
+                        </div>
+                        <div class="columns is-mobile post-meta">
+                            <div class="column is-half-desktop has-text-left is-paddingless"> 
+                                 
+                                更老一篇:<a href="http://www.lihongkun.com/design/mass_data_export/"> 后端大量数据导出场景的处理</a>
+                                
+                            </div>
+                            <div class="column is-half-desktop has-text-right is-paddingless">
+                                
+                                没有了，已经是最新文章
+                                
+                            </div>
+                            <div class="is-clearfix"></div>
+                        </div>
+                        <script src="https://utteranc.es/client.js"
+                                repo="lihongkun/lihongkun.github.io"
+                                issue-term="title"
+                                theme="github-light"
+                                crossorigin="anonymous"
+                                async>
+                        </script>
+                    </article>
+                </div>
+                <div class="column">    <aside>
+        <h2 class="is-size-4">关于我</h2>
+        <div class="content">
+            Working in advertising platform team. Backend on duty,full stack in my own time.
+        </div>
+        <h2 class="is-size-4">GitHub</h2>
+        <div class="content">
+            <a href="https://github.com/lihongkun" target="_blank">https://github.com/lihongkun</a>
+        </div>
+    </aside></div>
+                </div>
+            </div>
+         </main>    <footer class="footer">
+    
+        <div class="copyright has-text-centered">
+            <a href="https://bulma.io">
+                <img src="http://www.lihongkun.com/images/made-with-bulma.png" alt="Made with Bulma" width="128" height="24">
+            </a>
+            <p>© 泛泛之辈 Power by Hugo v0.55.6 - 闽ICP备15009606号</p>
+        </div>
+    </footer>
+    <script type="text/javascript">
+    document.addEventListener('DOMContentLoaded', () => {
+        
+        const $navbarBurgers = Array.prototype.slice.call(document.querySelectorAll('.navbar-burger'), 0);
+        
+        if ($navbarBurgers.length > 0) {
+            
+            $navbarBurgers.forEach( el => {
+                el.addEventListener('click', () => {
+                
+                const target = el.dataset.target;
+                const $target = document.getElementById(target);
+                
+                el.classList.toggle('is-active');
+                $target.classList.toggle('is-active');
+    
+                });
+            });
+        }
+    });
+    </script></body>
+</html>
