@@ -2,21 +2,21 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>vscode on 泛泛之辈</title>
-    <link>http://www.lihongkun.com/categories/vscode/</link>
+    <link>https://www.lihongkun.com/categories/vscode/</link>
     <description>Recent content in vscode on 泛泛之辈</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-CN</language>
     <lastBuildDate>Sun, 02 Feb 2020 00:00:00 +0000</lastBuildDate>
     
-	<atom:link href="http://www.lihongkun.com/categories/vscode/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="https://www.lihongkun.com/categories/vscode/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>初见 VS Code</title>
-      <link>http://www.lihongkun.com/ide/hello_vscode/</link>
+      <link>https://www.lihongkun.com/ide/hello_vscode/</link>
       <pubDate>Sun, 02 Feb 2020 00:00:00 +0000</pubDate>
       
-      <guid>http://www.lihongkun.com/ide/hello_vscode/</guid>
+      <guid>https://www.lihongkun.com/ide/hello_vscode/</guid>
       <description>&lt;p&gt;Visual Studio Code (简称 VS Code) 是一款免费开源的现代化轻量级代码编辑器，支持几乎所有主流的开发语言的语法高亮、智能代码补全、自定义热键、括号匹配、代码片段、代码对比 Diff、Git 等特性，支持插件扩展，并针对网页开发和云端应用开发做了优化。轻量、免费、开源和扩展机制为它赢得了很多用户，同时社区和官方对他的维护和扩展是非常活跃的。&lt;/p&gt;</description>
     </item>
     

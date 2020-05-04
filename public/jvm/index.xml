@@ -2,30 +2,30 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Jvms on 泛泛之辈</title>
-    <link>http://www.lihongkun.com/jvm/</link>
+    <link>https://www.lihongkun.com/jvm/</link>
     <description>Recent content in Jvms on 泛泛之辈</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-CN</language>
     <lastBuildDate>Sat, 06 Jul 2019 00:00:00 +0000</lastBuildDate>
     
-	<atom:link href="http://www.lihongkun.com/jvm/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="https://www.lihongkun.com/jvm/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>G1垃圾收集器</title>
-      <link>http://www.lihongkun.com/jvm/garbage_first_collector/</link>
+      <link>https://www.lihongkun.com/jvm/garbage_first_collector/</link>
       <pubDate>Sat, 06 Jul 2019 00:00:00 +0000</pubDate>
       
-      <guid>http://www.lihongkun.com/jvm/garbage_first_collector/</guid>
+      <guid>https://www.lihongkun.com/jvm/garbage_first_collector/</guid>
       <description>&lt;p&gt;G1 (Garbage-First)是一款面向服务器的垃圾收集器,主要针对处理器并且使用大容量堆内存的应用。它尽可能满足GC停顿时间要求的同时，还具备高吞吐量性能特征。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>CMS垃圾收集器</title>
-      <link>http://www.lihongkun.com/jvm/cms_collector/</link>
+      <link>https://www.lihongkun.com/jvm/cms_collector/</link>
       <pubDate>Wed, 26 Jun 2019 00:00:00 +0000</pubDate>
       
-      <guid>http://www.lihongkun.com/jvm/cms_collector/</guid>
+      <guid>https://www.lihongkun.com/jvm/cms_collector/</guid>
       <description>&lt;p&gt;并发标记清除垃圾收集器(简称CMS) , 是一款为低延迟而设计的垃圾收集器 , 在应用进程工作的时候利用机器多处理器资源在后台进行垃圾收集动作. 特别适用于有比较多的长期存活对象 , 且机器的处理器大于2.可以使用 -XX:+UseConcMarkSweepGC命令行选项来启用 .&lt;/p&gt;
 
 &lt;p&gt;CMS已经不推荐使用 , 业界推荐使用G1来替代它 . 虽然如此很多老的应用依旧运行着此垃圾收集器.&lt;/p&gt;</description>
@@ -33,64 +33,64 @@
     
     <item>
       <title>Java垃圾收集器概览</title>
-      <link>http://www.lihongkun.com/jvm/garbage_collector/</link>
+      <link>https://www.lihongkun.com/jvm/garbage_collector/</link>
       <pubDate>Tue, 18 Jun 2019 00:00:00 +0000</pubDate>
       
-      <guid>http://www.lihongkun.com/jvm/garbage_collector/</guid>
+      <guid>https://www.lihongkun.com/jvm/garbage_collector/</guid>
       <description>&lt;p&gt;经过多年的发展Java的垃圾收集器也在不断地进步 , 截止目前存在五种垃圾收集器, 分别适用在不同的场景 . 不同版本的JDK默认的垃圾收集器和所支持的垃圾收集器可能会不一致&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>Java虚拟机监控工具 - GC日志和GCViewer</title>
-      <link>http://www.lihongkun.com/jvm/gclog/</link>
+      <link>https://www.lihongkun.com/jvm/gclog/</link>
       <pubDate>Thu, 07 Jun 2018 00:00:00 +0000</pubDate>
       
-      <guid>http://www.lihongkun.com/jvm/gclog/</guid>
+      <guid>https://www.lihongkun.com/jvm/gclog/</guid>
       <description>&lt;p&gt;之前介绍的jstat和jmap只能使用输入命令的方式来进行GC和内存方面的监控.应用程序的GC情况可能是一个需要持续观察的过程,JVM提供了命令行选项来保存这些GC相关的日志.&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>Java虚拟机监控工具 - jmap</title>
-      <link>http://www.lihongkun.com/jvm/jmap/</link>
+      <link>https://www.lihongkun.com/jvm/jmap/</link>
       <pubDate>Tue, 05 Jun 2018 00:00:00 +0000</pubDate>
       
-      <guid>http://www.lihongkun.com/jvm/jmap/</guid>
+      <guid>https://www.lihongkun.com/jvm/jmap/</guid>
       <description>&lt;p&gt;jmap主要用于打印指定Java进程的共享对象内存映射或堆内存细节.&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>Java虚拟机监控工具 - jps和jstat</title>
-      <link>http://www.lihongkun.com/jvm/jps_and_jstat/</link>
+      <link>https://www.lihongkun.com/jvm/jps_and_jstat/</link>
       <pubDate>Mon, 28 May 2018 00:00:00 +0000</pubDate>
       
-      <guid>http://www.lihongkun.com/jvm/jps_and_jstat/</guid>
+      <guid>https://www.lihongkun.com/jvm/jps_and_jstat/</guid>
       <description>&lt;p&gt;简单介绍下两个JVM监控工具 , jps 和 jstat&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>Java垃圾收集简介</title>
-      <link>http://www.lihongkun.com/jvm/garbage_collection/</link>
+      <link>https://www.lihongkun.com/jvm/garbage_collection/</link>
       <pubDate>Mon, 14 May 2018 00:00:00 +0000</pubDate>
       
-      <guid>http://www.lihongkun.com/jvm/garbage_collection/</guid>
+      <guid>https://www.lihongkun.com/jvm/garbage_collection/</guid>
       <description>&lt;p&gt;对于程序员而言,Java最诱人的特性之一是不需要显式地管理对象的生命周期,我们可以在需要对象的时候创建对象,对象不再使用的时候由JVM在后台自动进行垃圾回收.&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>Java虚拟机内存模型简介</title>
-      <link>http://www.lihongkun.com/jvm/jvm_memory_model/</link>
+      <link>https://www.lihongkun.com/jvm/jvm_memory_model/</link>
       <pubDate>Mon, 07 May 2018 00:00:00 +0000</pubDate>
       
-      <guid>http://www.lihongkun.com/jvm/jvm_memory_model/</guid>
+      <guid>https://www.lihongkun.com/jvm/jvm_memory_model/</guid>
       <description>&lt;p&gt;Java虚拟机的内存区域 叫做 运行时数据区 , 这是一张比较典型的内存划分图&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>Java字符串常量调优</title>
-      <link>http://www.lihongkun.com/jvm/java_intern/</link>
+      <link>https://www.lihongkun.com/jvm/java_intern/</link>
       <pubDate>Mon, 26 Mar 2018 00:00:00 +0000</pubDate>
       
-      <guid>http://www.lihongkun.com/jvm/java_intern/</guid>
+      <guid>https://www.lihongkun.com/jvm/java_intern/</guid>
       <description>&lt;p&gt;Java中的常量池,实际上分为两种形态:静态常量池和运行时常量池.&lt;/p&gt;
 
 &lt;p&gt;&lt;strong&gt;静态常量池&lt;/strong&gt;,即*.class文件中的常量池,class文件中的常量池不仅仅包含字符串(数字)字面量，还包含类、方法的信息，占用class文件绝大部分空间.&lt;/p&gt;

@@ -2,30 +2,30 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>concurrent on 泛泛之辈</title>
-    <link>http://www.lihongkun.com/categories/concurrent/</link>
+    <link>https://www.lihongkun.com/categories/concurrent/</link>
     <description>Recent content in concurrent on 泛泛之辈</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-CN</language>
     <lastBuildDate>Mon, 17 Dec 2018 00:00:00 +0000</lastBuildDate>
     
-	<atom:link href="http://www.lihongkun.com/categories/concurrent/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="https://www.lihongkun.com/categories/concurrent/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>原子变量</title>
-      <link>http://www.lihongkun.com/concurrent/atomic/</link>
+      <link>https://www.lihongkun.com/concurrent/atomic/</link>
       <pubDate>Mon, 17 Dec 2018 00:00:00 +0000</pubDate>
       
-      <guid>http://www.lihongkun.com/concurrent/atomic/</guid>
+      <guid>https://www.lihongkun.com/concurrent/atomic/</guid>
       <description>&lt;p&gt;锁机制提供了独占的方法来访问变量,并且对变量的任何修改都会对随后获得这个锁的其他线程可见.但是如果一个线程在休眠或者自旋的时候持有一个锁,那么其他线程便无法执行下去.而非阻塞算法不会受到单个线程失败的影响.对于&lt;strong&gt;细粒度&lt;/strong&gt;的操作,非阻塞算法更高效.它需要借助冲突检查机制来判断更新过程中是否存在来自其他线程的干扰,如果存在则操作失败,并且重试.现代处理器都提供了这种读-改-写(Compare-And-Swap)的指令,来实现这种复杂的并发对象.&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>线程封闭与ThreadLocal</title>
-      <link>http://www.lihongkun.com/concurrent/threadlocal/</link>
+      <link>https://www.lihongkun.com/concurrent/threadlocal/</link>
       <pubDate>Mon, 03 Dec 2018 00:00:00 +0000</pubDate>
       
-      <guid>http://www.lihongkun.com/concurrent/threadlocal/</guid>
+      <guid>https://www.lihongkun.com/concurrent/threadlocal/</guid>
       <description>&lt;p&gt;访问共享数据,通常需要使用同步来保证变量的并发安全性.避免同步的方式就是不共享数据,如果数据只有单线程访问则不需要同步.这叫做线程封闭.&lt;/p&gt;
 
 &lt;p&gt;线程封闭分为两种方式&lt;/p&gt;
@@ -37,10 +37,10 @@
     
     <item>
       <title>线程池实现</title>
-      <link>http://www.lihongkun.com/concurrent/threadpool_implements/</link>
+      <link>https://www.lihongkun.com/concurrent/threadpool_implements/</link>
       <pubDate>Mon, 26 Nov 2018 00:00:00 +0000</pubDate>
       
-      <guid>http://www.lihongkun.com/concurrent/threadpool_implements/</guid>
+      <guid>https://www.lihongkun.com/concurrent/threadpool_implements/</guid>
       <description>&lt;h3 id=&#34;线程池状态和数量&#34;&gt;线程池状态和数量&lt;/h3&gt;
 
 &lt;p&gt;ThreadPoolExecutor拥有如下状态 , 它控制着线程是否接收新任务以及当前在队列中或者执行中的任务如何结束.&lt;/p&gt;
@@ -58,91 +58,91 @@
     
     <item>
       <title>任务执行与线程池</title>
-      <link>http://www.lihongkun.com/concurrent/threadpool/</link>
+      <link>https://www.lihongkun.com/concurrent/threadpool/</link>
       <pubDate>Mon, 19 Nov 2018 00:00:00 +0000</pubDate>
       
-      <guid>http://www.lihongkun.com/concurrent/threadpool/</guid>
+      <guid>https://www.lihongkun.com/concurrent/threadpool/</guid>
       <description>&lt;p&gt;任务通常是一些抽象的离散的工作单元,我们把应用程序的工作分解到多个任务中,可以简化程序的组织结构,提供一种自然的事务边界来优化错误恢复过程,以及提供一种自然的并行工作结构来提升并发性.而并发执行任务在Java体系里面就是线程.&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>高效队列框架Disruptor</title>
-      <link>http://www.lihongkun.com/concurrent/disruptor/</link>
+      <link>https://www.lihongkun.com/concurrent/disruptor/</link>
       <pubDate>Tue, 13 Nov 2018 00:00:00 +0000</pubDate>
       
-      <guid>http://www.lihongkun.com/concurrent/disruptor/</guid>
+      <guid>https://www.lihongkun.com/concurrent/disruptor/</guid>
       <description>&lt;p&gt;Disruptor是英国外汇交易公司LMAX开发的一个高性能队列，研发的初衷是解决内存队列的延迟问题.2010年在QCon演讲后,获得了业界关注. 2011年，Martin Fowler大神专门撰写长文对其进行介绍.由于熟悉程度问题,只能科普介绍一下,介绍之前可以先了解下ArrayBlockingQueue存在的一些问题.&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>阻塞队列</title>
-      <link>http://www.lihongkun.com/concurrent/blocking_queue/</link>
+      <link>https://www.lihongkun.com/concurrent/blocking_queue/</link>
       <pubDate>Mon, 05 Nov 2018 00:00:00 +0000</pubDate>
       
-      <guid>http://www.lihongkun.com/concurrent/blocking_queue/</guid>
+      <guid>https://www.lihongkun.com/concurrent/blocking_queue/</guid>
       <description>&lt;p&gt;阻塞队列(BlockingQueue)提供了可阻塞的put和take方法,以及支持定时的offer和pull.如果队列已经满了,那么put方法将阻塞到有空间可用;如果队列为空那么take方法将阻塞到有元素可用.&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>同步容器和并发容器</title>
-      <link>http://www.lihongkun.com/concurrent/synchronized_container_and_concurrent_container/</link>
+      <link>https://www.lihongkun.com/concurrent/synchronized_container_and_concurrent_container/</link>
       <pubDate>Tue, 23 Oct 2018 00:00:00 +0000</pubDate>
       
-      <guid>http://www.lihongkun.com/concurrent/synchronized_container_and_concurrent_container/</guid>
+      <guid>https://www.lihongkun.com/concurrent/synchronized_container_and_concurrent_container/</guid>
       <description>&lt;p&gt;一般的容器如ArrayList,HashSet和HashMap都不是线程安全的.容器在Java中的地位不言而喻,那么它必然也存在线程安全的版本.线程安全的容器从其并发特性上可以简单分为两类:同步容器和并发容器.&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>同步工具类 - 栅栏</title>
-      <link>http://www.lihongkun.com/concurrent/cyclic_barrier/</link>
+      <link>https://www.lihongkun.com/concurrent/cyclic_barrier/</link>
       <pubDate>Mon, 15 Oct 2018 00:00:00 +0000</pubDate>
       
-      <guid>http://www.lihongkun.com/concurrent/cyclic_barrier/</guid>
+      <guid>https://www.lihongkun.com/concurrent/cyclic_barrier/</guid>
       <description>&lt;p&gt;栅栏类似闭锁,它能阻塞一组线程直到到达某个事件发生.栅栏与闭锁的关键区别在于,所有的线程必须同时到达栅栏位置,才能继续执行.闭锁用于等待事件,而栅栏用于等待其他线程.&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>同步工具类 - 信号量和闭锁</title>
-      <link>http://www.lihongkun.com/concurrent/semaphore_and_latch/</link>
+      <link>https://www.lihongkun.com/concurrent/semaphore_and_latch/</link>
       <pubDate>Mon, 17 Sep 2018 00:00:00 +0000</pubDate>
       
-      <guid>http://www.lihongkun.com/concurrent/semaphore_and_latch/</guid>
+      <guid>https://www.lihongkun.com/concurrent/semaphore_and_latch/</guid>
       <description>&lt;p&gt;底层实现是AbstractQueuedSynchronizer的同步工具类有不少,先来聊聊信号量(Semaphore),闭锁(Latch)&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>AbstractQueuedSynchronizer</title>
-      <link>http://www.lihongkun.com/concurrent/abstract_queued_synchronizer/</link>
+      <link>https://www.lihongkun.com/concurrent/abstract_queued_synchronizer/</link>
       <pubDate>Mon, 10 Sep 2018 00:00:00 +0000</pubDate>
       
-      <guid>http://www.lihongkun.com/concurrent/abstract_queued_synchronizer/</guid>
+      <guid>https://www.lihongkun.com/concurrent/abstract_queued_synchronizer/</guid>
       <description>&lt;p&gt;AbstractQueuedSynchronizer是JDK并发包里面很多同步类的基础框架.在简单了解了自旋锁和CLH锁之后再来了解下JDK里面的实现.&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>自旋锁</title>
-      <link>http://www.lihongkun.com/concurrent/spin_lock/</link>
+      <link>https://www.lihongkun.com/concurrent/spin_lock/</link>
       <pubDate>Tue, 04 Sep 2018 00:00:00 +0000</pubDate>
       
-      <guid>http://www.lihongkun.com/concurrent/spin_lock/</guid>
+      <guid>https://www.lihongkun.com/concurrent/spin_lock/</guid>
       <description>&lt;p&gt;自旋锁是指当一个线程尝试获取某个锁时,如果该锁已被其他线程占用,就一直循环检测锁是否被释放,而不是进入线程挂起或睡眠状态.它适用于锁保护的临界区很小的情况,临界区很小的话,锁占用的时间就很短.&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>ReentrantLock使用</title>
-      <link>http://www.lihongkun.com/concurrent/using_reentrantlock/</link>
+      <link>https://www.lihongkun.com/concurrent/using_reentrantlock/</link>
       <pubDate>Thu, 23 Aug 2018 00:00:00 +0000</pubDate>
       
-      <guid>http://www.lihongkun.com/concurrent/using_reentrantlock/</guid>
+      <guid>https://www.lihongkun.com/concurrent/using_reentrantlock/</guid>
       <description>&lt;p&gt;ReentrantLock能做到synchronized得功能，而且在JDK1.6以前性能比后者好很多。之后synchronized性能进行了改进，差距已经不是很大。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>共享变量的并发安全性</title>
-      <link>http://www.lihongkun.com/concurrent/shared_variable_in_concurrent_env/</link>
+      <link>https://www.lihongkun.com/concurrent/shared_variable_in_concurrent_env/</link>
       <pubDate>Wed, 15 Aug 2018 00:00:00 +0000</pubDate>
       
-      <guid>http://www.lihongkun.com/concurrent/shared_variable_in_concurrent_env/</guid>
+      <guid>https://www.lihongkun.com/concurrent/shared_variable_in_concurrent_env/</guid>
       <description>&lt;p&gt;线程通信模型大体可分为两种，共享变量和消息传递。虽然消息传递（Actor模型）是比较被推崇的，但是Java语言并不支持。所以在并发程序中我们必须要面对共享变量所带来的编程复杂度。&lt;/p&gt;</description>
     </item>
     
