@@ -51,6 +51,8 @@
             
                 
             
+                
+            
         
     
         
@@ -113,11 +115,13 @@
                                 
                                 <a class="navbar-item" href="/categories/springframework/">Spring</a>
                                 
-                                <a class="navbar-item" href="/categories/mybatis/">Mybatis</a>
-                                
                                 <a class="navbar-item" href="/categories/springcloud/">SpringCloud</a>
                                 
-                                <a class="navbar-item" href="/categories/common/">常用框架</a>
+                                <a class="navbar-item" href="/categories/log/">日志</a>
+                                
+                                <a class="navbar-item" href="/categories/serialize/">序列化</a>
+                                
+                                <a class="navbar-item" href="/categories/common/">其他</a>
                                 
                             </div>
                         </div>
@@ -142,6 +146,19 @@
             <div class="container">
                 <div class="columns">
                 <div class="column is-four-fifths"><section class="posts">
+
+<article class="post box is-radiusless">
+    <div class="post-title">
+        <a class="post-title-link" href="/design/an_open_api_design_evolution/"><h2 class="is-size-4 has-text-dark">一次开放API的设计演进思路</h2></a>
+    </div>
+    <div class="post-meta">
+        <span class="post-time">日期 : 2018-09-12</span>
+    </div>
+    <div class="post-excerpt content">
+        <p>很多时候使用dubbo,gRPC等关注度主要在内部的服务化 , 反而容易忽略了用微服务的思想去设计对外的HTTP接口,导致HTTP接入业务层的边界服务重复且混乱不堪. 最近有一次比较大的重构 , 聊聊一些思路.</p>
+    </div>
+    <a href="/design/an_open_api_design_evolution/">阅读全文>></a>
+    </article>
 
 <article class="post box is-radiusless">
     <div class="post-title">
@@ -193,19 +210,6 @@
         <p>ReentrantLock能做到synchronized得功能，而且在JDK1.6以前性能比后者好很多。之后synchronized性能进行了改进，差距已经不是很大。</p>
     </div>
     <a href="/concurrent/using_reentrantlock/">阅读全文>></a>
-    </article>
-
-<article class="post box is-radiusless">
-    <div class="post-title">
-        <a class="post-title-link" href="/concurrent/shared_variable_in_concurrent_env/"><h2 class="is-size-4 has-text-dark">共享变量的并发安全性</h2></a>
-    </div>
-    <div class="post-meta">
-        <span class="post-time">日期 : 2018-08-15</span>
-    </div>
-    <div class="post-excerpt content">
-        <p>线程通信模型大体可分为两种，共享变量和消息传递。虽然消息传递（Actor模型）是比较被推崇的，但是Java语言并不支持。所以在并发程序中我们必须要面对共享变量所带来的编程复杂度。</p>
-    </div>
-    <a href="/concurrent/shared_variable_in_concurrent_env/">阅读全文>></a>
     </article>
 
 </section>

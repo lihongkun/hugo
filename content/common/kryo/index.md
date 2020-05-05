@@ -1,7 +1,7 @@
 ---
 title: Kryo序列化器
 date: 2019-12-04
-categories: ["common","java","serialize"]
+categories: ["java","serialize"]
 ---
 
 Kryo是一个快速高效的java二进制对象图序列化框架。该项目的目标是高解析效率、高压缩率和易于使用的API。无论是文件、数据库还是网络上的对象，在需要持久化的场景中，该项目可以进入考虑的范围。

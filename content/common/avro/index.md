@@ -1,7 +1,7 @@
 ---
 title: Avro序列化器
 date: 2019-12-01
-categories: ["common","java","serialize"]
+categories: [java","serialize"]
 ---
 
 Apache Avro（以下简称 Avro）是一种与编程语言无关的序列化格式。Avro 数据通过与语言无关的 schema 来定义。schema 通过 JSON 来描述，数据被序列化成二进制文件或 JSON 文件，不过一般会使用二进制文件。在大数据体系下，比较注重存储的压缩率，反而对效率并没有要求得很苛刻。

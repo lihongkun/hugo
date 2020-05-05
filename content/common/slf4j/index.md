@@ -1,7 +1,7 @@
 ---
 title: Java日志门面系统
 date: 2020-02-08
-categories: ["common","java","log"]
+categories: ["java","log"]
 ---
 
 一个线上程序的运行情况监测，日志扮演着极其重要的角色。Java发展了20年，日志系统也是百家争鸣，不同历史时期出现的开源组件往往有着不同的日志实现，应用的整合难度陡升。所幸Simple Logging Facade for Java（SLF4J）对各种日志框架进行了抽象。如其名字，它对开发者提供了统一的门面，允许开发者在部署时插入所需的日志框架。

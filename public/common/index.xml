@@ -6,10 +6,19 @@
     <description>Recent content in Commons on 泛泛之辈</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-CN</language>
-    <lastBuildDate>Sun, 12 Apr 2020 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Sun, 03 May 2020 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="https://www.lihongkun.com/common/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Log4j2日志框架</title>
+      <link>https://www.lihongkun.com/common/log4j2/</link>
+      <pubDate>Sun, 03 May 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.lihongkun.com/common/log4j2/</guid>
+      <description>&lt;p&gt;log4j2是一个比较新的日志框架，作为log4j的升级版本，修复了它的锁竞争问题提升了性能，提供了丰富的组件支持以及良好的语义配置。&lt;/p&gt;</description>
+    </item>
     
     <item>
       <title>微基准测试框架JMH</title>

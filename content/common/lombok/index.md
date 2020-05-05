@@ -23,6 +23,7 @@ POJO等一系列的java bean最让人诟病的是他们有很多重复的工作�
 	<groupId>org.projectlombok</groupId>
 	<artifactId>lombok</artifactId>
 	<version>1.18.8</version>
+	<scope>providered</scope>
 </dependency>
 ```
 

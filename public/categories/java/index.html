@@ -48,9 +48,7 @@
             
                 
             
-        
-    
-        
+                
             
         
     
@@ -62,7 +60,11 @@
             
         
     
-    <title> java | 泛泛之辈 </title>
+        
+            
+        
+    
+    <title> java&#34; | 泛泛之辈 </title>
 
     <link rel="shortcut icon" href="https://www.lihongkun.com/favicon.jpg"/>
     <link rel="stylesheet" href="https://www.lihongkun.com/css/bulma.min.css"/>
@@ -110,11 +112,13 @@
                                 
                                 <a class="navbar-item" href="/categories/springframework/">Spring</a>
                                 
-                                <a class="navbar-item" href="/categories/mybatis/">Mybatis</a>
-                                
                                 <a class="navbar-item" href="/categories/springcloud/">SpringCloud</a>
                                 
-                                <a class="navbar-item" href="/categories/common/">常用框架</a>
+                                <a class="navbar-item" href="/categories/log/">日志</a>
+                                
+                                <a class="navbar-item" href="/categories/serialize/">序列化</a>
+                                
+                                <a class="navbar-item" href="/categories/common/">其他</a>
                                 
                             </div>
                         </div>
@@ -139,6 +143,19 @@
             <div class="container">
                 <div class="columns">
                 <div class="column is-four-fifths"><section class="posts">
+
+<article class="post box is-radiusless">
+    <div class="post-title">
+        <a class="post-title-link" href="/common/log4j2/"><h2 class="is-size-4 has-text-dark">Log4j2日志框架</h2></a>
+    </div>
+    <div class="post-meta">
+        <span class="post-time">日期 : 2020-05-03</span>
+    </div>
+    <div class="post-excerpt content">
+        <p>log4j2是一个比较新的日志框架，作为log4j的升级版本，修复了它的锁竞争问题提升了性能，提供了丰富的组件支持以及良好的语义配置。</p>
+    </div>
+    <a href="/common/log4j2/">阅读全文>></a>
+    </article>
 
 <article class="post box is-radiusless">
     <div class="post-title">
@@ -190,19 +207,6 @@
         <p>序列化和反序列化在线上系统中是一个绕不开的话题，通常作为RPC框架中的一部分而被很多人所忽略。然而它经常成为系统设计或者性能影响因素的一个重要环节。业界有许许多多的序列化库，我们应该如何进行选型，下面我们来简单探讨一下</p>
     </div>
     <a href="/common/serialization/">阅读全文>></a>
-    </article>
-
-<article class="post box is-radiusless">
-    <div class="post-title">
-        <a class="post-title-link" href="/common/serializable_and_hession/"><h2 class="is-size-4 has-text-dark">Serializable和Hession</h2></a>
-    </div>
-    <div class="post-meta">
-        <span class="post-time">日期 : 2019-12-07</span>
-    </div>
-    <div class="post-excerpt content">
-        <p>Serializable是Java提供的原生序列化方式，它提供了配套的ObjectOutputStream和ObjectIutputStream来处理Java对象的序列化读写，解析效率性能比较高，但是消耗的存储却捉襟见肘。很多框架中仅仅作为一个基础实现，但是基本无人使用。比如 Dubbo 框架中并不是使用它作为默认的序列化方式，而是使用hession。下面看看这两种序列化方式的优劣。</p>
-    </div>
-    <a href="/common/serializable_and_hession/">阅读全文>></a>
     </article>
 
 </section>

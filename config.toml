@@ -60,24 +60,31 @@ title = "泛泛之辈"
 
     [[menu.main]]
         parent = "framework"
-        identifier = "mybatis"
-        name = "Mybatis"
-        url = "/categories/mybatis/"
-        weight = 2  
-
-    [[menu.main]]
-        parent = "framework"
         identifier = "springcloud"
         name = "SpringCloud"
         url = "/categories/springcloud/"
+        weight = 2  
+
+     [[menu.main]]
+        parent = "framework"
+        identifier = "log"
+        name = "日志"
+        url = "/categories/log/"
         weight = 3  
+    
+     [[menu.main]]
+        parent = "framework"
+        identifier = "serialize"
+        name = "序列化"
+        url = "/categories/serialize/"
+        weight = 4  
 	
 	[[menu.main]]
         parent = "framework"
         identifier = "common"
-        name = "常用框架"
+        name = "其他"
         url = "/categories/common/"
-        weight = 3  
+        weight = 5  
 
     [[menu.main]]
         identifier = "troubleshooting"

@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html><head>
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+
+    
+    <meta name="author"
+            content=""/>
+
+    
+    <meta name="description" content="log4j2是一个比较新的日志框架，作为log4j的升级版本，修复了它的锁竞争问题提升了性能，提供了丰富的组件支持以及良好的语义配置。
+"/>
+    
+
+    
+
+    
+    <link rel="canonical" href="https://www.lihongkun.com/common/log4j2/"/>
+
+    
+
+    
+    
+    
+        
+            
+        
+    
+        
+            
+                
+            
+                
+            
+                
+            
+                
+            
+        
+    
+        
+            
+                
+            
+                
+            
+                
+            
+                
+            
+                
+            
+        
+    
+        
+            
+        
+    
+        
+            
+        
+    
+        
+            
+        
+    
+    <title> Log4j2日志框架 | 泛泛之辈 </title>
+
+    <link rel="shortcut icon" href="https://www.lihongkun.com/favicon.jpg"/>
+    <link rel="stylesheet" href="https://www.lihongkun.com/css/bulma.min.css"/>
+    <link rel="stylesheet" href="https://www.lihongkun.com/css/style.css"/>
+</head><body><header>
+    <nav class="navbar is-fixed-top is-primary" role="navigation" aria-label="main navigation">
+        <div class="navbar-brand is-size-4">
+            <a class="navbar-item" href="https://www.lihongkun.com/">
+                    泛泛之辈
+            </a>
+            <a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false" data-target="navbar-menu">
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+            </a>
+        </div>
+        <div id="navbar-menu" class="navbar-menu">
+            <div class="navbar-end">
+                
+                    
+                        <a class="navbar-item" href="/">首页</a>
+                    
+                
+                    
+                        <div class="navbar-item has-dropdown is-hoverable">
+                            <a class="navbar-link">基本功</a>
+                            <div class="navbar-dropdown">
+                                
+                                <a class="navbar-item" href="/categories/concurrent/">并发</a>
+                                
+                                <a class="navbar-item" href="/categories/network/">网络</a>
+                                
+                                <a class="navbar-item" href="/categories/security/">Web安全</a>
+                                
+                                <a class="navbar-item" href="/categories/jvm/">Java虚拟机</a>
+                                
+                            </div>
+                        </div>
+                    
+                
+                    
+                        <div class="navbar-item has-dropdown is-hoverable">
+                            <a class="navbar-link">编程框架</a>
+                            <div class="navbar-dropdown">
+                                
+                                <a class="navbar-item" href="/categories/springframework/">Spring</a>
+                                
+                                <a class="navbar-item" href="/categories/springcloud/">SpringCloud</a>
+                                
+                                <a class="navbar-item" href="/categories/log/">日志</a>
+                                
+                                <a class="navbar-item" href="/categories/serialize/">序列化</a>
+                                
+                                <a class="navbar-item" href="/categories/common/">其他</a>
+                                
+                            </div>
+                        </div>
+                    
+                
+                    
+                        <a class="navbar-item" href="/categories/troubleshooting/">问题排查</a>
+                    
+                
+                    
+                        <a class="navbar-item" href="/categories/design/">设计思路</a>
+                    
+                
+                    
+                        <a class="navbar-item" href="/categories/reading/">读书笔记</a>
+                    
+                
+            </div>
+            </div>
+    </nav>
+</header><main>
+            <div class="container">
+                <div class="columns">
+                <div class="column is-four-fifths">
+                    <article class="post box is-radiusless">
+                        <div class="post-title">
+                            <h2 class="is-size-4">Log4j2日志框架</h2>
+                        </div>
+                            <div class="post-meta">
+                            <span class="post-time">日期&nbsp;:&nbsp;2020-05-03</span>
+                        </div>
+                        <div class="post-content content">
+                            <p>log4j2是一个比较新的日志框架，作为log4j的升级版本，修复了它的锁竞争问题提升了性能，提供了丰富的组件支持以及良好的语义配置。</p>
+
+<h3 id="如何使用">如何使用</h3>
+
+<p>同样使用SLF4J来进行日志的门面，需要引入以下依赖。</p>
+
+<pre><code>&lt;properties&gt;
+    &lt;log4j2.version&gt;2.13.1&lt;/log4j2.version&gt;
+&lt;/properties&gt;
+
+&lt;dependencies&gt;
+    &lt;dependency&gt;
+        &lt;groupId&gt;org.apache.logging.log4j&lt;/groupId&gt;
+        &lt;artifactId&gt;log4j-core&lt;/artifactId&gt;
+        &lt;version&gt;${log4j2.version}&lt;/version&gt;
+    &lt;/dependency&gt;
+    &lt;dependency&gt;
+        &lt;groupId&gt;org.apache.logging.log4j&lt;/groupId&gt;
+        &lt;artifactId&gt;log4j-slf4j-impl&lt;/artifactId&gt;
+        &lt;version&gt;${log4j2.version}&lt;/version&gt;
+    &lt;/dependency&gt;
+&lt;/dependencies&gt;
+</code></pre>
+
+<p>编写配置文件，log4j2的配置文件相对其他的日志框架层次比较分明。</p>
+
+<pre><code>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;Configuration status=&quot;INFO&quot;&gt;
+    &lt;Appenders&gt;
+        &lt;Console name=&quot;LogToConsole&quot; target=&quot;SYSTEM_OUT&quot;&gt;
+            &lt;PatternLayout pattern=&quot;%d{yyyy-MM-dd HH:mm:ss} [%level] [%thread] [%logger{15}] \: %m%n&quot;/&gt;
+        &lt;/Console&gt;
+    &lt;/Appenders&gt;
+    &lt;Loggers&gt;
+        &lt;Root level=&quot;info&quot;&gt;
+            &lt;AppenderRef ref=&quot;LogToConsole&quot;/&gt;
+        &lt;/Root&gt;
+    &lt;/Loggers&gt;
+&lt;/Configuration&gt;
+</code></pre>
+
+<p><strong>Appenders</strong>标签包含了所有的日志输出目的地，每个Appender都包含在其中，如上述代码声明的Console也是比较具备语义性的。<strong>Loggers</strong>标签包含了所有的日志输出器，同样也是突出了语义性。</p>
+
+<pre><code>package com.lihongkun.labs.log4j2;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+/**
+ * Hello world!
+ */
+public class Application {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(Application.class);
+
+    public static void main(String[] args) {
+        LOGGER.info(&quot;Hello World&quot;);
+    }
+}
+
+// 输出为
+2020-04-25 16:33:45 [INFO] [main] [com.lihongkun.labs.log4j2.Application] : Hello World
+</code></pre>
+
+<h3 id="组件">组件</h3>
+
+<p>log4j2在组件上的概念和logback一样都是继承自log4j，基本上没有什么差别。最大的差别在于其中的扩展实现。除了一些常见的Appender，比如日志文件大小和日期滚动，JDBC，邮件等等。它还对一些开源日志采集或者存储中间件进行了比较多的支持如flume-ng、kafka、mongodb等等，官方原生支持使用起来不用费一些力气去扩展。更多丰富的功能可参考 <a href="http://logging.apache.org/log4j/2.x/manual/appenders.html">http://logging.apache.org/log4j/2.x/manual/appenders.html</a></p>
+
+<h3 id="异步">异步</h3>
+
+<p>log4j最大的诟病就是在多线程环境下，锁竞争激烈，严重拖慢了应用。而升级版的log4j2提供了两种异步日志的方式：</p>
+
+<ol>
+<li>AsyncAppender。内部使用的一个队列（ArrayBlockingQueue）和一个后台线程，日志先存入队列，后台线程从队列中取出日志。阻塞队列容易受到锁竞争的影响，当更多线程同时记录时性能可能会变差。</li>
+<li>AsyncLogger。内部使用的是LMAX Disruptor技术，Disruptor是一个无锁的线程间通信库，它不是一个队列，不需要排队，从而产生更高的吞吐量和更低的延迟。</li>
+</ol>
+
+<h4 id="asyncappender"><strong>AsyncAppender</strong></h4>
+
+<p>这个组件在logback和log4j2 都是存在的，对比下它们的性能。</p>
+
+<p>使用同样的代码进行基准测试,并通过调整@Threads的值调整测试的线程数，来测试不同并发线程下他们的性能表现。</p>
+
+<pre><code>public static void main(String[] args) throws RunnerException {
+    Options opt = new OptionsBuilder()
+            .include(Log4j2Jmh.class.getSimpleName())
+            .forks(1)
+            .warmupIterations(1)
+            .measurementIterations(5)
+            .build();
+
+    new Runner(opt).run();
+}
+
+@Benchmark
+@Threads(32)
+public void async(){
+    LOGGER.info(&quot;hello world&quot;);
+}
+</code></pre>
+
+<p>测试机器情况</p>
+
+<ul>
+<li>64位 windows 10</li>
+<li>8GB内存</li>
+<li>Intel&reg; Core&trade; i7-4510U @2.00GHz 2.60GHz</li>
+</ul>
+
+<p>logback的日志文件异步配置如下</p>
+
+<pre><code>&lt;Configuration&gt;
+    &lt;appender name=&quot;FILE&quot; class=&quot;ch.qos.logback.core.FileAppender&quot;&gt;
+        &lt;file&gt;logback-lab.log&lt;/file&gt;
+        &lt;encoder&gt;
+            &lt;pattern&gt;%d{HH:mm:ss.SSS} [%thread] [%-5level] [%logger{30}] - %msg%n&lt;/pattern&gt;
+        &lt;/encoder&gt;
+    &lt;/appender&gt;
+    &lt;appender name=&quot;ASYNC_FILE&quot; class=&quot;ch.qos.logback.classic.AsyncAppender&quot;&gt;
+        &lt;appender-ref ref=&quot;FILE&quot;/&gt;
+    &lt;/appender&gt;
+    &lt;root level=&quot;INFO&quot;&gt;
+        &lt;appender-ref ref=&quot;ASYNC_FILE&quot; /&gt;
+    &lt;/root&gt;
+&lt;/Configuration&gt;
+</code></pre>
+
+<p>吞吐表现异步比同步高了一个数量级，数据如下</p>
+
+<table>
+<thead>
+<tr>
+<th>线程数</th>
+<th>FileAppender(ops/s)</th>
+<th>AsyncAppender(ops/s)</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td>1</td>
+<td>229,312</td>
+<td>7,538,561</td>
+</tr>
+
+<tr>
+<td>2</td>
+<td>138,359</td>
+<td>4,879,026</td>
+</tr>
+
+<tr>
+<td>4</td>
+<td>115,662</td>
+<td>3,948,502</td>
+</tr>
+
+<tr>
+<td>8</td>
+<td>136,350</td>
+<td>4,018,552</td>
+</tr>
+
+<tr>
+<td>16</td>
+<td>133,302</td>
+<td>4,040,151</td>
+</tr>
+
+<tr>
+<td>32</td>
+<td>122,303</td>
+<td>4,084,070</td>
+</tr>
+</tbody>
+</table>
+
+<p>log4j2的异步日志配置文件如下，采用了同样的输出格式。</p>
+
+<pre><code>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;Configuration status=&quot;INFO&quot;&gt;
+    &lt;Appenders&gt;
+        &lt;File name=&quot;default&quot; fileName=&quot;log4j2-lab.log&quot;&gt;
+            &lt;PatternLayout pattern=&quot;%d{HH:mm:ss.SSS} [%thread] [%-5level] [%logger{30}] - %msg%n&quot;/&gt;
+        &lt;/File&gt;
+        &lt;Async name=&quot;defaultAsync&quot;&gt;
+            &lt;AppenderRef ref=&quot;default&quot;/&gt;
+        &lt;/Async&gt;
+    &lt;/Appenders&gt;
+    &lt;Loggers&gt;
+        &lt;Root level=&quot;info&quot;&gt;
+            &lt;AppenderRef ref=&quot;defaultAsync&quot;/&gt;
+        &lt;/Root&gt;
+    &lt;/Loggers&gt;
+&lt;/Configuration&gt;
+</code></pre>
+
+<p>结果和官方的性能测试相悖，log4j2的异步比logback差距了一个数量级。</p>
+
+<table>
+<thead>
+<tr>
+<th>线程数</th>
+<th>log4j2(ops/s)</th>
+<th>logback(ops/s)</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td>1</td>
+<td>186,722</td>
+<td>7,538,561</td>
+</tr>
+
+<tr>
+<td>2</td>
+<td>156,574</td>
+<td>4,879,026</td>
+</tr>
+
+<tr>
+<td>4</td>
+<td>112,581</td>
+<td>3,948,502</td>
+</tr>
+
+<tr>
+<td>8</td>
+<td>105,942</td>
+<td>4,018,552</td>
+</tr>
+
+<tr>
+<td>16</td>
+<td>98,952</td>
+<td>4,040,151</td>
+</tr>
+
+<tr>
+<td>32</td>
+<td>99,801</td>
+<td>4,084,070</td>
+</tr>
+</tbody>
+</table>
+
+<p><strong>AsyncLogger</strong></p>
+
+<p>它的开启方式有两种，一种是通过配置文件直接指定Logger是异步的，可以做到一部分异步，一部分是同步，相对灵活。比如官网是在做性能测试的时候是这么配置的，只有com.foo.Bar是异步的。</p>
+
+<pre><code>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+ 
+&lt;!-- No need to set system property &quot;log4j2.contextSelector&quot; to any value
+     when using &lt;asyncLogger&gt; or &lt;asyncRoot&gt;. --&gt;
+ 
+&lt;Configuration status=&quot;WARN&quot;&gt;
+  &lt;Appenders&gt;
+    &lt;!-- Async Loggers will auto-flush in batches, so switch off immediateFlush. --&gt;
+    &lt;RandomAccessFile name=&quot;RandomAccessFile&quot; fileName=&quot;asyncWithLocation.log&quot;
+              immediateFlush=&quot;false&quot; append=&quot;false&quot;&gt;
+      &lt;PatternLayout&gt;
+        &lt;Pattern&gt;%d %p %class{1.} [%t] %location %m %ex%n&lt;/Pattern&gt;
+      &lt;/PatternLayout&gt;
+    &lt;/RandomAccessFile&gt;
+  &lt;/Appenders&gt;
+  &lt;Loggers&gt;
+    &lt;!-- pattern layout actually uses location, so we need to include it --&gt;
+    &lt;AsyncLogger name=&quot;com.foo.Bar&quot; level=&quot;trace&quot; includeLocation=&quot;true&quot;&gt;
+      &lt;AppenderRef ref=&quot;RandomAccessFile&quot;/&gt;
+    &lt;/AsyncLogger&gt;
+    &lt;Root level=&quot;info&quot; includeLocation=&quot;true&quot;&gt;
+      &lt;AppenderRef ref=&quot;RandomAccessFile&quot;/&gt;
+    &lt;/Root&gt;
+  &lt;/Loggers&gt;
+&lt;/Configuration&gt;
+</code></pre>
+
+<p>另外一种是直接通过命令行选项开启全部logger异步，无需额外配置。</p>
+
+<pre><code>&lt;!-- 使用jvm参数-Dlog4j2.contextSelector=org.apache.logging.log4j.core.async.AsyncLoggerContextSelector --&gt;
+
+&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;Configuration status=&quot;INFO&quot;&gt;
+    &lt;Appenders&gt;
+        &lt;RandomAccessFile name=&quot;default&quot; fileName=&quot;log4j2-lab.log&quot; immediateFlush=&quot;false&quot; append=&quot;false&quot;&gt;
+            &lt;PatternLayout pattern=&quot;%d{HH:mm:ss.SSS} [%thread] [%-5level] [%logger{30}] - %msg%n&quot;/&gt;
+        &lt;/RandomAccessFile&gt;
+    &lt;/Appenders&gt;
+    &lt;Loggers&gt;
+        &lt;Root level=&quot;info&quot;&gt;
+            &lt;AppenderRef ref=&quot;default&quot;/&gt;
+        &lt;/Root&gt;
+    &lt;/Loggers&gt;
+&lt;/Configuration&gt;
+</code></pre>
+
+<p>无论是哪一种方式去开启AsyncLogger都需要引入 disruptor的依赖。</p>
+
+<pre><code>&lt;dependency&gt;
+  &lt;groupId&gt;com.lmax&lt;/groupId&gt;
+  &lt;artifactId&gt;disruptor&lt;/artifactId&gt;
+  &lt;version&gt;3.4.2&lt;/version&gt;
+&lt;/dependency&gt;
+</code></pre>
+
+<p>通过测试，吞吐的表现比log4j2 的 AsyncAppender 好很多但是和 logback的AsyncAppender相比还是差了一个数量级。</p>
+
+<p>logback的性能数据和log4j2官方给出的相近，而log4j2的性能数据缺和官方给出的差距非常大。这点就让人很迷惑了。<a href="http://logging.apache.org/log4j/2.x/manual/async.html">http://logging.apache.org/log4j/2.x/manual/async.html</a> 这是官方对应同步和异步性能测试的参考数据。</p>
+                        </div>
+                        <div class="columns is-mobile post-meta">
+                            <div class="column is-half-desktop has-text-left is-paddingless"> 
+                                 
+                                更老一篇:<a href="https://www.lihongkun.com/common/jmh/"> 微基准测试框架JMH</a>
+                                
+                            </div>
+                            <div class="column is-half-desktop has-text-right is-paddingless">
+                                
+                                没有了，已经是最新文章
+                                
+                            </div>
+                            <div class="is-clearfix"></div>
+                        </div>
+                    </article>
+                </div>
+                <div class="column">    <aside>
+        <h2 class="is-size-4">关于我</h2>
+        <div class="content">
+            Working in advertising platform team. Backend on duty,full stack in my own time.
+        </div>
+        <h2 class="is-size-4">GitHub</h2>
+        <div class="content">
+            <a href="https://github.com/lihongkun" target="_blank">https://github.com/lihongkun</a>
+        </div>
+    </aside></div>
+                </div>
+            </div>
+         </main>    <footer class="footer">
+    
+        <div class="copyright has-text-centered">
+            <a href="https://bulma.io">
+                <img src="https://www.lihongkun.com/images/made-with-bulma.png" alt="Made with Bulma" width="128" height="24">
+            </a>
+            <p>© 泛泛之辈 Power by Hugo v0.55.6 - 闽ICP备15009606号</p>
+        </div>
+    </footer>
+    <script type="text/javascript">
+    document.addEventListener('DOMContentLoaded', () => {
+        
+        const $navbarBurgers = Array.prototype.slice.call(document.querySelectorAll('.navbar-burger'), 0);
+        
+        if ($navbarBurgers.length > 0) {
+            
+            $navbarBurgers.forEach( el => {
+                el.addEventListener('click', () => {
+                
+                const target = el.dataset.target;
+                const $target = document.getElementById(target);
+                
+                el.classList.toggle('is-active');
+                $target.classList.toggle('is-active');
+    
+                });
+            });
+        }
+    });
+    </script></body>
+</html>

@@ -51,6 +51,8 @@
             
                 
             
+                
+            
         
     
         
@@ -113,11 +115,13 @@
                                 
                                 <a class="navbar-item" href="/categories/springframework/">Spring</a>
                                 
-                                <a class="navbar-item" href="/categories/mybatis/">Mybatis</a>
-                                
                                 <a class="navbar-item" href="/categories/springcloud/">SpringCloud</a>
                                 
-                                <a class="navbar-item" href="/categories/common/">常用框架</a>
+                                <a class="navbar-item" href="/categories/log/">日志</a>
+                                
+                                <a class="navbar-item" href="/categories/serialize/">序列化</a>
+                                
+                                <a class="navbar-item" href="/categories/common/">其他</a>
                                 
                             </div>
                         </div>
@@ -142,6 +146,19 @@
             <div class="container">
                 <div class="columns">
                 <div class="column is-four-fifths"><section class="posts">
+
+<article class="post box is-radiusless">
+    <div class="post-title">
+        <a class="post-title-link" href="/concurrent/shared_variable_in_concurrent_env/"><h2 class="is-size-4 has-text-dark">共享变量的并发安全性</h2></a>
+    </div>
+    <div class="post-meta">
+        <span class="post-time">日期 : 2018-08-15</span>
+    </div>
+    <div class="post-excerpt content">
+        <p>线程通信模型大体可分为两种，共享变量和消息传递。虽然消息传递（Actor模型）是比较被推崇的，但是Java语言并不支持。所以在并发程序中我们必须要面对共享变量所带来的编程复杂度。</p>
+    </div>
+    <a href="/concurrent/shared_variable_in_concurrent_env/">阅读全文>></a>
+    </article>
 
 <article class="post box is-radiusless">
     <div class="post-title">
@@ -193,21 +210,6 @@
         <p>后端一些任务场景中经常需要去执行shell,使用可能踩坑.</p>
     </div>
     <a href="/troubleshooting/java_exec_shell/">阅读全文>></a>
-    </article>
-
-<article class="post box is-radiusless">
-    <div class="post-title">
-        <a class="post-title-link" href="/design/web_page_content_monitoring/"><h2 class="is-size-4 has-text-dark">前端页面内容监控</h2></a>
-    </div>
-    <div class="post-meta">
-        <span class="post-time">日期 : 2018-07-04</span>
-    </div>
-    <div class="post-excerpt content">
-        <p>最近有个事件抖音在搜狗的搜索引擎上面投放了侮辱先烈的广告，导致公司被相关部门约谈,还涉及了多家广告代理商。他们纷纷表示完善广告审查机制,将广告审查纳入总编辑负责制；切实落实公共信息巡查，应急处置等网络安全主体责任制度。</p>
-
-<p>一般这种投放广告是推广一个落地页链接,广告主可以自己做这个页面,然后创建广告的时候落地链接填入到广告中。广告平台对其进行审核。到这个步骤是没有问题的，只要平台方严格执行。但是总是有那么一些状况。比如广告主在审核通过后对页面进行了修改没有重新提交审核。猪队友总是有的。求生欲望强一些总要做点什么来监控这种情况。</p>
-    </div>
-    <a href="/design/web_page_content_monitoring/">阅读全文>></a>
     </article>
 
 </section>

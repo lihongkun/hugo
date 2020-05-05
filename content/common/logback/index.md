@@ -1,7 +1,7 @@
 ---
 title: Logback日志框架
 date: 2020-02-22
-categories: ["common","java","log"]
+categories: ["java","log"]
 ---
 
 Logback是一个日志实现框架，它实现了SLF4J 。它们二者出自同一作者之手，也是时下比较普及的一个组合。

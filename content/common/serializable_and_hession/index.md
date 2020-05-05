@@ -1,7 +1,7 @@
 ---
 title: Serializable和Hession
 date: 2019-12-07
-categories: ["common","java","serialize"]
+categories: ["java","serialize"]
 ---
 
 Serializable是Java提供的原生序列化方式，它提供了配套的ObjectOutputStream和ObjectIutputStream来处理Java对象的序列化读写，解析效率性能比较高，但是消耗的存储却捉襟见肘。很多框架中仅仅作为一个基础实现，但是基本无人使用。比如 Dubbo 框架中并不是使用它作为默认的序列化方式，而是使用hession。下面看看这两种序列化方式的优劣。
