@@ -154,9 +154,9 @@
                         <div class="post-content content">
                             <p>log4j2是一个比较新的日志框架，作为log4j的升级版本，修复了它的锁竞争问题提升了性能，提供了丰富的组件支持以及良好的语义配置。</p>
 
-<h3 id="如何使用">如何使用</h3>
+<h4 id="如何使用">如何使用</h4>
 
-<p>同样使用SLF4J来进行日志的门面，需要引入以下依赖。</p>
+<p>同样使用SLF4J来作为日志门面，需要引入以下依赖。</p>
 
 <pre><code>&lt;properties&gt;
     &lt;log4j2.version&gt;2.13.1&lt;/log4j2.version&gt;
@@ -216,11 +216,11 @@ public class Application {
 2020-04-25 16:33:45 [INFO] [main] [com.lihongkun.labs.log4j2.Application] : Hello World
 </code></pre>
 
-<h3 id="组件">组件</h3>
+<h4 id="组件">组件</h4>
 
 <p>log4j2在组件上的概念和logback一样都是继承自log4j，基本上没有什么差别。最大的差别在于其中的扩展实现。除了一些常见的Appender，比如日志文件大小和日期滚动，JDBC，邮件等等。它还对一些开源日志采集或者存储中间件进行了比较多的支持如flume-ng、kafka、mongodb等等，官方原生支持使用起来不用费一些力气去扩展。更多丰富的功能可参考 <a href="http://logging.apache.org/log4j/2.x/manual/appenders.html">http://logging.apache.org/log4j/2.x/manual/appenders.html</a></p>
 
-<h3 id="异步">异步</h3>
+<h4 id="异步">异步</h4>
 
 <p>log4j最大的诟病就是在多线程环境下，锁竞争激烈，严重拖慢了应用。而升级版的log4j2提供了两种异步日志的方式：</p>
 
@@ -229,7 +229,7 @@ public class Application {
 <li>AsyncLogger。内部使用的是LMAX Disruptor技术，Disruptor是一个无锁的线程间通信库，它不是一个队列，不需要排队，从而产生更高的吞吐量和更低的延迟。</li>
 </ol>
 
-<h4 id="asyncappender"><strong>AsyncAppender</strong></h4>
+<p><strong>AsyncAppender</strong></p>
 
 <p>这个组件在logback和log4j2 都是存在的，对比下它们的性能。</p>
 
@@ -460,7 +460,7 @@ public void async(){
 
 <p>通过测试，吞吐的表现比log4j2 的 AsyncAppender 好很多但是和 logback的AsyncAppender相比还是差了一个数量级。</p>
 
-<p>logback的性能数据和log4j2官方给出的相近，而log4j2的性能数据缺和官方给出的差距非常大。这点就让人很迷惑了。<a href="http://logging.apache.org/log4j/2.x/manual/async.html">http://logging.apache.org/log4j/2.x/manual/async.html</a> 这是官方对应同步和异步性能测试的参考数据。</p>
+<p>logback的性能数据和log4j2官方给出的相近，而log4j2的性能数据却和官方给出的差距非常大。这点就让人很迷惑了。<a href="http://logging.apache.org/log4j/2.x/manual/async.html">http://logging.apache.org/log4j/2.x/manual/async.html</a> 这是官方对应同步和异步性能测试的参考数据。</p>
                         </div>
                         <div class="columns is-mobile post-meta">
                             <div class="column is-half-desktop has-text-left is-paddingless"> 

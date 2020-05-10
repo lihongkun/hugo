@@ -6,10 +6,19 @@
     <description>Recent content in springframework on 泛泛之辈</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-CN</language>
-    <lastBuildDate>Tue, 13 Mar 2018 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Sun, 10 May 2020 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="https://www.lihongkun.com/categories/springframework/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>控制反转</title>
+      <link>https://www.lihongkun.com/design/ioc/</link>
+      <pubDate>Sun, 10 May 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.lihongkun.com/design/ioc/</guid>
+      <description>&lt;p&gt;控制反转是Spring框架的核心内容，也是因为Spring的关系这个模式为大众所知晓。当然很多人对他并不是有比较系统的了解。&lt;/p&gt;</description>
+    </item>
     
     <item>
       <title>tomcat连接器调优</title>
