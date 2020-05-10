@@ -12,12 +12,12 @@
     
     
     <item>
-      <title>控制反转</title>
+      <title>控制反转与依赖注入</title>
       <link>https://www.lihongkun.com/design/ioc/</link>
       <pubDate>Sun, 10 May 2020 00:00:00 +0000</pubDate>
       
       <guid>https://www.lihongkun.com/design/ioc/</guid>
-      <description>&lt;p&gt;控制反转是Spring框架的核心内容，也是因为Spring的关系这个模式为大众所知晓。当然很多人对他并不是有比较系统的了解。&lt;/p&gt;</description>
+      <description>&lt;p&gt;控制反转是Spring框架的核心内容，也是因为Spring的关系这个模式为大众所知晓。&lt;/p&gt;</description>
     </item>
     
     <item>

@@ -1,10 +1,10 @@
 ---
-title: 控制反转
+title: 控制反转与依赖注入
 date: 2020-05-10
 categories: ["springframework","design"]
 ---
 
-控制反转是Spring框架的核心内容，也是因为Spring的关系这个模式为大众所知晓。当然很多人对他并不是有比较系统的了解。<!--more-->
+控制反转是Spring框架的核心内容，也是因为Spring的关系这个模式为大众所知晓。<!--more-->
 
 #### 依赖抽象
 
@@ -59,7 +59,9 @@ public class Application{
 }
 ```
 
-如上述代码把Application与具体的DeviceWriter实现解耦，在存储介质变化的时候并不需要重新修改Application的实现。应用程序不依赖于实现，但是应用程序与实现都要依赖于接口。
+如上述代码把Application与具体的DeviceWriter实现解耦，在存储介质变化的时候并不需要重新修改Application的实现。
+
+应用程序不依赖于实现，但是应用程序与实现都要依赖于接口。这也正是控制反转所要表述的内容。
 
 #### 控制反转
 
