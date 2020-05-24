@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html><head>
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+
+    
+    <meta name="author"
+            content=""/>
+
+    
+    <meta name="description" content="Spring IoC 容器是Java世界对于IoC实现的事实上的工业标准。基本上大型 Java应用都绕不过它。以至于滴滴在转型golang的时候搞了一个go-spring出来。本文介绍了Spring IoC 容器的基本使用。
+"/>
+    
+
+    
+
+    
+    <link rel="canonical" href="https://www.lihongkun.com/springframework/spring_container_basic/"/>
+
+    
+
+    
+    
+    
+        
+            
+        
+    
+        
+            
+                
+            
+                
+            
+                
+            
+                
+            
+        
+    
+        
+            
+                
+            
+                
+            
+                
+            
+                
+            
+                
+            
+        
+    
+        
+            
+        
+    
+        
+            
+        
+    
+        
+            
+        
+    
+    <title> Spring IoC 容器基础使用 | 泛泛之辈 </title>
+
+    <link rel="shortcut icon" href="https://www.lihongkun.com/favicon.jpg"/>
+    <link rel="stylesheet" href="https://www.lihongkun.com/css/bulma.min.css"/>
+    <link rel="stylesheet" href="https://www.lihongkun.com/css/style.css"/>
+</head><body><header>
+    <nav class="navbar is-fixed-top is-primary" role="navigation" aria-label="main navigation">
+        <div class="navbar-brand is-size-4">
+            <a class="navbar-item" href="https://www.lihongkun.com/">
+                    泛泛之辈
+            </a>
+            <a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false" data-target="navbar-menu">
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+            </a>
+        </div>
+        <div id="navbar-menu" class="navbar-menu">
+            <div class="navbar-end">
+                
+                    
+                        <a class="navbar-item" href="/">首页</a>
+                    
+                
+                    
+                        <div class="navbar-item has-dropdown is-hoverable">
+                            <a class="navbar-link">基本功</a>
+                            <div class="navbar-dropdown">
+                                
+                                <a class="navbar-item" href="/categories/concurrent/">并发</a>
+                                
+                                <a class="navbar-item" href="/categories/network/">网络</a>
+                                
+                                <a class="navbar-item" href="/categories/security/">Web安全</a>
+                                
+                                <a class="navbar-item" href="/categories/jvm/">Java虚拟机</a>
+                                
+                            </div>
+                        </div>
+                    
+                
+                    
+                        <div class="navbar-item has-dropdown is-hoverable">
+                            <a class="navbar-link">编程框架</a>
+                            <div class="navbar-dropdown">
+                                
+                                <a class="navbar-item" href="/categories/springframework/">Spring</a>
+                                
+                                <a class="navbar-item" href="/categories/springcloud/">SpringCloud</a>
+                                
+                                <a class="navbar-item" href="/categories/log/">日志</a>
+                                
+                                <a class="navbar-item" href="/categories/serialize/">序列化</a>
+                                
+                                <a class="navbar-item" href="/categories/common/">其他</a>
+                                
+                            </div>
+                        </div>
+                    
+                
+                    
+                        <a class="navbar-item" href="/categories/troubleshooting/">问题排查</a>
+                    
+                
+                    
+                        <a class="navbar-item" href="/categories/design/">设计思路</a>
+                    
+                
+                    
+                        <a class="navbar-item" href="/categories/reading/">读书笔记</a>
+                    
+                
+            </div>
+            </div>
+    </nav>
+</header><main>
+            <div class="container">
+                <div class="columns">
+                <div class="column is-four-fifths">
+                    <article class="post box is-radiusless">
+                        <div class="post-title">
+                            <h2 class="is-size-4">Spring IoC 容器基础使用</h2>
+                        </div>
+                            <div class="post-meta">
+                            <span class="post-time">日期&nbsp;:&nbsp;2020-05-24</span>
+                        </div>
+                        <div class="post-content content">
+                            <p>Spring IoC 容器是Java世界对于IoC实现的事实上的工业标准。基本上大型 Java应用都绕不过它。以至于滴滴在转型golang的时候搞了一个go-spring出来。本文介绍了Spring IoC 容器的基本使用。</p>
+
+<h4 id="基本概念">基本概念</h4>
+
+<p>org.springframework.beans和org.springframework.context两个包是Spring框架IoC容器的基础。它们分别提供了BeanFactory和ApplicationContext。顾名思义BeanFactory是一个bean的工厂，它提供了一种配置的机制，可以管理任何对象。而ApplicationContext是它的子接口，对他实现了一些增强，如：</p>
+
+<ul>
+<li>更容易与Spring的AOP特性集成</li>
+<li>消息资源处理，可以用于国际化</li>
+<li>容器事件的发布</li>
+<li>特定于应用程序层的上下文，如用于web应用程序的WebApplicationContext。</li>
+</ul>
+
+<p>简而言之，BeanFactory提供了配置框架和基本功能，ApplicationContext添加了更多增强功能。ApplicationContext是BeanFactory的完整超集。</p>
+
+<p>Spring IoC容器管理的对象称为bean。bean是由Spring IoC容器实例化、组装和管理的对象。否则，bean只是应用程序中许多对象中的一个。bean以及它们之间的依赖关系反映在容器使用的配置元数据中。</p>
+
+<h4 id="容器使用">容器使用</h4>
+
+<pre><code>// beans.xml
+&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;beans xmlns=&quot;http://www.springframework.org/schema/beans&quot;
+       xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;
+       xsi:schemaLocation=&quot;http://www.springframework.org/schema/beans
+        https://www.springframework.org/schema/beans/spring-beans.xsd&quot;&gt;
+
+    &lt;bean id=&quot;hhdDevice&quot; class=&quot;com.lihongkun.labs.spring.container.devicewriter.HhdWriter&quot;&gt;&lt;/bean&gt;
+    &lt;bean id=&quot;ssdDevice&quot; class=&quot;com.lihongkun.labs.spring.container.devicewriter.SsdWriter&quot;&gt;&lt;/bean&gt;
+    &lt;bean id=&quot;deviceWriter&quot; class=&quot;com.lihongkun.labs.spring.container.devicewriter.DeviceWriter&quot;&gt;
+        &lt;property name=&quot;deviceWriter&quot; ref=&quot;hhdDevice&quot; /&gt;
+    &lt;/bean&gt;
+&lt;/beans&gt;
+</code></pre>
+
+<p>先前举过一个例子，如果托管给spring容器则配置如上。每个对象都是一个bean，用bean的标签来声明，<strong>id即其唯一标识，class 为其实现类</strong>，容器会通过这个类型去初始化一个对象。上述配置文件中的deviceWriter依赖了一个IDeviceWriter接口的实现，使用hhdDevice注入其中，DeviceWriter的实现中并不知道其存在。</p>
+
+<p>使用BeanFactory来实例化一个IoC容器</p>
+
+<pre><code>package com.lihongkun.labs.spring.container;
+
+import com.lihongkun.labs.spring.container.devicewriter.DeviceWriter;
+import org.springframework.beans.factory.support.DefaultListableBeanFactory;
+import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
+import org.springframework.core.io.ClassPathResource;
+
+public class BeanFactoryLab {
+    public static void main(String[] args) {
+        DefaultListableBeanFactory beanFactory = new DefaultListableBeanFactory();
+        XmlBeanDefinitionReader reader = new XmlBeanDefinitionReader(beanFactory);
+        reader.loadBeanDefinitions(new ClassPathResource(&quot;beans.xml&quot;));
+
+        DeviceWriter deviceWriter = beanFactory.getBean(&quot;deviceWriter&quot;, DeviceWriter.class);
+        deviceWriter.saveToDevice();
+    }
+}
+</code></pre>
+
+<p>使用ApplicationContext来实例化一个IoC容器</p>
+
+<pre><code>package com.lihongkun.labs.spring.container;
+
+import com.lihongkun.labs.spring.container.devicewriter.DeviceWriter;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+public class ApplicationContextLab {
+    public static void main(String[] args) {
+        ApplicationContext applicationContext = new ClassPathXmlApplicationContext(&quot;beans.xml&quot;);
+        DeviceWriter deviceWriter = applicationContext.getBean(&quot;deviceWriter&quot;, DeviceWriter.class);
+        deviceWriter.saveToDevice();
+    }
+}
+</code></pre>
+
+<p>实现同样的功能，使用方式类似，bean定义文件可以互通。</p>
+
+<h4 id="配置引用">配置引用</h4>
+
+<p>简单的场景使用一个bean配置文件可以解决问题，如果项目比较复杂，可以按bean的领域进行分类来划分配置文件。这时候就需要使用到import的功能。</p>
+
+<pre><code>&lt;beans&gt;
+    &lt;import resource=&quot;services.xml&quot;/&gt;
+    &lt;import resource=&quot;resources/messageSource.xml&quot;/&gt;
+    &lt;import resource=&quot;/resources/themeSource.xml&quot;/&gt;
+
+    &lt;bean id=&quot;bean1&quot; class=&quot;...&quot;/&gt;
+    &lt;bean id=&quot;bean2&quot; class=&quot;...&quot;/&gt;
+&lt;/beans&gt;
+</code></pre>
+
+<h4 id="命名和别名">命名和别名</h4>
+
+<p>bean除了id 还可以使用name为其命名，name必须是容器中唯一。不仅如此，还能为其使用别名，即alias标签的使用。</p>
+
+<pre><code>&lt;alias name=&quot;fromName&quot; alias=&quot;toName&quot;/&gt;
+</code></pre>
+
+<p>这么做只是为了拥有更好的语义性。假设有两个子系统，它们都各自声明了数据源，其实是同一个。在一个应用中集成了两个子系统。则不需要初始化两个数据源。但是又改变其中的配置实现。那么只需要初始化myApp-dataSource，将其设置别名，两个不同的子系统就分别能够引用到了。</p>
+
+<pre><code>&lt;alias name=&quot;myApp-dataSource&quot; alias=&quot;subsystemA-dataSource&quot;/&gt;
+&lt;alias name=&quot;myApp-dataSource&quot; alias=&quot;subsystemB-dataSource&quot;/&gt;
+</code></pre>
+
+<p>一致地命名bean使配置更易于阅读和理解。另外，如果使用Spring AOP，按名称相关的bean进行配置，语义性的作用就更加明显了。</p>
+
+<h4 id="bean实例化方式">Bean实例化方式</h4>
+
+<p>Spring容器的初始化bean可以通过几种方式：</p>
+
+<h5 id="构造函数">构造函数</h5>
+
+<pre><code>&lt;bean id=&quot;exampleBean&quot; class=&quot;examples.ExampleBean&quot;/&gt;
+</code></pre>
+
+<p>实际使用的是反射，容器在进行实例化的时候直接使用反射调用了ExampleBean的构造函数</p>
+
+<h5 id="静态工厂方法">静态工厂方法</h5>
+
+<pre><code>// application.xml
+&lt;bean id=&quot;clientService&quot;
+    class=&quot;examples.ClientService&quot;
+    factory-method=&quot;createInstance&quot;/&gt;
+   
+// static factory method
+public class ClientService {
+    private static ClientService clientService = new ClientService();
+    private ClientService() {}
+
+    public static ClientService createInstance() {
+        return clientService;
+    }
+}
+</code></pre>
+
+<p>class的指定没有区别，只是使用factory-method来告诉容器实例化的时候调用此方法就能实例化，而不同通过反射的方式去创建类对象。</p>
+
+<h5 id="实例工厂方法">实例工厂方法</h5>
+
+<pre><code>// application.xml
+&lt;bean id=&quot;serviceLocator&quot; class=&quot;examples.DefaultServiceLocator&quot;&gt;
+    &lt;!-- inject any dependencies required by this locator bean --&gt;
+&lt;/bean&gt;
+
+&lt;bean id=&quot;clientService&quot;
+    factory-bean=&quot;serviceLocator&quot;
+    factory-method=&quot;createClientServiceInstance&quot;/&gt;
+
+&lt;bean id=&quot;accountService&quot;
+    factory-bean=&quot;serviceLocator&quot;
+    factory-method=&quot;createAccountServiceInstance&quot;/&gt;
+  
+// instance 
+public class DefaultServiceLocator {
+
+    private static ClientService clientService = new ClientServiceImpl();
+
+    private static AccountService accountService = new AccountServiceImpl();
+
+    public ClientService createClientServiceInstance() {
+        return clientService;
+    }
+
+    public AccountService createAccountServiceInstance() {
+        return accountService;
+    }
+}
+</code></pre>
+
+<p>实例工厂的方式需要先实例化工厂类，然后使用factory-bean来引用。进而使用factory-method来指定使用factory-bean的哪个方法来实例化bean。</p>
+
+<h4 id="依赖注入">依赖注入</h4>
+
+<p>Spring容器的依赖注入方式分为以下几种</p>
+
+<h5 id="构造函数-1">构造函数</h5>
+
+<pre><code>&lt;beans&gt;
+    &lt;bean id=&quot;beanOne&quot; class=&quot;x.y.ThingOne&quot;&gt;
+        &lt;constructor-arg index=&quot;0&quot; ref=&quot;beanTwo&quot;/&gt;
+        &lt;constructor-arg index=&quot;1&quot; ref=&quot;beanThree&quot;/&gt;
+    &lt;/bean&gt;
+
+    &lt;bean id=&quot;beanTwo&quot; class=&quot;x.y.ThingTwo&quot;/&gt;
+
+    &lt;bean id=&quot;beanThree&quot; class=&quot;x.y.ThingThree&quot;/&gt;
+&lt;/beans&gt;
+</code></pre>
+
+<p>beanOne使用constructor-arg指定了构造函数的参数进行依赖bean的注入。</p>
+
+<p>如果是一些原始类型常量可以使用type指定类型进行注入，因为有时候类型推断是一件不靠谱的事情。</p>
+
+<pre><code>&lt;bean id=&quot;exampleBean&quot; class=&quot;examples.ExampleBean&quot;&gt;
+    &lt;constructor-arg type=&quot;int&quot; value=&quot;7500000&quot;/&gt;
+    &lt;constructor-arg type=&quot;java.lang.String&quot; value=&quot;42&quot;/&gt;
+&lt;/bean&gt;
+</code></pre>
+
+<h5 id="setter函数">Setter函数</h5>
+
+<pre><code>&lt;beans&gt;
+    &lt;bean id=&quot;hhdDevice&quot; class=&quot;com.lihongkun.labs.spring.container.devicewriter.HhdWriter&quot;&gt;&lt;/bean&gt;
+    &lt;bean id=&quot;deviceWriter&quot; class=&quot;com.lihongkun.labs.spring.container.devicewriter.DeviceWriter&quot;&gt;
+        &lt;property name=&quot;deviceWriter&quot; ref=&quot;hhdDevice&quot; /&gt;
+    &lt;/bean&gt;
+&lt;/beans&gt;
+</code></pre>
+
+<p>如果class的实现里面有setXXX的属性 则可以使用 property 标签进行属性的注入。</p>
+
+<h5 id="如何选择">如何选择</h5>
+
+<p>基于构造函数和基于Setter函数的依赖注入并不冲突，它们可以混合使用。选择的原则应该倾向于，如果是强依赖则使用构造函数注入，如果是可选的依赖则使用Setter函数注入。</p>
+
+<p>Setter注入应该主要用于可选的依赖项，这些依赖项可以在类中分配合理的默认值。否则，非空检查必须在代码使用依赖项的任何地方执行。setter注入的一个好处是setter方法使该类的对象能够在以后重新配置或重新注入。因此，通过JMX MBeans进行管理是setter注入的一个引人注目的用例。</p>
+
+<p>这个关注点其实做国内业界已经被滥用了，基本上大部分的注入都是基于Setter。</p>
+
+<h5 id="循环依赖">循环依赖</h5>
+
+<p>如果主要使用构造函数注入，则有可能创建一个无法解决的循环依赖场景。</p>
+
+<pre><code>public class CircularBeanA {
+    private CircularBeanB circularBeanB;
+
+    public CircularBeanA(CircularBeanB circularBeanB){
+        this.circularBeanB = circularBeanB;
+    }
+}
+
+public class CircularBeanB {
+    private CircularBeanA circularBeanA;
+
+    public CircularBeanB(CircularBeanA circularBeanA){
+        this.circularBeanA = circularBeanA;
+    }
+}
+</code></pre>
+
+<p>如上述两个类，使用基于构造函数的依赖注入，配置如下</p>
+
+<pre><code>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;beans xmlns=&quot;http://www.springframework.org/schema/beans&quot;
+       xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;
+       xsi:schemaLocation=&quot;http://www.springframework.org/schema/beans
+        https://www.springframework.org/schema/beans/spring-beans.xsd&quot;&gt;
+
+    &lt;bean id=&quot;circularBeanA&quot; class=&quot;com.lihongkun.labs.spring.container.circular.CircularBeanA&quot;&gt;
+        &lt;constructor-arg ref=&quot;circularBeanB&quot; /&gt;
+    &lt;/bean&gt;
+
+    &lt;bean id=&quot;circularBeanB&quot; class=&quot;com.lihongkun.labs.spring.container.circular.CircularBeanB&quot;&gt;
+        &lt;constructor-arg ref=&quot;circularBeanA&quot; /&gt;
+    &lt;/bean&gt;
+
+&lt;/beans&gt;
+</code></pre>
+
+<p>那么容器初始化的时候将抛出一个BeanCurrentlyInCreationException并且提示是不是循环依赖了。这时候如果使Setter注入则可以解决。</p>
+
+<pre><code>// 需要改造下上述两个类的实现
+&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;beans xmlns=&quot;http://www.springframework.org/schema/beans&quot;
+       xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;
+       xsi:schemaLocation=&quot;http://www.springframework.org/schema/beans
+        https://www.springframework.org/schema/beans/spring-beans.xsd&quot;&gt;
+
+    &lt;bean id=&quot;circularBeanA&quot; class=&quot;com.lihongkun.labs.spring.container.circular.CircularBeanA&quot;&gt;
+        &lt;property name=&quot;circularBeanB&quot; ref=&quot;circularBeanB&quot; /&gt;
+    &lt;/bean&gt;
+
+    &lt;bean id=&quot;circularBeanB&quot; class=&quot;com.lihongkun.labs.spring.container.circular.CircularBeanB&quot;&gt;
+        &lt;property name=&quot;circularBeanA&quot; ref=&quot;circularBeanA&quot; /&gt;
+    &lt;/bean&gt;
+
+&lt;/beans&gt;
+</code></pre>
+
+<h4 id="作用域">作用域</h4>
+
+<p>Spring Bean的作用域除了常见的Singleton 和 Prototype 还有随着扩展功能而增加的Request, Session, Application, and WebSocket Scopes</p>
+
+<p><strong>Singleton</strong></p>
+
+<p>顾名思义是一个单例模式的bean，也就是在容器中只有一个实例存在。</p>
+
+<p><img src="singleton.png" alt="" /></p>
+
+<p><strong>Prototype</strong></p>
+
+<p>每次需要的时候进行创建</p>
+
+<p><img src="prototype.png" alt="" /></p>
+
+<p><strong>Request, Session, Application, and WebSocket</strong></p>
+
+<p>Request, Session, Application, and WebSocket 作用域只存在于 XmlWebApplicationContext，同是把Web相关的bean创建托管到Spring 容器的时候才存在。最典型的应用就是Spring MVC，其中获取请求或者会话对象的方式。</p>
+
+<h4 id="总结">总结</h4>
+
+<p>Spring IoC容器 提供了一套基础配置框架，让使用者把应用程序中类的管理托管到容器中。被托管到容器中实例化的对象我们称为Bean。通常使用ApplicationContext 及其子类来实例化Spring IoC容器。</p>
+
+<p>Bean可以进行命名和使用别名、指定实例化的方式、指定实例化后的作用域、设定依赖注入的方式 和 注入的Bean。</p>
+                        </div>
+                        <div class="columns is-mobile post-meta">
+                            <div class="column is-half-desktop has-text-left is-paddingless"> 
+                                 
+                                更老一篇:<a href="https://www.lihongkun.com/springframework/springboot_tomcat_connetor/"> tomcat连接器调优</a>
+                                
+                            </div>
+                            <div class="column is-half-desktop has-text-right is-paddingless">
+                                
+                                没有了，已经是最新文章
+                                
+                            </div>
+                            <div class="is-clearfix"></div>
+                        </div>
+                    </article>
+                </div>
+                <div class="column">    <aside>
+        <h2 class="is-size-4">关于我</h2>
+        <div class="content">
+            Working in advertising platform team. Backend on duty,full stack in my own time.
+        </div>
+        <h2 class="is-size-4">GitHub</h2>
+        <div class="content">
+            <a href="https://github.com/lihongkun" target="_blank">https://github.com/lihongkun</a>
+        </div>
+    </aside></div>
+                </div>
+            </div>
+         </main>    <footer class="footer">
+    
+        <div class="copyright has-text-centered">
+            <a href="https://bulma.io">
+                <img src="https://www.lihongkun.com/images/made-with-bulma.png" alt="Made with Bulma" width="128" height="24">
+            </a>
+            <p>© 泛泛之辈 Power by Hugo v0.55.6 - 闽ICP备15009606号</p>
+        </div>
+    </footer>
+    <script type="text/javascript">
+    document.addEventListener('DOMContentLoaded', () => {
+        
+        const $navbarBurgers = Array.prototype.slice.call(document.querySelectorAll('.navbar-burger'), 0);
+        
+        if ($navbarBurgers.length > 0) {
+            
+            $navbarBurgers.forEach( el => {
+                el.addEventListener('click', () => {
+                
+                const target = el.dataset.target;
+                const $target = document.getElementById(target);
+                
+                el.classList.toggle('is-active');
+                $target.classList.toggle('is-active');
+    
+                });
+            });
+        }
+    });
+    </script></body>
+</html>

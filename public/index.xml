@@ -6,10 +6,19 @@
     <description>Recent content on 泛泛之辈</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-CN</language>
-    <lastBuildDate>Sun, 10 May 2020 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Sun, 24 May 2020 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="https://www.lihongkun.com/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Spring IoC 容器基础使用</title>
+      <link>https://www.lihongkun.com/springframework/spring_container_basic/</link>
+      <pubDate>Sun, 24 May 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.lihongkun.com/springframework/spring_container_basic/</guid>
+      <description>&lt;p&gt;Spring IoC 容器是Java世界对于IoC实现的事实上的工业标准。基本上大型 Java应用都绕不过它。以至于滴滴在转型golang的时候搞了一个go-spring出来。本文介绍了Spring IoC 容器的基本使用。&lt;/p&gt;</description>
+    </item>
     
     <item>
       <title>控制反转与依赖注入</title>
