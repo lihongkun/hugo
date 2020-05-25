@@ -299,23 +299,23 @@ public class CircularBeanB {
 
 Spring Bean的作用域除了常见的Singleton 和 Prototype 还有随着扩展功能而增加的Request, Session, Application, and WebSocket Scopes
 
-**Singleton** 
+##### Singleton
 
 顾名思义是一个单例模式的bean，也就是在容器中只有一个实例存在。
 
 ![](singleton.png)
 
-**Prototype** 
+##### Prototype
 
 每次需要的时候进行创建
 
 ![](prototype.png)
 
-**Request, Session, Application, and WebSocket**
+##### Request, Session, Application, and WebSocket
 
 Request, Session, Application, and WebSocket 作用域只存在于 XmlWebApplicationContext，同是把Web相关的bean创建托管到Spring 容器的时候才存在。最典型的应用就是Spring MVC，其中获取请求或者会话对象的方式。
 
-#### 总结
+#### 小结
 
 Spring IoC容器 提供了一套基础配置框架，让使用者把应用程序中类的管理托管到容器中。被托管到容器中实例化的对象我们称为Bean。通常使用ApplicationContext 及其子类来实例化Spring IoC容器。
 
