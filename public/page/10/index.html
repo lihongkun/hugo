@@ -149,6 +149,19 @@
 
 <article class="post box is-radiusless">
     <div class="post-title">
+        <a class="post-title-link" href="/concurrent/spin_lock/"><h2 class="is-size-4 has-text-dark">自旋锁</h2></a>
+    </div>
+    <div class="post-meta">
+        <span class="post-time">日期 : 2018-09-04</span>
+    </div>
+    <div class="post-excerpt content">
+        <p>自旋锁是指当一个线程尝试获取某个锁时,如果该锁已被其他线程占用,就一直循环检测锁是否被释放,而不是进入线程挂起或睡眠状态.它适用于锁保护的临界区很小的情况,临界区很小的话,锁占用的时间就很短.</p>
+    </div>
+    <a href="/concurrent/spin_lock/">阅读全文>></a>
+    </article>
+
+<article class="post box is-radiusless">
+    <div class="post-title">
         <a class="post-title-link" href="/design/binary_system_thinking/"><h2 class="is-size-4 has-text-dark">二进制思维</h2></a>
     </div>
     <div class="post-meta">
@@ -197,19 +210,6 @@
         <p>运营反馈问题,日志排查中发现线上有个任务一直没有执行.工具脚本看出基本上CPU都消耗在正则表达式上面了.无疑是进入正则表达式的回溯陷阱.</p>
     </div>
     <a href="/troubleshooting/regulation_expression_backtracing/">阅读全文>></a>
-    </article>
-
-<article class="post box is-radiusless">
-    <div class="post-title">
-        <a class="post-title-link" href="/troubleshooting/linux_random_dev_blocking/"><h2 class="is-size-4 has-text-dark">随机数阻塞问题</h2></a>
-    </div>
-    <div class="post-meta">
-        <span class="post-time">日期 : 2018-07-25</span>
-    </div>
-    <div class="post-excerpt content">
-        <p>有个使用了SpringBoot的API的项目拆分了不同业务的服务,一个jar包通过不同的命令行来启动不同的10个业务进程.所以发布版本的时候基本上是重启所有的进程. 偶然的一次线上发布看业务日志,发现进程启动的时候卡在tomcat embeded初始化的时候.而且基本上重启的进程都卡住了.</p>
-    </div>
-    <a href="/troubleshooting/linux_random_dev_blocking/">阅读全文>></a>
     </article>
 
 </section>

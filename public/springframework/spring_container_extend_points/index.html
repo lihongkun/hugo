@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html><head>
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+
+    
+    <meta name="author"
+            content=""/>
+
+    
+    <meta name="description" content="托管给Spring IoC 容器的Bean虽然不知道容器的存在，但是容器也提供了完整的扩展点，让使用者动态干预bean的定义和实例化，生命周期相关的事件都有对应的hook。
+"/>
+    
+
+    
+
+    
+    <link rel="canonical" href="https://www.lihongkun.com/springframework/spring_container_extend_points/"/>
+
+    
+
+    
+    
+    
+        
+            
+        
+    
+        
+            
+                
+            
+                
+            
+                
+            
+                
+            
+        
+    
+        
+            
+                
+            
+                
+            
+                
+            
+                
+            
+                
+            
+        
+    
+        
+            
+        
+    
+        
+            
+        
+    
+        
+            
+        
+    
+    <title> Spring IoC 容器扩展 | 泛泛之辈 </title>
+
+    <link rel="shortcut icon" href="https://www.lihongkun.com/favicon.jpg"/>
+    <link rel="stylesheet" href="https://www.lihongkun.com/css/bulma.min.css"/>
+    <link rel="stylesheet" href="https://www.lihongkun.com/css/style.css"/>
+</head><body><header>
+    <nav class="navbar is-fixed-top is-primary" role="navigation" aria-label="main navigation">
+        <div class="navbar-brand is-size-4">
+            <a class="navbar-item" href="https://www.lihongkun.com/">
+                    泛泛之辈
+            </a>
+            <a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false" data-target="navbar-menu">
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+            </a>
+        </div>
+        <div id="navbar-menu" class="navbar-menu">
+            <div class="navbar-end">
+                
+                    
+                        <a class="navbar-item" href="/">首页</a>
+                    
+                
+                    
+                        <div class="navbar-item has-dropdown is-hoverable">
+                            <a class="navbar-link">基本功</a>
+                            <div class="navbar-dropdown">
+                                
+                                <a class="navbar-item" href="/categories/concurrent/">并发</a>
+                                
+                                <a class="navbar-item" href="/categories/network/">网络</a>
+                                
+                                <a class="navbar-item" href="/categories/security/">Web安全</a>
+                                
+                                <a class="navbar-item" href="/categories/jvm/">Java虚拟机</a>
+                                
+                            </div>
+                        </div>
+                    
+                
+                    
+                        <div class="navbar-item has-dropdown is-hoverable">
+                            <a class="navbar-link">编程框架</a>
+                            <div class="navbar-dropdown">
+                                
+                                <a class="navbar-item" href="/categories/springframework/">Spring</a>
+                                
+                                <a class="navbar-item" href="/categories/springcloud/">SpringCloud</a>
+                                
+                                <a class="navbar-item" href="/categories/log/">日志</a>
+                                
+                                <a class="navbar-item" href="/categories/serialize/">序列化</a>
+                                
+                                <a class="navbar-item" href="/categories/common/">其他</a>
+                                
+                            </div>
+                        </div>
+                    
+                
+                    
+                        <a class="navbar-item" href="/categories/troubleshooting/">问题排查</a>
+                    
+                
+                    
+                        <a class="navbar-item" href="/categories/design/">设计思路</a>
+                    
+                
+                    
+                        <a class="navbar-item" href="/categories/reading/">读书笔记</a>
+                    
+                
+            </div>
+            </div>
+    </nav>
+</header><main>
+            <div class="container">
+                <div class="columns">
+                <div class="column is-four-fifths">
+                    <article class="post box is-radiusless">
+                        <div class="post-title">
+                            <h2 class="is-size-4">Spring IoC 容器扩展</h2>
+                        </div>
+                            <div class="post-meta">
+                            <span class="post-time">日期&nbsp;:&nbsp;2020-05-30</span>
+                        </div>
+                        <div class="post-content content">
+                            <p>托管给Spring IoC 容器的Bean虽然不知道容器的存在，但是容器也提供了完整的扩展点，让使用者动态干预bean的定义和实例化，生命周期相关的事件都有对应的hook。</p>
+
+<h3 id="生命周期事件">生命周期事件</h3>
+
+<p>Bean实例化和销毁的时候，容器提供了默认的Hook，它们分别是InitializingBean和DisposableBean。实现后，容器将在bean实例化和销毁的时候进行调用。如果不实现这两个接口，同样可以使用该功能，那就是在配置对应的init-method和destroy-method。JSR-250定义了两个注解<code>@PostConstruct</code> and <code>@PreDestroy</code>同样是可以实现这样的功能。</p>
+
+<pre><code>package com.lihongkun.labs.spring.container.lifecycle;
+
+import org.springframework.beans.factory.DisposableBean;
+import org.springframework.beans.factory.InitializingBean;
+
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
+
+public class LifeCycleBean implements InitializingBean, DisposableBean {
+
+    private String propertyValue;
+
+    public void setPropertyValue(String propertyValue) {
+        this.propertyValue = propertyValue;
+        System.out.println(&quot;[lifecycle event] setter inject&quot;);
+    }
+
+    public LifeCycleBean(){
+        System.out.println(&quot;[lifecycle event] constructor&quot;);
+    }
+
+    @PostConstruct
+    public void postConstruct(){
+        System.out.println(&quot;[lifecycle event] PostConstruct&quot;);
+    }
+
+    @PreDestroy
+    public void preDestroy(){
+        System.out.println(&quot;[lifecycle event] PreDestroy&quot;);
+    }
+
+    public void initMethod(){
+        System.out.println(&quot;[lifecycle event] initMethod&quot;);
+    }
+
+    public void destroyMethod(){
+        System.out.println(&quot;[lifecycle event] destroyMethod&quot;);
+    }
+
+    @Override
+    public void destroy() throws Exception {
+        System.out.println(&quot;[lifecycle event] destroy&quot;);
+    }
+
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        System.out.println(&quot;[lifecycle event] afterPropertiesSet&quot;);
+    }
+}
+</code></pre>
+
+<p>bean的配置</p>
+
+<pre><code>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;beans xmlns=&quot;http://www.springframework.org/schema/beans&quot;
+       xmlns:context=&quot;http://www.springframework.org/schema/context&quot;
+       xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;
+       xsi:schemaLocation=&quot;http://www.springframework.org/schema/beans
+        https://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context
+        https://www.springframework.org/schema/context/spring-context.xsd&quot;&gt;
+    &lt;context:component-scan base-package=&quot;org.example&quot;/&gt;
+
+    &lt;bean id=&quot;lifeCycleBean&quot;
+          init-method=&quot;initMethod&quot;
+          destroy-method=&quot;destroyMethod&quot;
+          class=&quot;com.lihongkun.labs.spring.container.lifecycle.LifeCycleBean&quot; &gt;
+        &lt;property name=&quot;propertyValue&quot; value=&quot;hello&quot; /&gt;
+    &lt;/bean&gt;
+&lt;/beans&gt;
+</code></pre>
+
+<p>执行后的结果是</p>
+
+<pre><code>[lifecycle event] constructor
+[lifecycle event] setter inject
+[lifecycle event] PostConstruct
+[lifecycle event] afterPropertiesSet
+[lifecycle event] initMethod
+[lifecycle event] PreDestroy
+[lifecycle event] destroy
+[lifecycle event] destroyMethod
+</code></pre>
+
+<p>可以看出执行顺序是 ： 构造函数 =&gt; 属性注入 =&gt; PostConstruct =&gt;  InitializingBean =&gt; init-method配置 =&gt; PreDestroy =&gt; DisposableBean =&gt; destroy-method配置。</p>
+
+<p>InitializingBean 和 DisposableBean 的实现方式是和Spring容器耦合的。<strong>推荐的是JSR-250的注解</strong>，跟容器无关，切换其他容器的时候也是有对应的功能。如果不能使用的话，次优选择是init-method配置和destroy-method配置，保持类的干净，也是不耦合于容器。</p>
+
+<h3 id="容器扩展点">容器扩展点</h3>
+
+<p>除了当个bean本身的事件，Spring容器提供了BeanPostProcessor和BeanFactoryPostProcessor两个容器级别的扩展点。它们被大量用在和Spring结合的一些基础框架上。</p>
+
+<h4 id="beanpostprocessor">BeanPostProcessor</h4>
+
+<p>BeanPostProcessor 作用在实例化后的bean上，允许使用者在容器实例化bean的后，对其进行修改。它提供了两个方法，传入bean和beanName，返回处理后的bean。用法示例如下：</p>
+
+<pre><code>import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.config.BeanPostProcessor;
+
+public class HelloBeanPostProcessor implements BeanPostProcessor {
+    @Override
+    public Object postProcessBeforeInitialization(Object bean, String beanName) throws BeansException {
+        System.out.println(&quot;[lifecycle event] postProcessBeforeInitialization&quot;);
+        return bean;
+    }
+
+    @Override
+    public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
+        System.out.println(&quot;[lifecycle event] postProcessAfterInitialization&quot;);
+        return bean;
+    }
+}
+</code></pre>
+
+<p>通常应用于两种场景，<strong>对实现了某个接口的bean进行填充或者该接口相关的操作</strong>。Spring容器使用这个扩展点提供了一些特性。如postProcessBeforeInitialization实现了ApplicationContext相关的Aware机制。</p>
+
+<pre><code>class ApplicationContextAwareProcessor implements BeanPostProcessor {
+
+    private final ConfigurableApplicationContext applicationContext;
+
+    private final StringValueResolver embeddedValueResolver;
+
+
+    /**
+     * Create a new ApplicationContextAwareProcessor for the given context.
+     */
+    public ApplicationContextAwareProcessor(ConfigurableApplicationContext applicationContext) {
+        this.applicationContext = applicationContext;
+        this.embeddedValueResolver = new EmbeddedValueResolver(applicationContext.getBeanFactory());
+    }
+
+
+    @Override
+    @Nullable
+    public Object postProcessBeforeInitialization(final Object bean, String beanName) throws BeansException {
+        AccessControlContext acc = null;
+
+        if (System.getSecurityManager() != null &amp;&amp;
+                (bean instanceof EnvironmentAware || bean instanceof EmbeddedValueResolverAware ||
+                        bean instanceof ResourceLoaderAware || bean instanceof ApplicationEventPublisherAware ||
+                        bean instanceof MessageSourceAware || bean instanceof ApplicationContextAware)) {
+            acc = this.applicationContext.getBeanFactory().getAccessControlContext();
+        }
+
+        if (acc != null) {
+            AccessController.doPrivileged((PrivilegedAction&lt;Object&gt;) () -&gt; {
+                invokeAwareInterfaces(bean);
+                return null;
+            }, acc);
+        }
+        else {
+            invokeAwareInterfaces(bean);
+        }
+
+        return bean;
+    }
+
+    private void invokeAwareInterfaces(Object bean) {
+        if (bean instanceof Aware) {
+            if (bean instanceof EnvironmentAware) {
+                ((EnvironmentAware) bean).setEnvironment(this.applicationContext.getEnvironment());
+            }
+            if (bean instanceof EmbeddedValueResolverAware) {
+                ((EmbeddedValueResolverAware) bean).setEmbeddedValueResolver(this.embeddedValueResolver);
+            }
+            if (bean instanceof ResourceLoaderAware) {
+                ((ResourceLoaderAware) bean).setResourceLoader(this.applicationContext);
+            }
+            if (bean instanceof ApplicationEventPublisherAware) {
+                ((ApplicationEventPublisherAware) bean).setApplicationEventPublisher(this.applicationContext);
+            }
+            if (bean instanceof MessageSourceAware) {
+                ((MessageSourceAware) bean).setMessageSource(this.applicationContext);
+            }
+            if (bean instanceof ApplicationContextAware) {
+                ((ApplicationContextAware) bean).setApplicationContext(this.applicationContext);
+            }
+        }
+    }
+
+    @Override
+    public Object postProcessAfterInitialization(Object bean, String beanName) {
+        return bean;
+    }
+
+}
+</code></pre>
+
+<p>上述代码即是Spring容器使用了BeanPostProcessor实现了Aware机制里面的EnvironmentAware、EmbeddedValueResolverAware、ResourceLoaderAware、ApplicationEventPublisherAware、MessageSourceAware、ApplicationContextAware。</p>
+
+<p>另外一种场景是<strong>需要对实例化后的Bean进行代理包装</strong>，postProcessAfterInitialization很容易想到可以直接把bean的实现给替换了，实际上Spring的AOP机制也是用此扩展来实现的。</p>
+
+<h4 id="beanfactorypostprocessor">BeanFactoryPostProcessor</h4>
+
+<p>BeanFactoryPostProcessor主要使用在修改容器的bean definition上面，它的阶段在更前面的环节，可以达到动态修改bean配置的能力。它只有一个postProcessBeanFactory方法，使用示例如下</p>
+
+<pre><code>import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
+import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
+
+public class HelloBeanFactoryPostProcessor implements BeanFactoryPostProcessor {
+    @Override
+    public void postProcessBeanFactory(ConfigurableListableBeanFactory configurableListableBeanFactory) throws BeansException {
+        System.out.println(&quot;[lifecycle event] postProcessBeanFactory&quot;);
+    }
+}
+</code></pre>
+
+<p>典型的应用即Spring容器中@Value(&ldquo;${property}&rdquo;)的实现。它是通过PropertyPlaceholderConfigurer类实现，继承自PropertyResourceConfigurer实现了BeanFactoryPostProcessor。</p>
+
+<pre><code>@Override
+    public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) throws BeansException {
+        try {
+            // 合并本地属性和外部指定的属性文件资源中的属性 
+            Properties mergedProps = mergeProperties();
+
+            // Convert the merged properties, if necessary.
+            // 将属性的值做转换(仅在必要的时候做)
+            convertProperties(mergedProps);
+
+            // Let the subclass process the properties.
+            // 对容器中的每个bean定义进行处理，也就是替换每个bean定义中的属性中的占位符 
+            processProperties(beanFactory, mergedProps);
+        }
+        catch (IOException ex) {
+            throw new BeanInitializationException(&quot;Could not load properties&quot;, ex);
+        }
+    }
+</code></pre>
+
+<h3 id="小结">小结</h3>
+
+<p>生命周期事件和容器级别的扩展点可以做一些资源初始化销毁、动态修改bean对象以及动态修改bean定义。它们以一定的顺序作用在bean上。以下结果是示例中所输出的顺序。</p>
+
+<pre><code>[lifecycle event] postProcessBeanFactory
+[lifecycle event] constructor
+[lifecycle event] setter inject
+[lifecycle event] postProcessBeforeInitialization
+[lifecycle event] PostConstruct
+[lifecycle event] afterPropertiesSet
+[lifecycle event] initMethod
+[lifecycle event] postProcessAfterInitialization
+[lifecycle event] PreDestroy
+[lifecycle event] destroy
+[lifecycle event] destroyMethod
+</code></pre>
+                        </div>
+                        <div class="columns is-mobile post-meta">
+                            <div class="column is-half-desktop has-text-left is-paddingless"> 
+                                 
+                                更老一篇:<a href="https://www.lihongkun.com/springframework/spring_container_basic/"> Spring IoC 容器基础使用</a>
+                                
+                            </div>
+                            <div class="column is-half-desktop has-text-right is-paddingless">
+                                
+                                没有了，已经是最新文章
+                                
+                            </div>
+                            <div class="is-clearfix"></div>
+                        </div>
+                    </article>
+                </div>
+                <div class="column">    <aside>
+        <h2 class="is-size-4">关于我</h2>
+        <div class="content">
+            Working in advertising platform team. Backend on duty,full stack in my own time.
+        </div>
+        <h2 class="is-size-4">GitHub</h2>
+        <div class="content">
+            <a href="https://github.com/lihongkun" target="_blank">https://github.com/lihongkun</a>
+        </div>
+    </aside></div>
+                </div>
+            </div>
+         </main>    <footer class="footer">
+    
+        <div class="copyright has-text-centered">
+            <a href="https://bulma.io">
+                <img src="https://www.lihongkun.com/images/made-with-bulma.png" alt="Made with Bulma" width="128" height="24">
+            </a>
+            <p>© 泛泛之辈 Power by Hugo v0.55.6 - 闽ICP备15009606号</p>
+        </div>
+    </footer>
+    <script type="text/javascript">
+    document.addEventListener('DOMContentLoaded', () => {
+        
+        const $navbarBurgers = Array.prototype.slice.call(document.querySelectorAll('.navbar-burger'), 0);
+        
+        if ($navbarBurgers.length > 0) {
+            
+            $navbarBurgers.forEach( el => {
+                el.addEventListener('click', () => {
+                
+                const target = el.dataset.target;
+                const $target = document.getElementById(target);
+                
+                el.classList.toggle('is-active');
+                $target.classList.toggle('is-active');
+    
+                });
+            });
+        }
+    });
+    </script></body>
+</html>

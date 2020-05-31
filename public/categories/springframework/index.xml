@@ -6,10 +6,19 @@
     <description>Recent content in springframework on 泛泛之辈</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-CN</language>
-    <lastBuildDate>Sun, 24 May 2020 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Sat, 30 May 2020 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="https://www.lihongkun.com/categories/springframework/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Spring IoC 容器扩展</title>
+      <link>https://www.lihongkun.com/springframework/spring_container_extend_points/</link>
+      <pubDate>Sat, 30 May 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.lihongkun.com/springframework/spring_container_extend_points/</guid>
+      <description>&lt;p&gt;托管给Spring IoC 容器的Bean虽然不知道容器的存在，但是容器也提供了完整的扩展点，让使用者动态干预bean的定义和实例化，生命周期相关的事件都有对应的hook。&lt;/p&gt;</description>
+    </item>
     
     <item>
       <title>Spring IoC 容器基础使用</title>

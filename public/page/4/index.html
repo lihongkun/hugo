@@ -149,6 +149,19 @@
 
 <article class="post box is-radiusless">
     <div class="post-title">
+        <a class="post-title-link" href="/design/weight_random/"><h2 class="is-size-4 has-text-dark">加权随机算法</h2></a>
+    </div>
+    <div class="post-meta">
+        <span class="post-time">日期 : 2019-11-17</span>
+    </div>
+    <div class="post-excerpt content">
+        <p>加权重随机是一个比较常见的计算方式，比如 负载均衡算法中的一种、随机抽奖、广告系统流量分配等等。这种算法的实现方式比较成熟。</p>
+    </div>
+    <a href="/design/weight_random/">阅读全文>></a>
+    </article>
+
+<article class="post box is-radiusless">
+    <div class="post-title">
         <a class="post-title-link" href="/common/thirft/"><h2 class="is-size-4 has-text-dark">thrift序列化协议</h2></a>
     </div>
     <div class="post-meta">
@@ -197,19 +210,6 @@
         <p>算法新上线的接口，平均耗时增加了20ms。使用jstack一类的脚本出来的堆栈基本上比较平均。很难定位到确切的位置。这种微小耗时监测场景。典型的方式是直接进行CPU热点采样，通常是linux的perf加上perf-map-agent来映射出java的堆栈。这个组合略复杂。我使用的是 async-profiler 。</p>
     </div>
     <a href="/troubleshooting/async-profiler/">阅读全文>></a>
-    </article>
-
-<article class="post box is-radiusless">
-    <div class="post-title">
-        <a class="post-title-link" href="/security/sso/"><h2 class="is-size-4 has-text-dark">单点登录</h2></a>
-    </div>
-    <div class="post-meta">
-        <span class="post-time">日期 : 2019-07-15</span>
-    </div>
-    <div class="post-excerpt content">
-        <p><a href="https://www.lihongkun.com/security/sign_in/">分布式登录状态一致性</a> 解决的是同一个域名下的状态，如果一个企业内部存储多个领域的系统，且他们具备不同的特性和域名，又必须提供统一的登录方式。那么这时候单点登录就派上用场了。</p>
-    </div>
-    <a href="/security/sso/">阅读全文>></a>
     </article>
 
 </section>
