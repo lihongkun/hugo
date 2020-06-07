@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html><head>
-	<meta name="generator" content="Hugo 0.55.6" />
     <meta charset="utf-8"/>
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
@@ -10,22 +9,21 @@
             content=""/>
 
     
+    <meta name="description" content="在使用spring的过程中比较好的设计是bean不依赖于容器。在一些特殊的情况下需要感知容器的存在，使用容器的提供的资源。Spring IoC容器提供了Aware机制
+"/>
+    
+
+    
+
+    
+    <link rel="canonical" href="https://www.lihongkun.com/springframework/spring_aware/"/>
 
     
 
     
-    <link rel="canonical" href="https://www.lihongkun.com/"/>
-
-    
-    <link rel="alternate" type="application/rss&#43;xml" href="https://www.lihongkun.com/index.xml">
-    
-
-    
     
     
         
-            
-                
             
         
     
@@ -67,7 +65,7 @@
             
         
     
-    <title>泛泛之辈</title>
+    <title> Spring Aware机制 | 泛泛之辈 </title>
 
     <link rel="shortcut icon" href="https://www.lihongkun.com/favicon.jpg"/>
     <link rel="stylesheet" href="https://www.lihongkun.com/css/bulma.min.css"/>
@@ -145,422 +143,118 @@
 </header><main>
             <div class="container">
                 <div class="columns">
-                <div class="column is-four-fifths"><section class="posts">
-
-<article class="post box is-radiusless">
-    <div class="post-title">
-        <a class="post-title-link" href="/jvm/gclog/"><h2 class="is-size-4 has-text-dark">Java虚拟机监控工具 - GC日志和GCViewer</h2></a>
-    </div>
-    <div class="post-meta">
-        <span class="post-time">日期 : 2018-06-07</span>
-    </div>
-    <div class="post-excerpt content">
-        <p>之前介绍的jstat和jmap只能使用输入命令的方式来进行GC和内存方面的监控.应用程序的GC情况可能是一个需要持续观察的过程,JVM提供了命令行选项来保存这些GC相关的日志.</p>
-    </div>
-    <a href="/jvm/gclog/">阅读全文>></a>
-    </article>
-
-<article class="post box is-radiusless">
-    <div class="post-title">
-        <a class="post-title-link" href="/jvm/jmap/"><h2 class="is-size-4 has-text-dark">Java虚拟机监控工具 - jmap</h2></a>
-    </div>
-    <div class="post-meta">
-        <span class="post-time">日期 : 2018-06-05</span>
-    </div>
-    <div class="post-excerpt content">
-        <p>jmap主要用于打印指定Java进程的共享对象内存映射或堆内存细节.</p>
-    </div>
-    <a href="/jvm/jmap/">阅读全文>></a>
-    </article>
-
-<article class="post box is-radiusless">
-    <div class="post-title">
-        <a class="post-title-link" href="/jvm/jps_and_jstat/"><h2 class="is-size-4 has-text-dark">Java虚拟机监控工具 - jps和jstat</h2></a>
-    </div>
-    <div class="post-meta">
-        <span class="post-time">日期 : 2018-05-28</span>
-    </div>
-    <div class="post-excerpt content">
-        <p>简单介绍下两个JVM监控工具 , jps 和 jstat</p>
-    </div>
-    <a href="/jvm/jps_and_jstat/">阅读全文>></a>
-    </article>
-
-<article class="post box is-radiusless">
-    <div class="post-title">
-        <a class="post-title-link" href="/jvm/garbage_collection/"><h2 class="is-size-4 has-text-dark">Java垃圾收集简介</h2></a>
-    </div>
-    <div class="post-meta">
-        <span class="post-time">日期 : 2018-05-14</span>
-    </div>
-    <div class="post-excerpt content">
-        <p>对于程序员而言,Java最诱人的特性之一是不需要显式地管理对象的生命周期,我们可以在需要对象的时候创建对象,对象不再使用的时候由JVM在后台自动进行垃圾回收.</p>
-    </div>
-    <a href="/jvm/garbage_collection/">阅读全文>></a>
-    </article>
-
-<article class="post box is-radiusless">
-    <div class="post-title">
-        <a class="post-title-link" href="/jvm/jvm_memory_model/"><h2 class="is-size-4 has-text-dark">Java虚拟机内存模型简介</h2></a>
-    </div>
-    <div class="post-meta">
-        <span class="post-time">日期 : 2018-05-07</span>
-    </div>
-    <div class="post-excerpt content">
-        <p>Java虚拟机的内存区域 叫做 运行时数据区 , 这是一张比较典型的内存划分图</p>
-    </div>
-    <a href="/jvm/jvm_memory_model/">阅读全文>></a>
-    </article>
-
-</section>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<nav class="page-nav">
-    
-    <a href="/page/11/" class="extend prev">上一页</a>
-    
-
-    
-
-      
-
-        
-
-        
-          
-        
-
-        
-
-        
-
-        
-
-        
-
-      
-
-      
-      
-          <a href="/" class="page-number">1</a>
-      
-
-    
-
-      
-
-        
-
-        
-
-        
-          
-            <span class="space">...</span>
-          
-        
-
-        
-
-        
-
-        
-
-      
-
-      
-      
-
-    
-
-      
-
-        
-
-        
-
-        
-
-        
-
-        
-
-        
-
-      
-
-      
-      
-
-    
-
-      
-
-        
-
-        
-
-        
-
-        
-
-        
-
-        
-
-      
-
-      
-      
-
-    
-
-      
-
-        
-
-        
-
-        
-
-        
-
-        
-
-        
-
-      
-
-      
-      
-
-    
-
-      
-
-        
-
-        
-
-        
-
-        
-
-        
-
-        
-
-      
-
-      
-      
-
-    
-
-      
-
-        
-
-        
-
-        
-
-        
-
-        
-
-        
-
-      
-
-      
-      
-
-    
-
-      
-
-        
-
-        
-
-        
-
-        
-
-        
-
-        
-
-      
-
-      
-      
-
-    
-
-      
-
-        
-
-        
-
-        
-
-        
-
-        
-
-        
-
-      
-
-      
-      
-
-    
-
-      
-
-        
-
-        
-
-        
-
-        
-
-        
-
-        
-
-      
-
-      
-      
-
-    
-
-      
-
-        
-
-        
-
-        
-
-        
-          
-        
-
-        
-
-        
-
-      
-
-      
-      
-          <a href="/page/11/" class="page-number">11</a>
-      
-
-    
-
-      
-
-        
-
-        
-
-        
-
-        
-          
-        
-
-        
-
-        
-
-      
-
-      
-      
-          <a href="/page/12/" class="page-number current">12</a>
-      
-
-    
-
-      
-
-        
-
-        
-
-        
-
-        
-          
-        
-
-        
-          
-        
-
-        
-
-      
-
-      
-      
-          <a href="/page/13/" class="page-number">13</a>
-      
-
-    
-
-      
-
-        
-
-        
-
-        
-
-        
-
-        
-
-        
-          
-        
-
-      
-
-      
-      
-          <a href="/page/14/" class="page-number">14</a>
-      
-
-        
-
-
-    
-      <a href="/page/13/" class="extend next">下一页</a>
-    
-
-</nav>
-</div>
+                <div class="column is-four-fifths">
+                    <article class="post box is-radiusless">
+                        <div class="post-title">
+                            <h2 class="is-size-4">Spring Aware机制</h2>
+                        </div>
+                            <div class="post-meta">
+                            <span class="post-time">日期&nbsp;:&nbsp;2020-06-07</span>
+                        </div>
+                        <div class="post-content content">
+                            <p>在使用spring的过程中比较好的设计是bean不依赖于容器。在一些特殊的情况下需要感知容器的存在，使用容器的提供的资源。Spring IoC容器提供了Aware机制</p>
+
+<h4 id="aware机制的作用">Aware机制的作用</h4>
+
+<p>Aware：意识，发现的意思。它的作用即是让bean感知到容器的资源。早年版本的Spring容器如果需要ApplicationContext则经常使用如下代码去先存储其引用，在容器初始化后手动调用setApplicationContext把引用set进去。</p>
+
+<pre><code>public class ApplicationContextHolder {
+
+    private static ApplicationContext applicationContext = null;
+
+    public static void setApplicationContext(ApplicationContext applicationContext) {
+        ApplicationContextHolder.applicationContext = applicationContext;
+    }
+
+    public static ApplicationContext getApplicationContext() {
+        return applicationContext;
+    }
+}
+</code></pre>
+
+<p>如果是web场景下使用ContextLoaderListener来默认初始化容器，取得就有点困难。如果使用Spring的Aware机制则无需自己手动去获得容器的资源，而是Spring容器初始化bean后对其进行注入。上述例子可以修改为</p>
+
+<pre><code>@Component
+public class ApplicationContextHolder implements ApplicationContextAware {
+
+    private ApplicationContext applicationContext;
+
+    @Override
+    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+        this.applicationContext = applicationContext;
+    }
+
+    public ApplicationContext getApplicationContext() {
+        return applicationContext;
+    }
+}
+</code></pre>
+
+<p>ApplicationContextHolder的applicationContext不再是一个静态字段。当然并不希望到处去使用ApplicationContextHolder而是需要使用到ApplicationContext的时候bean自己去ApplicationContextAware。</p>
+
+<h4 id="其它aware接口">其它Aware接口</h4>
+
+<p>除了ApplicationContextAware，Spring容器还默认提供了一些常用的容器相关对象发现接口。</p>
+
+<pre><code>public class AwareBean implements ApplicationContextAware, 
+        ApplicationEventPublisherAware, 
+        BeanClassLoaderAware, 
+        BeanFactoryAware, 
+        MessageSourceAware, 
+        BeanNameAware {
+
+
+    @Override
+    public void setApplicationEventPublisher(ApplicationEventPublisher applicationEventPublisher) {
+        // 获得ApplicationEventPublisher，可使用来发布Spring容器事件
+    }
+
+    @Override
+    public void setBeanClassLoader(ClassLoader classLoader) {
+        // 动态bean初始化的时候使用和Spring容器一样的ClassLoader
+    }
+
+    @Override
+    public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
+        // 获得 BeanFactory
+    }
+
+    @Override
+    public void setBeanName(String beanName) {
+        // 获得当前bean的名称
+    }
+
+    @Override
+    public void setMessageSource(MessageSource messageSource) {
+        // i18n和一些配置参数解析
+    }
+
+    @Override
+    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+        // 获得 ApplicationContext
+    }
+}
+</code></pre>
+
+<h4 id="小结">小结</h4>
+
+<p>Spring容器提供了Aware机制，使Bean能够感知到容器的资源。此功能虽然是比较方便，但是使得Bean依赖于容器的API，这违背了依赖反转的初衷。因此，只有在一些需要对容器进行动态编程的基础bean才建议使用。</p>
+                        </div>
+                        <div class="columns is-mobile post-meta">
+                            <div class="column is-half-desktop has-text-left is-paddingless"> 
+                                 
+                                更老一篇:<a href="https://www.lihongkun.com/springframework/spring_container_extend_points/"> Spring IoC 容器扩展</a>
+                                
+                            </div>
+                            <div class="column is-half-desktop has-text-right is-paddingless">
+                                
+                                没有了，已经是最新文章
+                                
+                            </div>
+                            <div class="is-clearfix"></div>
+                        </div>
+                    </article>
+                </div>
                 <div class="column">    <aside>
         <h2 class="is-size-4">关于我</h2>
         <div class="content">

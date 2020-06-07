@@ -6,10 +6,19 @@
     <description>Recent content on 泛泛之辈</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-CN</language>
-    <lastBuildDate>Sat, 30 May 2020 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Sun, 07 Jun 2020 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="https://www.lihongkun.com/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Spring Aware机制</title>
+      <link>https://www.lihongkun.com/springframework/spring_aware/</link>
+      <pubDate>Sun, 07 Jun 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.lihongkun.com/springframework/spring_aware/</guid>
+      <description>&lt;p&gt;在使用spring的过程中比较好的设计是bean不依赖于容器。在一些特殊的情况下需要感知容器的存在，使用容器的提供的资源。Spring IoC容器提供了Aware机制&lt;/p&gt;</description>
+    </item>
     
     <item>
       <title>Spring IoC 容器扩展</title>

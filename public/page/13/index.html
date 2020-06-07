@@ -149,6 +149,25 @@
 
 <article class="post box is-radiusless">
     <div class="post-title">
+        <a class="post-title-link" href="/jvm/java_intern/"><h2 class="is-size-4 has-text-dark">Java字符串常量调优</h2></a>
+    </div>
+    <div class="post-meta">
+        <span class="post-time">日期 : 2018-03-26</span>
+    </div>
+    <div class="post-excerpt content">
+        <p>Java中的常量池,实际上分为两种形态:静态常量池和运行时常量池.</p>
+
+<p><strong>静态常量池</strong>,即*.class文件中的常量池,class文件中的常量池不仅仅包含字符串(数字)字面量，还包含类、方法的信息，占用class文件绝大部分空间.</p>
+
+<p><strong>运行时常量池</strong>,则是jvm虚拟机在完成类装载操作后,将class文件中的常量池载入到内存中,并保存在方法区中,我们常说的常量池,就是指方法区中的运行时常量池.</p>
+
+<p>运行时常量池相对于Class文件常量池的另外一个重要特征是具备动态性,Java语言并不要求常量一定只有编译期才能产生,也就是并非预置入Class文件中常量池的内容才能进入方法区运行时常量池,运行期间也可能将新的常量放入池中,这种特性被开发人员利用比较多的就是String类的intern()方法.</p>
+    </div>
+    <a href="/jvm/java_intern/">阅读全文>></a>
+    </article>
+
+<article class="post box is-radiusless">
+    <div class="post-title">
         <a class="post-title-link" href="/springframework/springboot_tomcat_connetor/"><h2 class="is-size-4 has-text-dark">tomcat连接器调优</h2></a>
     </div>
     <div class="post-meta">
@@ -197,19 +216,6 @@
         <p>尽管SpringBoot能够在application.properties来配置一些日志相关的内容,但是针对一个比较复杂,或者是有着自己运维体系的应用,这是远远不够用的.所以拓展自己的日志配置文件是必须的,官方推荐的是使用logback-spring.xml直接覆盖</p>
     </div>
     <a href="/springframework/springboot_logback/">阅读全文>></a>
-    </article>
-
-<article class="post box is-radiusless">
-    <div class="post-title">
-        <a class="post-title-link" href="/security/cmd_exe/"><h2 class="is-size-4 has-text-dark">命令执行漏洞</h2></a>
-    </div>
-    <div class="post-meta">
-        <span class="post-time">日期 : 2018-02-26</span>
-    </div>
-    <div class="post-excerpt content">
-        <p>命令执行漏洞是指攻击者可以随意执行系统命令。通常说的远程执行代码漏洞,都是此类型.</p>
-    </div>
-    <a href="/security/cmd_exe/">阅读全文>></a>
     </article>
 
 </section>

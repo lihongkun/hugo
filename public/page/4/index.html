@@ -149,6 +149,19 @@
 
 <article class="post box is-radiusless">
     <div class="post-title">
+        <a class="post-title-link" href="/common/avro/"><h2 class="is-size-4 has-text-dark">Avro序列化器</h2></a>
+    </div>
+    <div class="post-meta">
+        <span class="post-time">日期 : 2019-12-01</span>
+    </div>
+    <div class="post-excerpt content">
+        <p>Apache Avro（以下简称 Avro）是一种与编程语言无关的序列化格式。Avro 数据通过与语言无关的 schema 来定义。schema 通过 JSON 来描述，数据被序列化成二进制文件或 JSON 文件，不过一般会使用二进制文件。在大数据体系下，比较注重存储的压缩率，反而对效率并没有要求得很苛刻。</p>
+    </div>
+    <a href="/common/avro/">阅读全文>></a>
+    </article>
+
+<article class="post box is-radiusless">
+    <div class="post-title">
         <a class="post-title-link" href="/design/weight_random/"><h2 class="is-size-4 has-text-dark">加权随机算法</h2></a>
     </div>
     <div class="post-meta">
@@ -197,19 +210,6 @@
         <p>JSON（JavaScript Object Notation，JavaScript对象表示法，读作/ˈdʒeɪsən/）是一种由道格拉斯·克罗克福特构想和设计、轻量级的数据交换语言，该语言以易于让人阅读的文字为基础，用来传输由属性值或者序列性的值组成的数据对象。很多接口协议中都默认以它为序列化协议，如SpringCloud里面都是以HTTP+JSON的方式来提供服务。</p>
     </div>
     <a href="/common/json_compare/">阅读全文>></a>
-    </article>
-
-<article class="post box is-radiusless">
-    <div class="post-title">
-        <a class="post-title-link" href="/troubleshooting/async-profiler/"><h2 class="is-size-4 has-text-dark">async-profiler查找CPU热点</h2></a>
-    </div>
-    <div class="post-meta">
-        <span class="post-time">日期 : 2019-08-10</span>
-    </div>
-    <div class="post-excerpt content">
-        <p>算法新上线的接口，平均耗时增加了20ms。使用jstack一类的脚本出来的堆栈基本上比较平均。很难定位到确切的位置。这种微小耗时监测场景。典型的方式是直接进行CPU热点采样，通常是linux的perf加上perf-map-agent来映射出java的堆栈。这个组合略复杂。我使用的是 async-profiler 。</p>
-    </div>
-    <a href="/troubleshooting/async-profiler/">阅读全文>></a>
     </article>
 
 </section>
