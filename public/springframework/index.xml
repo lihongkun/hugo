@@ -6,10 +6,19 @@
     <description>Recent content in Springframeworks on 泛泛之辈</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-CN</language>
-    <lastBuildDate>Sun, 07 Jun 2020 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Sat, 13 Jun 2020 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="https://www.lihongkun.com/springframework/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Spring IoC 容器事件</title>
+      <link>https://www.lihongkun.com/springframework/spring_container_events/</link>
+      <pubDate>Sat, 13 Jun 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.lihongkun.com/springframework/spring_container_events/</guid>
+      <description>&lt;p&gt;Spring容器除了提供Bean的生命周期扩展点，还需要提供容器的生命周期扩展点。容器不像bean一样是由开发者定义的。框架代码编写的时候并不知道谁会关心。所以Spring采用的方式是将容器的生命周期通过事件机制发布出来，关心事件的开发者自行订阅。这是一个观察者模式的典型应用。&lt;/p&gt;</description>
+    </item>
     
     <item>
       <title>Spring Aware机制</title>

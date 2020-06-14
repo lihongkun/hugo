@@ -9,14 +9,14 @@
             content=""/>
 
     
-    <meta name="description" content="在使用spring的过程中比较好的设计是bean不依赖于容器。在一些特殊的情况下需要感知容器的存在，使用容器的提供的资源。Spring IoC容器提供了Aware机制
+    <meta name="description" content="Spring容器除了提供Bean的生命周期扩展点，还需要提供容器的生命周期扩展点。容器不像bean一样是由开发者定义的。框架代码编写的时候并不知道谁会关心。所以Spring采用的方式是将容器的生命周期通过事件机制发布出来，关心事件的开发者自行订阅。这是一个观察者模式的典型应用。
 "/>
     
 
     
 
     
-    <link rel="canonical" href="https://www.lihongkun.com/springframework/spring_aware/"/>
+    <link rel="canonical" href="https://www.lihongkun.com/springframework/spring_container_events/"/>
 
     
 
@@ -65,7 +65,7 @@
             
         
     
-    <title> Spring Aware机制 | 泛泛之辈 </title>
+    <title> Spring IoC 容器事件 | 泛泛之辈 </title>
 
     <link rel="shortcut icon" href="https://www.lihongkun.com/favicon.jpg"/>
     <link rel="stylesheet" href="https://www.lihongkun.com/css/bulma.min.css"/>
@@ -146,109 +146,164 @@
                 <div class="column is-four-fifths">
                     <article class="post box is-radiusless">
                         <div class="post-title">
-                            <h2 class="is-size-4">Spring Aware机制</h2>
+                            <h2 class="is-size-4">Spring IoC 容器事件</h2>
                         </div>
                             <div class="post-meta">
-                            <span class="post-time">日期&nbsp;:&nbsp;2020-06-07</span>
+                            <span class="post-time">日期&nbsp;:&nbsp;2020-06-13</span>
                         </div>
                         <div class="post-content content">
-                            <p>在使用spring的过程中比较好的设计是bean不依赖于容器。在一些特殊的情况下需要感知容器的存在，使用容器的提供的资源。Spring IoC容器提供了Aware机制</p>
+                            <p>Spring容器除了提供Bean的生命周期扩展点，还需要提供容器的生命周期扩展点。容器不像bean一样是由开发者定义的。框架代码编写的时候并不知道谁会关心。所以Spring采用的方式是将容器的生命周期通过事件机制发布出来，关心事件的开发者自行订阅。这是一个观察者模式的典型应用。</p>
 
-<h4 id="aware机制的作用">Aware机制的作用</h4>
+<h4 id="场景">场景</h4>
 
-<p>Aware：意识，发现的意思。它的作用即是让bean感知到容器的资源。早年版本的Spring容器如果需要ApplicationContext则经常使用如下代码去先存储其引用，在容器初始化后手动调用setApplicationContext把引用set进去。</p>
+<p>看一个简单的场景。有动态配置A，当它发生变化的时候需要按配置重新组织一个责任链的顺序，如果配置错误则不生效，使用上一次的配置并且告警。</p>
 
-<pre><code>public class ApplicationContextHolder {
-
-    private static ApplicationContext applicationContext = null;
-
-    public static void setApplicationContext(ApplicationContext applicationContext) {
-        ApplicationContextHolder.applicationContext = applicationContext;
-    }
-
-    public static ApplicationContext getApplicationContext() {
-        return applicationContext;
-    }
-}
-</code></pre>
-
-<p>如果是web场景下使用ContextLoaderListener来默认初始化容器，取得就有点困难。如果使用Spring的Aware机制则无需自己手动去获得容器的资源，而是Spring容器初始化bean后对其进行注入。上述例子可以修改为</p>
-
-<pre><code>@Component
-public class ApplicationContextHolder implements ApplicationContextAware {
-
+<pre><code>public class EhanceFilterChain implements ApplicationContextAware {
+    
     private ApplicationContext applicationContext;
-
+    
+    public List&lt;IFilter&gt; filterList;
+    
+    /**
+     *  filter顺序的动态配置
+     **/
+    @DynamicValue(key=&quot;ehance_filter_chain_filters&quot;)
+    public String filterListConfig;
+    
+    /**
+     *  动态配置变化监听函数
+     **/
+    @DynamicValueListerner(key=&quot;ehance_filter_chain_filters&quot;)
+    public void orderFilterList(){
+        // 动态配置变更，组织责任链。如果配置错误则告警
+        List&lt;IFilter&gt; filterListNew = new ArrayList&lt;IFilter&gt;();
+        try{
+            for(...){
+               filterListNew.add(applicationContext.getBean(&quot;filterBeanName&quot;));
+            }
+            this.filterList = filterListNew;
+        }
+        catch(Exception ex){
+            ///  monitor alert
+        }
+        
+    }
+    
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         this.applicationContext = applicationContext;
     }
+    
+}
+</code></pre>
 
-    public ApplicationContext getApplicationContext() {
-        return applicationContext;
+<p>那么问题来了，如果配置错误，还没处理前，应用被重启，处理错误导致责任链为空，容器正常启动，服务正常暴露出去。在关键业务这种情况是不允许的。启动中如果解析错误则需要让服务停止对外暴露。那么应该如何判断容器是否是启动或者bean刷新呢 ？</p>
+
+<h4 id="解决">解决</h4>
+
+<p>Spring容器提供了容器的事件机制，能够监听容器的生命周期事件。只需要实现ApplicationListener接口。</p>
+
+<pre><code>public class EhanceFilterChain implements ApplicationListener&lt;ContextRefreshedEvent&gt; {
+    // 省略其他
+    @Override
+    public void onApplicationEvent(ContextRefreshedEvent contextRefreshedEvent) {
+        ApplicationContext context = contextRefreshedEvent.getApplicationContext();
+        if(context.getParent() == null){
+           List&lt;IFilter&gt; filterListNew = new ArrayList&lt;IFilter&gt;();
+            try{
+                for(...){
+                   filterListNew.add(applicationContext.getBean(&quot;filterBeanName&quot;));
+                }
+                this.filterList = filterListNew;
+            }
+            catch(Exception ex){
+                // 关闭服务
+                context.close();
+            }
+        }
     }
 }
 </code></pre>
 
-<p>ApplicationContextHolder的applicationContext不再是一个静态字段。当然并不希望到处去使用ApplicationContextHolder而是需要使用到ApplicationContext的时候bean自己去ApplicationContextAware。</p>
+<h4 id="容器事件">容器事件</h4>
 
-<h4 id="其它aware接口">其它Aware接口</h4>
+<p>Spring容器事件是一个典型的观察者模式，它提供了一种容器的扩展机制。内置的容器事件有<code>ContextRefreshedEvent</code> <code>ContextStartedEvent</code> <code>ContextStoppedEvent</code> <code>ContextClosedEvent</code></p>
 
-<p>除了ApplicationContextAware，Spring容器还默认提供了一些常用的容器相关对象发现接口。</p>
+<p>分别对应着容器生命周期的 refresh、start、stop、和close方法。同时它还提供了开发者自定义事件的方法。</p>
 
-<pre><code>public class AwareBean implements ApplicationContextAware, 
-        ApplicationEventPublisherAware, 
-        BeanClassLoaderAware, 
-        BeanFactoryAware, 
-        MessageSourceAware, 
-        BeanNameAware {
+<p>首先需要定义一个事件，继承自ApplicationEvent</p>
 
+<pre><code>public class BlackListEvent extends ApplicationEvent {
 
-    @Override
-    public void setApplicationEventPublisher(ApplicationEventPublisher applicationEventPublisher) {
-        // 获得ApplicationEventPublisher，可使用来发布Spring容器事件
+    private final String address;
+    private final String content;
+
+    public BlackListEvent(Object source, String address, String content) {
+        super(source);
+        this.address = address;
+        this.content = content;
     }
 
-    @Override
-    public void setBeanClassLoader(ClassLoader classLoader) {
-        // 动态bean初始化的时候使用和Spring容器一样的ClassLoader
+    // accessor and other methods...
+}
+</code></pre>
+
+<p>接着定义一个被观察者，它需要有一个ApplicationEventPublisher来发布事件，容器提供了一个接口ApplicationEventPublisherAware来注入ApplicationEventPublisher。而ApplicationEventPublisher使用publishEvent方法发布事件。</p>
+
+<pre><code>public class EmailService implements ApplicationEventPublisherAware {
+
+    private List&lt;String&gt; blackList;
+    private ApplicationEventPublisher publisher;
+
+    public void setBlackList(List&lt;String&gt; blackList) {
+        this.blackList = blackList;
     }
 
-    @Override
-    public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
-        // 获得 BeanFactory
+    public void setApplicationEventPublisher(ApplicationEventPublisher publisher) {
+        this.publisher = publisher;
     }
 
-    @Override
-    public void setBeanName(String beanName) {
-        // 获得当前bean的名称
-    }
-
-    @Override
-    public void setMessageSource(MessageSource messageSource) {
-        // i18n和一些配置参数解析
-    }
-
-    @Override
-    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-        // 获得 ApplicationContext
+    public void sendEmail(String address, String content) {
+        if (blackList.contains(address)) {
+            publisher.publishEvent(new BlackListEvent(this, address, content));
+            return;
+        }
+        // send email...
     }
 }
 </code></pre>
 
-<h4 id="小结">小结</h4>
+<p>事件能够发布以后，就需要实现一个或者多个观察者。它们都需要实现ApplicationListener接口，在收到事件后进行对应的处理。</p>
 
-<p>Spring容器提供了Aware机制，使Bean能够感知到容器的资源。此功能虽然是比较方便，但是使得Bean依赖于容器的API，这违背了依赖反转的初衷。因此，只有在一些需要对容器进行动态编程的基础bean才建议使用。</p>
+<pre><code>public class BlackListNotifier implements ApplicationListener&lt;BlackListEvent&gt; {
+
+    private String notificationAddress;
+
+    public void setNotificationAddress(String notificationAddress) {
+        this.notificationAddress = notificationAddress;
+    }
+
+    public void onApplicationEvent(BlackListEvent event) {
+        // notify appropriate parties via notificationAddress...
+    }
+}
+</code></pre>
+
+<p>其他的事情是由Spring容器代劳的，开发者只需要关心事件的发布和订阅。并且两种动作是可以解耦的。发布者并不知道订阅者的存在。</p>
+
+<h4 id="缺点">缺点</h4>
+
+<p>容器事件可以做到代码的解耦，但是通知范围仅仅存在于容器内部，或者说是单进程内。它只能做代码级别的解耦。在分布式环境中用处并不大。分布式环境下的事件通知还是要使用消息队列中间件。</p>
                         </div>
                         <div class="columns is-mobile post-meta">
                             <div class="column is-half-desktop has-text-left is-paddingless"> 
                                  
-                                更老一篇:<a href="https://www.lihongkun.com/springframework/spring_container_extend_points/"> Spring IoC 容器扩展</a>
+                                更老一篇:<a href="https://www.lihongkun.com/springframework/spring_aware/"> Spring Aware机制</a>
                                 
                             </div>
                             <div class="column is-half-desktop has-text-right is-paddingless">
                                 
-                                更新一篇:<a href="https://www.lihongkun.com/springframework/spring_container_events/"> Spring IoC 容器事件</a>
+                                没有了，已经是最新文章
                                 
                             </div>
                             <div class="is-clearfix"></div>
