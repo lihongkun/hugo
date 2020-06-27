@@ -6,10 +6,19 @@
     <description>Recent content in springframework on 泛泛之辈</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-CN</language>
-    <lastBuildDate>Sat, 13 Jun 2020 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Fri, 26 Jun 2020 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="https://www.lihongkun.com/categories/springframework/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>面向切面编程</title>
+      <link>https://www.lihongkun.com/design/aop/</link>
+      <pubDate>Fri, 26 Jun 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.lihongkun.com/design/aop/</guid>
+      <description>&lt;p&gt;面向切面编程（Aspect Oriented Programming），简称AOP。作为面向对象编程的一个强力补充，在业务系统中很少被关注，却随着Spring的出现而名声鹊起。&lt;/p&gt;</description>
+    </item>
     
     <item>
       <title>Spring IoC 容器事件</title>
