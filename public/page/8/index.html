@@ -149,6 +149,19 @@
 
 <article class="post box is-radiusless">
     <div class="post-title">
+        <a class="post-title-link" href="/network/tcp_handshake_and_short_connection/"><h2 class="is-size-4 has-text-dark">TCP三次握手和短连接优化</h2></a>
+    </div>
+    <div class="post-meta">
+        <span class="post-time">日期 : 2019-01-28</span>
+    </div>
+    <div class="post-excerpt content">
+        <p>虽然高级语言或者网络库对于网络连接的细节进行了屏蔽, 但是在遇到瓶颈的时候难免要深入其中,才能对其进行调优. 那么连接建立和终止的时候发生了什么?</p>
+    </div>
+    <a href="/network/tcp_handshake_and_short_connection/">阅读全文>></a>
+    </article>
+
+<article class="post box is-radiusless">
+    <div class="post-title">
         <a class="post-title-link" href="/network/nic_capacity/"><h2 class="is-size-4 has-text-dark">网卡容量</h2></a>
     </div>
     <div class="post-meta">
@@ -203,31 +216,6 @@
 <p><strong>ThreadLocal类</strong> 它提供了get和set等方法,这些方法为每个使用变量的线程存储一份独立的副本.因此get总是返回由当前执行线程在调用set时设置的最新值.</p>
     </div>
     <a href="/concurrent/threadlocal/">阅读全文>></a>
-    </article>
-
-<article class="post box is-radiusless">
-    <div class="post-title">
-        <a class="post-title-link" href="/concurrent/threadpool_implements/"><h2 class="is-size-4 has-text-dark">线程池实现</h2></a>
-    </div>
-    <div class="post-meta">
-        <span class="post-time">日期 : 2018-11-26</span>
-    </div>
-    <div class="post-excerpt content">
-        <h3 id="线程池状态和数量">线程池状态和数量</h3>
-
-<p>ThreadPoolExecutor拥有如下状态 , 它控制着线程是否接收新任务以及当前在队列中或者执行中的任务如何结束.</p>
-
-<p><strong>RUNNING</strong>:  接收新的任务,新建或者放入任务队列</p>
-
-<p><strong>SHUTDOWN</strong>: 不接收新的任务,但是会执行任务队列的中任务</p>
-
-<p><strong>STOP</strong>:     不接收新的任务,不会执行任务队列中的任务,并且停止在执行中的任务</p>
-
-<p><strong>TIDYING</strong>:  任务执行结束,workerCountOf返回 0 ,线程池状态设置为此状态,并执行钩子函数.</p>
-
-<p><strong>TERMINATED</strong>: terminated() 结束</p>
-    </div>
-    <a href="/concurrent/threadpool_implements/">阅读全文>></a>
     </article>
 
 </section>

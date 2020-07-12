@@ -9,17 +9,18 @@
             content=""/>
 
     
+    <meta name="description" content="Model-View-Controller模式最开始出现于Client-Server流行的时代，它很好地解决了视图展示代码和模型及其业务逻辑代码的耦合。
+"/>
+    
+
+    
+
+    
+    <link rel="canonical" href="https://www.lihongkun.com/design/mvc/"/>
 
     
 
     
-    <link rel="canonical" href="https://www.lihongkun.com/categories/design/"/>
-
-    
-    <link rel="alternate" type="application/rss&#43;xml" href="https://www.lihongkun.com/categories/design/index.xml">
-    
-
-    
     
     
         
@@ -58,15 +59,13 @@
     
         
             
-                
-            
         
     
         
             
         
     
-    <title> 设计思路  |  泛泛之辈  </title>
+    <title> MVC模式在服务端的过去、现状和未来 | 泛泛之辈 </title>
 
     <link rel="shortcut icon" href="https://www.lihongkun.com/favicon.jpg"/>
     <link rel="stylesheet" href="https://www.lihongkun.com/css/bulma.min.css"/>
@@ -144,102 +143,46 @@
 </header><main>
             <div class="container">
                 <div class="columns">
-                <div class="column is-four-fifths"><section class="posts">
+                <div class="column is-four-fifths">
+                    <article class="post box is-radiusless">
+                        <div class="post-title">
+                            <h2 class="is-size-4">MVC模式在服务端的过去、现状和未来</h2>
+                        </div>
+                            <div class="post-meta">
+                            <span class="post-time">日期&nbsp;:&nbsp;2020-07-12</span>
+                        </div>
+                        <div class="post-content content">
+                            <p>Model-View-Controller模式最开始出现于Client-Server流行的时代，它很好地解决了视图展示代码和模型及其业务逻辑代码的耦合。</p>
 
-<article class="post box is-radiusless">
-    <div class="post-title">
-        <a class="post-title-link" href="/design/binary_system_thinking/"><h2 class="is-size-4 has-text-dark">二进制思维</h2></a>
-    </div>
-    <div class="post-meta">
-        <span class="post-time">日期 : 2018-08-27</span>
-    </div>
-    <div class="post-excerpt content">
-        <p>有1000个苹果10个盒子,要求把1000个苹果分装到10个盒子里.如果有人来买苹果随便说出一个数,直接拿这些盒子组装一下就可以给他,不用拆分盒子.请问这10个盒子应该分别装多少苹果.</p>
-    </div>
-    <a href="/design/binary_system_thinking/">阅读全文>></a>
-    </article>
+<p>从更广的角度去看，它对软件进行了分层，视图层负责进行展示，模型层负责业务逻辑的处理。而控制层则是衔接二者，它控制数据流向模型对象，并在数据变化时更新视图。随着Browser-Server应用的普及，它也跟着进入了服务端编程领域。常见的框架如Spring MVC，目前是事实上的Web MVC框架的工业标准。</p>
 
-<article class="post box is-radiusless">
-    <div class="post-title">
-        <a class="post-title-link" href="/design/web_page_content_monitoring/"><h2 class="is-size-4 has-text-dark">前端页面内容监控</h2></a>
-    </div>
-    <div class="post-meta">
-        <span class="post-time">日期 : 2018-07-04</span>
-    </div>
-    <div class="post-excerpt content">
-        <p>最近有个事件抖音在搜狗的搜索引擎上面投放了侮辱先烈的广告，导致公司被相关部门约谈,还涉及了多家广告代理商。他们纷纷表示完善广告审查机制,将广告审查纳入总编辑负责制；切实落实公共信息巡查，应急处置等网络安全主体责任制度。</p>
+<p>View层的实现从服务端的脚本语言如JSP，到服务端渲染的模板引擎如FreeMarker，进而到目前的动静分离。通常一次MVC的请求，在框架里面流程如下。</p>
 
-<p>一般这种投放广告是推广一个落地页链接,广告主可以自己做这个页面,然后创建广告的时候落地链接填入到广告中。广告平台对其进行审核。到这个步骤是没有问题的，只要平台方严格执行。但是总是有那么一些状况。比如广告主在审核通过后对页面进行了修改没有重新提交审核。猪队友总是有的。求生欲望强一些总要做点什么来监控这种情况。</p>
-    </div>
-    <a href="/design/web_page_content_monitoring/">阅读全文>></a>
-    </article>
+<p><img src="mvc.jpg" alt="" /></p>
 
-</section>
+<p>由于视图存在多种多样，视图解析器ViewResolver通常是可以有很强的定制性。也就是说Web MVC框架大部分工作就是在 报文解析、路由寻址 和视图解析。而JavaScript越来越强大，RESTful 风格服务的普及。view层趋向于简单化，也就是JSON 为主。甚至，边界的web服务使用NodeJS来实现。导致现有的MVC框架渐渐只是变成了一个HTTP服务，在有的技术栈里面MVC框架就被直接给替换了。</p>
 
+<p><img src="mvc_layer.png" alt="" /></p>
 
+<p>这就催生了以上的分层架构，核心服务层以微服务的形式存在。为上层具体应用提供实现。而边界服务的To B业务和运营管理后台 通常是View（vue.js + html） 和 Controller (nodejs) 由前端团队实现。To C 由于其并发比较高，Spring MVC在一些极限场景下并不是很合适。故而会用Netty直接进行实现，或者Spring WebFlux。</p>
 
-
-
-
-
-
-
-
-
-
-
-
-<nav class="page-nav">
-    
-    <a href="/categories/design/page/2/" class="extend prev">上一页</a>
-    
-
-    
-
-      
-
-        
-
-      
-
-      
-      
-          <a href="/categories/design/" class="page-number">1</a>
-      
-
-    
-
-      
-
-        
-
-      
-
-      
-      
-          <a href="/categories/design/page/2/" class="page-number">2</a>
-      
-
-    
-
-      
-
-        
-
-      
-
-      
-      
-          <a href="/categories/design/page/3/" class="page-number current">3</a>
-      
-
-        
-
-
-    
-
-</nav>
-</div>
+<p>未来，纯粹的Web MVC框架可能会直接消失了，而其思想将在软件设计分层中体现。</p>
+                        </div>
+                        <div class="columns is-mobile post-meta">
+                            <div class="column is-half-desktop has-text-left is-paddingless"> 
+                                 
+                                更老一篇:<a href="https://www.lihongkun.com/design/aop/"> 面向切面编程</a>
+                                
+                            </div>
+                            <div class="column is-half-desktop has-text-right is-paddingless">
+                                
+                                没有了，已经是最新文章
+                                
+                            </div>
+                            <div class="is-clearfix"></div>
+                        </div>
+                    </article>
+                </div>
                 <div class="column">    <aside>
         <h2 class="is-size-4">关于我</h2>
         <div class="content">

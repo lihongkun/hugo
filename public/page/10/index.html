@@ -149,6 +149,19 @@
 
 <article class="post box is-radiusless">
     <div class="post-title">
+        <a class="post-title-link" href="/concurrent/cyclic_barrier/"><h2 class="is-size-4 has-text-dark">同步工具类 - 栅栏</h2></a>
+    </div>
+    <div class="post-meta">
+        <span class="post-time">日期 : 2018-10-15</span>
+    </div>
+    <div class="post-excerpt content">
+        <p>栅栏类似闭锁,它能阻塞一组线程直到到达某个事件发生.栅栏与闭锁的关键区别在于,所有的线程必须同时到达栅栏位置,才能继续执行.闭锁用于等待事件,而栅栏用于等待其他线程.</p>
+    </div>
+    <a href="/concurrent/cyclic_barrier/">阅读全文>></a>
+    </article>
+
+<article class="post box is-radiusless">
+    <div class="post-title">
         <a class="post-title-link" href="/concurrent/semaphore_and_latch/"><h2 class="is-size-4 has-text-dark">同步工具类 - 信号量和闭锁</h2></a>
     </div>
     <div class="post-meta">
@@ -197,19 +210,6 @@
         <p>自旋锁是指当一个线程尝试获取某个锁时,如果该锁已被其他线程占用,就一直循环检测锁是否被释放,而不是进入线程挂起或睡眠状态.它适用于锁保护的临界区很小的情况,临界区很小的话,锁占用的时间就很短.</p>
     </div>
     <a href="/concurrent/spin_lock/">阅读全文>></a>
-    </article>
-
-<article class="post box is-radiusless">
-    <div class="post-title">
-        <a class="post-title-link" href="/design/binary_system_thinking/"><h2 class="is-size-4 has-text-dark">二进制思维</h2></a>
-    </div>
-    <div class="post-meta">
-        <span class="post-time">日期 : 2018-08-27</span>
-    </div>
-    <div class="post-excerpt content">
-        <p>有1000个苹果10个盒子,要求把1000个苹果分装到10个盒子里.如果有人来买苹果随便说出一个数,直接拿这些盒子组装一下就可以给他,不用拆分盒子.请问这10个盒子应该分别装多少苹果.</p>
-    </div>
-    <a href="/design/binary_system_thinking/">阅读全文>></a>
     </article>
 
 </section>
