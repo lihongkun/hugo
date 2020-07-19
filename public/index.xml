@@ -6,10 +6,19 @@
     <description>Recent content on 泛泛之辈</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-CN</language>
-    <lastBuildDate>Sun, 12 Jul 2020 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Sun, 19 Jul 2020 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="https://www.lihongkun.com/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Spring MVC 你必须关注点</title>
+      <link>https://www.lihongkun.com/springframework/spring_mvc/</link>
+      <pubDate>Sun, 19 Jul 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.lihongkun.com/springframework/spring_mvc/</guid>
+      <description>&lt;p&gt;Spring MVC配置简单，特别是在SpringBoot出现后基本都是开箱即用。在实际项目中通常是需要单独去处理一些特殊的情况，比如统一的异常处理，校验器以及国际化。&lt;/p&gt;</description>
+    </item>
     
     <item>
       <title>MVC模式在服务端的过去、现状和未来</title>

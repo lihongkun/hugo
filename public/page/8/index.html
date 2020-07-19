@@ -149,6 +149,26 @@
 
 <article class="post box is-radiusless">
     <div class="post-title">
+        <a class="post-title-link" href="/network/network_io_model/"><h2 class="is-size-4 has-text-dark">网络IO模型</h2></a>
+    </div>
+    <div class="post-meta">
+        <span class="post-time">日期 : 2019-02-25</span>
+    </div>
+    <div class="post-excerpt content">
+        <p>一次网络IO 的调用涉及到用户进程和系统内核对象 , 以读为例.</p>
+
+<ol>
+<li>等待网络上的数据分组到达,并复制到内核的缓冲区</li>
+<li>内核缓冲区数据复制到用户进程中,也就是调用网络IO进程的缓冲区.</li>
+</ol>
+
+<p>常见的IO模型有五种, 不同的IO模型在这两个阶段的处理上各不相同.</p>
+    </div>
+    <a href="/network/network_io_model/">阅读全文>></a>
+    </article>
+
+<article class="post box is-radiusless">
+    <div class="post-title">
         <a class="post-title-link" href="/network/tcp_handshake_and_short_connection/"><h2 class="is-size-4 has-text-dark">TCP三次握手和短连接优化</h2></a>
     </div>
     <div class="post-meta">
@@ -197,25 +217,6 @@
         <p>锁机制提供了独占的方法来访问变量,并且对变量的任何修改都会对随后获得这个锁的其他线程可见.但是如果一个线程在休眠或者自旋的时候持有一个锁,那么其他线程便无法执行下去.而非阻塞算法不会受到单个线程失败的影响.对于<strong>细粒度</strong>的操作,非阻塞算法更高效.它需要借助冲突检查机制来判断更新过程中是否存在来自其他线程的干扰,如果存在则操作失败,并且重试.现代处理器都提供了这种读-改-写(Compare-And-Swap)的指令,来实现这种复杂的并发对象.</p>
     </div>
     <a href="/concurrent/atomic/">阅读全文>></a>
-    </article>
-
-<article class="post box is-radiusless">
-    <div class="post-title">
-        <a class="post-title-link" href="/concurrent/threadlocal/"><h2 class="is-size-4 has-text-dark">线程封闭与ThreadLocal</h2></a>
-    </div>
-    <div class="post-meta">
-        <span class="post-time">日期 : 2018-12-03</span>
-    </div>
-    <div class="post-excerpt content">
-        <p>访问共享数据,通常需要使用同步来保证变量的并发安全性.避免同步的方式就是不共享数据,如果数据只有单线程访问则不需要同步.这叫做线程封闭.</p>
-
-<p>线程封闭分为两种方式</p>
-
-<p><strong>栈封闭</strong> 通常我们使用的局部变量,天然具备线程封闭性,它没有被其他地方访问,方法结束后即不可访问.</p>
-
-<p><strong>ThreadLocal类</strong> 它提供了get和set等方法,这些方法为每个使用变量的线程存储一份独立的副本.因此get总是返回由当前执行线程在调用set时设置的最新值.</p>
-    </div>
-    <a href="/concurrent/threadlocal/">阅读全文>></a>
     </article>
 
 </section>

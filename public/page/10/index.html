@@ -149,6 +149,19 @@
 
 <article class="post box is-radiusless">
     <div class="post-title">
+        <a class="post-title-link" href="/concurrent/synchronized_container_and_concurrent_container/"><h2 class="is-size-4 has-text-dark">同步容器和并发容器</h2></a>
+    </div>
+    <div class="post-meta">
+        <span class="post-time">日期 : 2018-10-23</span>
+    </div>
+    <div class="post-excerpt content">
+        <p>一般的容器如ArrayList,HashSet和HashMap都不是线程安全的.容器在Java中的地位不言而喻,那么它必然也存在线程安全的版本.线程安全的容器从其并发特性上可以简单分为两类:同步容器和并发容器.</p>
+    </div>
+    <a href="/concurrent/synchronized_container_and_concurrent_container/">阅读全文>></a>
+    </article>
+
+<article class="post box is-radiusless">
+    <div class="post-title">
         <a class="post-title-link" href="/concurrent/cyclic_barrier/"><h2 class="is-size-4 has-text-dark">同步工具类 - 栅栏</h2></a>
     </div>
     <div class="post-meta">
@@ -197,19 +210,6 @@
         <p>AbstractQueuedSynchronizer是JDK并发包里面很多同步类的基础框架.在简单了解了自旋锁和CLH锁之后再来了解下JDK里面的实现.</p>
     </div>
     <a href="/concurrent/abstract_queued_synchronizer/">阅读全文>></a>
-    </article>
-
-<article class="post box is-radiusless">
-    <div class="post-title">
-        <a class="post-title-link" href="/concurrent/spin_lock/"><h2 class="is-size-4 has-text-dark">自旋锁</h2></a>
-    </div>
-    <div class="post-meta">
-        <span class="post-time">日期 : 2018-09-04</span>
-    </div>
-    <div class="post-excerpt content">
-        <p>自旋锁是指当一个线程尝试获取某个锁时,如果该锁已被其他线程占用,就一直循环检测锁是否被释放,而不是进入线程挂起或睡眠状态.它适用于锁保护的临界区很小的情况,临界区很小的话,锁占用的时间就很短.</p>
-    </div>
-    <a href="/concurrent/spin_lock/">阅读全文>></a>
     </article>
 
 </section>

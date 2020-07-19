@@ -149,6 +149,25 @@
 
 <article class="post box is-radiusless">
     <div class="post-title">
+        <a class="post-title-link" href="/concurrent/threadlocal/"><h2 class="is-size-4 has-text-dark">线程封闭与ThreadLocal</h2></a>
+    </div>
+    <div class="post-meta">
+        <span class="post-time">日期 : 2018-12-03</span>
+    </div>
+    <div class="post-excerpt content">
+        <p>访问共享数据,通常需要使用同步来保证变量的并发安全性.避免同步的方式就是不共享数据,如果数据只有单线程访问则不需要同步.这叫做线程封闭.</p>
+
+<p>线程封闭分为两种方式</p>
+
+<p><strong>栈封闭</strong> 通常我们使用的局部变量,天然具备线程封闭性,它没有被其他地方访问,方法结束后即不可访问.</p>
+
+<p><strong>ThreadLocal类</strong> 它提供了get和set等方法,这些方法为每个使用变量的线程存储一份独立的副本.因此get总是返回由当前执行线程在调用set时设置的最新值.</p>
+    </div>
+    <a href="/concurrent/threadlocal/">阅读全文>></a>
+    </article>
+
+<article class="post box is-radiusless">
+    <div class="post-title">
         <a class="post-title-link" href="/concurrent/threadpool_implements/"><h2 class="is-size-4 has-text-dark">线程池实现</h2></a>
     </div>
     <div class="post-meta">
@@ -209,19 +228,6 @@
         <p>阻塞队列(BlockingQueue)提供了可阻塞的put和take方法,以及支持定时的offer和pull.如果队列已经满了,那么put方法将阻塞到有空间可用;如果队列为空那么take方法将阻塞到有元素可用.</p>
     </div>
     <a href="/concurrent/blocking_queue/">阅读全文>></a>
-    </article>
-
-<article class="post box is-radiusless">
-    <div class="post-title">
-        <a class="post-title-link" href="/concurrent/synchronized_container_and_concurrent_container/"><h2 class="is-size-4 has-text-dark">同步容器和并发容器</h2></a>
-    </div>
-    <div class="post-meta">
-        <span class="post-time">日期 : 2018-10-23</span>
-    </div>
-    <div class="post-excerpt content">
-        <p>一般的容器如ArrayList,HashSet和HashMap都不是线程安全的.容器在Java中的地位不言而喻,那么它必然也存在线程安全的版本.线程安全的容器从其并发特性上可以简单分为两类:同步容器和并发容器.</p>
-    </div>
-    <a href="/concurrent/synchronized_container_and_concurrent_container/">阅读全文>></a>
     </article>
 
 </section>

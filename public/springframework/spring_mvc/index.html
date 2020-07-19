@@ -1,0 +1,709 @@
+<!DOCTYPE html>
+<html><head>
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+
+    
+    <meta name="author"
+            content=""/>
+
+    
+    <meta name="description" content="Spring MVC配置简单，特别是在SpringBoot出现后基本都是开箱即用。在实际项目中通常是需要单独去处理一些特殊的情况，比如统一的异常处理，校验器以及国际化。
+"/>
+    
+
+    
+
+    
+    <link rel="canonical" href="https://www.lihongkun.com/springframework/spring_mvc/"/>
+
+    
+
+    
+    
+    
+        
+            
+        
+    
+        
+            
+                
+            
+                
+            
+                
+            
+                
+            
+        
+    
+        
+            
+                
+            
+                
+            
+                
+            
+                
+            
+                
+            
+        
+    
+        
+            
+        
+    
+        
+            
+        
+    
+        
+            
+        
+    
+    <title> Spring MVC 你必须关注点 | 泛泛之辈 </title>
+
+    <link rel="shortcut icon" href="https://www.lihongkun.com/favicon.jpg"/>
+    <link rel="stylesheet" href="https://www.lihongkun.com/css/bulma.min.css"/>
+    <link rel="stylesheet" href="https://www.lihongkun.com/css/style.css"/>
+</head><body><header>
+    <nav class="navbar is-fixed-top is-primary" role="navigation" aria-label="main navigation">
+        <div class="navbar-brand is-size-4">
+            <a class="navbar-item" href="https://www.lihongkun.com/">
+                    泛泛之辈
+            </a>
+            <a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false" data-target="navbar-menu">
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+            </a>
+        </div>
+        <div id="navbar-menu" class="navbar-menu">
+            <div class="navbar-end">
+                
+                    
+                        <a class="navbar-item" href="/">首页</a>
+                    
+                
+                    
+                        <div class="navbar-item has-dropdown is-hoverable">
+                            <a class="navbar-link">基本功</a>
+                            <div class="navbar-dropdown">
+                                
+                                <a class="navbar-item" href="/categories/concurrent/">并发</a>
+                                
+                                <a class="navbar-item" href="/categories/network/">网络</a>
+                                
+                                <a class="navbar-item" href="/categories/security/">Web安全</a>
+                                
+                                <a class="navbar-item" href="/categories/jvm/">Java虚拟机</a>
+                                
+                            </div>
+                        </div>
+                    
+                
+                    
+                        <div class="navbar-item has-dropdown is-hoverable">
+                            <a class="navbar-link">编程框架</a>
+                            <div class="navbar-dropdown">
+                                
+                                <a class="navbar-item" href="/categories/springframework/">Spring</a>
+                                
+                                <a class="navbar-item" href="/categories/springcloud/">SpringCloud</a>
+                                
+                                <a class="navbar-item" href="/categories/log/">日志</a>
+                                
+                                <a class="navbar-item" href="/categories/serialize/">序列化</a>
+                                
+                                <a class="navbar-item" href="/categories/common/">其他</a>
+                                
+                            </div>
+                        </div>
+                    
+                
+                    
+                        <a class="navbar-item" href="/categories/troubleshooting/">问题排查</a>
+                    
+                
+                    
+                        <a class="navbar-item" href="/categories/design/">设计思路</a>
+                    
+                
+                    
+                        <a class="navbar-item" href="/categories/reading/">读书笔记</a>
+                    
+                
+            </div>
+            </div>
+    </nav>
+</header><main>
+            <div class="container">
+                <div class="columns">
+                <div class="column is-four-fifths">
+                    <article class="post box is-radiusless">
+                        <div class="post-title">
+                            <h2 class="is-size-4">Spring MVC 你必须关注点</h2>
+                        </div>
+                            <div class="post-meta">
+                            <span class="post-time">日期&nbsp;:&nbsp;2020-07-19</span>
+                        </div>
+                        <div class="post-content content">
+                            <p>Spring MVC配置简单，特别是在SpringBoot出现后基本都是开箱即用。在实际项目中通常是需要单独去处理一些特殊的情况，比如统一的异常处理，校验器以及国际化。</p>
+
+<h3 id="基础使用">基础使用</h3>
+
+<p>为了简化相关的配置和包的引入，例子基于SpringBoot。首先引入相关的依赖包。</p>
+
+<pre><code>&lt;parent&gt;
+    &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+    &lt;artifactId&gt;spring-boot-starter-parent&lt;/artifactId&gt;
+    &lt;version&gt;2.3.1.RELEASE&lt;/version&gt;
+&lt;/parent&gt;
+
+&lt;dependencies&gt;
+    &lt;dependency&gt;
+        &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+        &lt;artifactId&gt;spring-boot-starter-web&lt;/artifactId&gt;
+    &lt;/dependency&gt;
+&lt;/dependencies&gt;
+</code></pre>
+
+<p>然后可以直接创建Controller类，即可实现一个基于SpringMVC的HTTP服务</p>
+
+<pre><code>@RestController
+public class ExampleController {
+
+    @RequestMapping(&quot;/&quot;)
+    String home() {
+        return &quot;Hello World!&quot;;
+    }
+}
+
+
+@SpringBootApplication
+public class Application {
+
+    public static void main(String[] args) {
+        SpringApplication.run(Application.class, args);
+    }
+
+}
+</code></pre>
+
+<p><code>@RequestMapping</code> 表示当前方法所对应的 Contextpath</p>
+
+<p><code>@RestController</code> 表示当前类，为Controller类，并且每个方法的ViewResolver都是采用JSON的方式来渲染。</p>
+
+<h3 id="异常处理">异常处理</h3>
+
+<p>Controller中发生了异常，该如何处理。直接抛出异常，这是一种不可取得行为，对前端不友好，而且也可能暴露服务端的一些细节，给网络攻击提供一些便利的信息。每个Controller的方法都使用try &hellip; catch 包裹住，这样的话代码的冗余度非常的高。这很容易让人想到了面向切面编程，SpringMVC提供了一个<code>ControllerAdvice</code> 机制来处理这种情况。这个注解的意义是拦截所有你在里面定义的异常。</p>
+
+<pre><code>@ControllerAdvice
+public class CustomErrorController {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(CustomErrorController.class);
+
+    @ExceptionHandler({ RuntimeException.class })
+    @ResponseStatus(HttpStatus.OK)
+    public @ResponseBody HttpResponse&lt;Void&gt; processException(RuntimeException ex) {
+        LOGGER.error(this.getClass().getName(), ex);
+        HttpResponse&lt;Void&gt; response = new HttpResponse&lt;&gt;();
+        response.fail().setMsg(ex.getMessage());
+        return response;
+    }
+
+    @ExceptionHandler({ Exception.class })
+    @ResponseStatus(HttpStatus.OK)
+    public @ResponseBody HttpResponse&lt;Void&gt; processException(Exception ex) {
+        LOGGER.error(this.getClass().getName(), ex);
+        HttpResponse&lt;Void&gt; response = new HttpResponse&lt;&gt;();
+        response.fail().setMsg(ex.getMessage());
+        return response;
+    }
+
+    @ExceptionHandler({ BindException.class })
+    @ResponseStatus(HttpStatus.OK)
+    public @ResponseBody HttpResponse&lt;Void&gt; processException(BindException ex) {
+
+        LOGGER.error(this.getClass().getName(), ex.getMessage());
+
+        HttpResponse&lt;Void&gt; response = new HttpResponse&lt;&gt;();
+        response.fail();
+
+        response.setMsg(getErrorMessage(ex));
+        return response;
+    }
+
+}
+</code></pre>
+
+<p>如上述代码 <code>ExceptionHandler</code> 注解在某个方法上表示的是该方法处理该注解所标识的异常。这里面是统一对异常进行处理返回了自定义的HttpResponse对象。</p>
+
+<p>通过ControllerAdvice能解决请求到达了Controller后的所有的异常，但是如果还未到达业务逻辑后所产生的异常同样是会直接抛到前端去，正好SpringMVC框架在处理路由的时候如果没有找到路由是会产生这样的异常。</p>
+
+<pre><code>/**
+ * 未处理错误页面 
+ * 
+ * 由于Spring MVC 的 DispatchServlet.throwExceptionIfNoHandler 直接返回了 404错误
+ *   
+ * 404错误还没到Controller,无法被 ControllerAdvice捕获 
+ * 需要单独的错误处理
+ */
+@RestController
+public class NotFoundController implements ErrorController{
+
+    private static final String PATH = &quot;/error&quot;;
+    
+    public String getErrorPath() {
+        return PATH;
+    }
+    
+    @RequestMapping(PATH)
+    public HttpResponse&lt;Void&gt; handler(HttpServletRequest request){
+        HttpResponse&lt;Void&gt; response = new HttpResponse&lt;&gt;();
+        
+        Integer statusCode = (Integer) request.getAttribute(&quot;javax.servlet.error.status_code&quot;);
+        if(Objects.equal(statusCode, org.apache.http.HttpStatus.SC_NOT_FOUND)){
+            response.setCode(statusCode);
+        }
+        else{
+            response.fail().setMsg(&quot;unknown error&quot;);
+        }
+        
+        return response;
+    }
+
+}
+</code></pre>
+
+<p>上述代码定义了一个通用error处理的页面，当框架抛出异常，会转到 /error地址，我们对其进行了定制。</p>
+
+<h3 id="数据校验">数据校验</h3>
+
+<p>web环境的输入比较复杂，后端需要对输入做好保底的业务正确性校验。Spring MVC 提供了两种方法来对用户的输入数据进行校验，一种是 Spring 自带的 Validation 校验框架，另一种是利用 JRS-303 验证框架进行验证。通常使用 JRS-303 ，代表性的框架为 Hibernate-Validator，它所包含的功能如下表。</p>
+
+<table>
+<thead>
+<tr>
+<th>注解</th>
+<th>功能</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td>@Null</td>
+<td>验证对象是否为null</td>
+</tr>
+
+<tr>
+<td>@NotNull</td>
+<td>验证对象是否不为null</td>
+</tr>
+
+<tr>
+<td>@AssertTrue</td>
+<td>验证Boolean对象是否为true</td>
+</tr>
+
+<tr>
+<td>@AssertTrue</td>
+<td>验证Boolean对象是否为false</td>
+</tr>
+
+<tr>
+<td>@Max(value)</td>
+<td>验证Number和String对象是否小于等于指定值</td>
+</tr>
+
+<tr>
+<td>@Min(value)</td>
+<td>验证Number和String对象是否大于等于指定值</td>
+</tr>
+
+<tr>
+<td>@DecimalMax(value)</td>
+<td>验证注解的元素值小于等于@DecimalMax指定的value值</td>
+</tr>
+
+<tr>
+<td>@DecimalMin(value)</td>
+<td>验证注解的元素值大于等于@DecimalMin指定的value值</td>
+</tr>
+
+<tr>
+<td>@Digits(integer,fraction)</td>
+<td>验证字符串是否符合指定格式的数字，integer指定整数精度，fraction指定小数精度</td>
+</tr>
+
+<tr>
+<td>@Size(min,max)</td>
+<td>验证对象长度是否在给定的范围内</td>
+</tr>
+
+<tr>
+<td>@Past</td>
+<td>验证Date和Calendar对象是否在当前时间之前</td>
+</tr>
+
+<tr>
+<td>@Future</td>
+<td>验证Date和Calendar对象是否在当前时间之后</td>
+</tr>
+
+<tr>
+<td>@Pattern</td>
+<td>验证String对象是否符合正则表达式的规则</td>
+</tr>
+
+<tr>
+<td>@NotBlank</td>
+<td>检查字符串是不是Null，被Trim的长度是否大于0，只对字符串，且会去掉前后空格</td>
+</tr>
+
+<tr>
+<td>@URL</td>
+<td>验证是否是合法的url</td>
+</tr>
+
+<tr>
+<td>@Email</td>
+<td>验证是否是合法的邮箱</td>
+</tr>
+
+<tr>
+<td>@CreditCardNumber</td>
+<td>验证是否是合法的信用卡号</td>
+</tr>
+
+<tr>
+<td>@Length(min,max)</td>
+<td>验证字符串的长度必须在指定范围内</td>
+</tr>
+
+<tr>
+<td>@NotEmpty</td>
+<td>检查元素是否为Null或Empty</td>
+</tr>
+</tbody>
+</table>
+
+<p>使用这些注解来标注接收参数的表单对象，然后在需要校验的时候使用<code>@Validated</code>注解进行标注</p>
+
+<pre><code>@Data
+public class User {
+
+    @NotBlank(message = &quot;用户名不能为空&quot;)
+    private String username;
+    
+    @NotBlank(message = &quot;密码不能为空&quot;)
+    @Length(min = 6, max = 16, message = &quot;密码的长度必须在6~16位之间&quot;)
+    private String password;
+    
+    @Range(min = 18, max = 60, message = &quot;年龄必须在18岁到60岁之间&quot;)
+    private Integer age;
+    
+    @Pattern(regexp = &quot;^1[3|4|5|7|8][0-9]{9}$&quot;, message = &quot;请输入正确格式的手机号&quot;)
+    private String phone;
+    
+    @Email(message = &quot;请输入合法的邮箱地址&quot;)
+    private String email;
+}
+
+@RestController
+public class UserController {
+
+    @RequestMapping(&quot;/register&quot;)
+    public HttpResponse register(@Validated User user) {
+        // logic
+    }
+}
+</code></pre>
+
+<p>当然以上注解在实际项目中远远不够，有一些业务的校验本身就比较复杂。在参数解析的时候进行校验的话，还需要做很多更业务相关的逻辑，但是如果把校验逻辑放到Controller或者Service里面又显得很服务非常复杂，并且校验逻辑无法复用。SpringMVC支持我们进行校验器的自定义。</p>
+
+<pre><code>@Documented
+@Constraint(validatedBy = UserValidaror.class)
+@Target({ElementType.TYPE})
+@Retention(RetentionPolicy.RUNTIME)
+public @interface UserConstraint {
+
+    String message() default &quot;&quot;;
+    
+    Class&lt;?&gt;[] groups() default {};
+    
+    Class&lt;? extends Payload&gt;[] payload() default {};
+    
+}
+
+@Conpement
+public class UserValidaror implements ConstraintValidator&lt;UserConstraint, User&gt;  {
+    
+    public void initialize(UserConstraint constraintAnnotation) {
+        
+    }
+
+    public boolean isValid(User value, ConstraintValidatorContext context) {
+        // 比如校验邮箱或者电话的唯一性,或者其他需要通过服务调用
+    }
+}
+
+@Data
+@UserConstraint
+public class User {
+
+    @NotBlank(message = &quot;用户名不能为空&quot;)
+    private String username;
+    
+    @NotBlank(message = &quot;密码不能为空&quot;)
+    @Length(min = 6, max = 16, message = &quot;密码的长度必须在6~16位之间&quot;)
+    private String password;
+    
+    @Range(min = 18, max = 60, message = &quot;年龄必须在18岁到60岁之间&quot;)
+    private Integer age;
+    
+    @Pattern(regexp = &quot;^1[3|4|5|7|8][0-9]{9}$&quot;, message = &quot;请输入正确格式的手机号&quot;)
+    private String phone;
+    
+    @Email(message = &quot;请输入合法的邮箱地址&quot;)
+    private String email;
+}
+</code></pre>
+
+<p>如上述代码，我们需要定义一个UserConstraint 注解，它将使用在表单接收模型User类上面，同时UserConstraint定义的时候即指定其对应的校验器类UserValidaror。UserValidaror实现了ConstraintValidator接口，使用isValid方法进行校验逻辑的业务实现。在使用的时候UserValidaror需要托管到Spring进行实例化。</p>
+
+<h4 id="分组校验">分组校验</h4>
+
+<p>Constraint 注解都有一个group属性，用来指定校验的分组。因为并不是每一个操作需要校验所有的属性，比如新增和更新 校验的参数不一样。那么我们就可以定义两个分组。</p>
+
+<pre><code>@UserConstraint(groups={Create.class,Update.class})
+public class User {
+
+    @NotBlank(message = &quot;用户名不能为空&quot;,groups={Create.class})
+    private String username;
+    
+    ...
+}
+
+@RestController
+public class UserController {
+
+    @RequestMapping(&quot;/register&quot;)
+    public HttpResponse register(@Validated(Create.class) User user) {
+        // logic
+    }
+    
+    @RequestMapping(&quot;/update&quot;)
+    public HttpResponse register(@Validated(Update.class) User user) {
+        // logic
+    }
+}
+</code></pre>
+
+<p>在使用校验注册的时候指定了，该注解的生效分组，如果没有指定的话则全部分组生效。在用@Validated 指定校验的分组，则可以实现不同类型的操作，校验不同的内容。</p>
+
+<h3 id="国际化">国际化</h3>
+
+<p>在校验环节，我们直接把message放到了代码中。除了调整不方便，每次都需要重新编译和发布版本。还不能支持多语言。Spring Core 本身就有一个MessageSource 的接口，用来实现各种消息的翻译。</p>
+
+<pre><code>@Configuration
+public class WebMvcConfs extends WebMvcConfigurerAdapter {
+        
+    @Bean
+    public MessageSource messageSource(){
+        ResourceBundleMessageSource  messageSource = new ResourceBundleMessageSource ();
+        
+        messageSource.setBasename(&quot;i18n/message&quot;);
+        messageSource.setCacheSeconds(300);
+        messageSource.setDefaultEncoding(&quot;UTF-8&quot;);
+        
+        return messageSource;
+    }
+    
+    // Validator 注入i18n 信息
+    public Validator getValidator() {
+        LocalValidatorFactoryBean factory = new LocalValidatorFactoryBean();
+        factory.setValidationMessageSource(messageSource());
+        return factory;
+    }
+}
+</code></pre>
+
+<p>上述代码配置了SpringMVC的 MessageSource实现和对Validator注入 翻译的MessageSource。它会根据Http Header中的Locale 来决定取哪个文件的配置来解析消息。比如locale 是zh_CN那么会取classpath下的i18n/message_zh_CN.properties来查找消息的对应翻译，如果查找不到则使用i18n/message.properties，兜底的文件没有的话则会发生异常，走入异常逻辑处理的环节。</p>
+
+<p>那么要实现一个多语言的网站就比较简单了，只需要在界面上设置一个选择语言的交互界面。选择后设置对应的Locale，后续的请求和返回的内容则可以更加Locale来定制。</p>
+
+<p>Validator 在引入了国际化的内容后，配置会有一些差别。首先我们不需要在配置注解里面写message，而是配置到对应的MessageSource文件里。</p>
+
+<pre><code>public class User {
+
+    @NotBlank
+    private String username;
+    
+    @Range(min = 18, max = 60)
+    private Integer age;
+}
+
+
+// i18n/message.properties
+NotBlank.user.username=username can not be blank
+Range.user.age=age must between {min} in {max} 
+
+// i18n/message_zh_CN.properties
+NotBlank.user.username=用户名不能为空
+Range.user.age=年龄必须在{min}岁到{max}岁之间
+</code></pre>
+
+<p>在定义i18n文件的时候是可以使用变量的，比如上述的Range注解对应Validate把min和max作为变量传入到校验后的结果中。那么配合国际化的时候我们的自定义注解也是可以做到。</p>
+
+<pre><code>@Conpement
+public class UserValidaror implements ConstraintValidator&lt;UserConstraint, User&gt;  {
+    
+    public void initialize(UserConstraint constraintAnnotation) {
+        
+    }
+
+    public boolean isValid(User value, ConstraintValidatorContext context) {
+        // 比如校验邮箱或者电话的唯一性,或者其他需要通过服务调用
+        
+        if (/* some condition */) {
+            HibernateConstraintValidatorContext hibernateValidatorContext = constraintValidatorContext.unwrap(HibernateConstraintValidatorContext.class);
+            hibernateValidatorContext.disableDefaultConstraintViolation();
+            hibernateValidatorContext.addMessageParameter(&quot;age&quot;, &quot;some value...&quot;).buildConstraintViolationWithTemplate(&quot;{Range.user.age}&quot;)
+                .addPropertyNode(&quot;age&quot;).addConstraintViolation();
+            return false;
+        }
+    }
+}
+</code></pre>
+
+<h4 id="扩展使用">扩展使用</h4>
+
+<p>除了校验的异常需要进行国际化，服务端使用返回码来提示的业务错误也需要进行国际化消息提醒。那么异常处理可以定义一个ServiceException 统一包装来处理。那么<code>ControllerAdvice</code> 可以增加以下两个处理方法</p>
+
+<pre><code>@ExceptionHandler({ BindException.class })
+@ResponseStatus(HttpStatus.OK)
+public @ResponseBody HttpResponse&lt;Void&gt; processException(BindException ex) {
+    HttpResponse&lt;Void&gt; response = new HttpResponse&lt;&gt;();
+    response.fail();
+    response.setMsg(getErrorMessage(ex));
+    return response;
+}
+
+@ExceptionHandler({ ServiceException.class })
+@ResponseStatus(HttpStatus.OK)
+public @ResponseBody HttpResponse&lt;Void&gt; processException(ServiceException ex) {
+    HttpResponse&lt;Void&gt; response = new HttpResponse&lt;&gt;();
+    response.fail();
+    response.setMsg(getErrorMsg(ex));
+    return response;
+}
+
+/**
+ * 获取参数错误信息
+ * @param ex
+ * @return
+ */
+private String getErrorMsg(BindException ex){
+    String message = null;
+    
+    List&lt;FieldError&gt; fieldErrors = ex.getBindingResult().getFieldErrors();
+    
+    if(CollectionUtils.isEmpty(fieldErrors)){
+        return messageSource.getMessage(&quot;Param.Error&quot;, new Object[]{},&quot;参数错误&quot;,RequestContextUtils.getLocale(request));
+    }
+    
+    FieldError fieldError = fieldErrors.get(0);
+    String[] codes = fieldError.getCodes();
+    
+    for(String code:codes){
+        message = messageSource.getMessage(code, fieldError.getArguments(), RequestContextUtils.getLocale(request));
+        //最明细的消息有的话就直接返回
+        if(StringUtils.isNotEmpty(message)){
+            break;
+        }
+    }
+    
+    //如果没有定义i18n 信息 ,则取默认的
+    if(StringUtils.isEmpty(message)){
+        message = fieldError.getField() + fieldError.getDefaultMessage();
+    }
+    
+    return message;
+}
+
+private String getErrorMsg(ServiceException ex){
+    String message = message = messageSource.getMessage(ex.getCode(), ex.getArguments(), RequestContextUtils.getLocale(request));
+    
+    if(StringUtils.isEmpty(message)){
+        messageSource.getMessage(/**unknow exception code*/, new Obejct[]{}, RequestContextUtils.getLocale(request));
+    }
+    
+    return message;
+}
+</code></pre>
+
+<p>BindException 为 校验器默认的异常，ServiceException为自定义异常。分别对他们的以及内容进行i18n信息的翻译。</p>
+                        </div>
+                        <div class="columns is-mobile post-meta">
+                            <div class="column is-half-desktop has-text-left is-paddingless"> 
+                                 
+                                更老一篇:<a href="https://www.lihongkun.com/springframework/spring_container_events/"> Spring IoC 容器事件</a>
+                                
+                            </div>
+                            <div class="column is-half-desktop has-text-right is-paddingless">
+                                
+                                没有了，已经是最新文章
+                                
+                            </div>
+                            <div class="is-clearfix"></div>
+                        </div>
+                    </article>
+                </div>
+                <div class="column">    <aside>
+        <h2 class="is-size-4">关于我</h2>
+        <div class="content">
+            Working in advertising platform team. Backend on duty,full stack in my own time.
+        </div>
+        <h2 class="is-size-4">GitHub</h2>
+        <div class="content">
+            <a href="https://github.com/lihongkun" target="_blank">https://github.com/lihongkun</a>
+        </div>
+    </aside></div>
+                </div>
+            </div>
+         </main>    <footer class="footer">
+    
+        <div class="copyright has-text-centered">
+            <a href="https://bulma.io">
+                <img src="https://www.lihongkun.com/images/made-with-bulma.png" alt="Made with Bulma" width="128" height="24">
+            </a>
+            <p>© 泛泛之辈 Power by Hugo v0.55.6 - 闽ICP备15009606号</p>
+        </div>
+    </footer>
+    <script type="text/javascript">
+    document.addEventListener('DOMContentLoaded', () => {
+        
+        const $navbarBurgers = Array.prototype.slice.call(document.querySelectorAll('.navbar-burger'), 0);
+        
+        if ($navbarBurgers.length > 0) {
+            
+            $navbarBurgers.forEach( el => {
+                el.addEventListener('click', () => {
+                
+                const target = el.dataset.target;
+                const $target = document.getElementById(target);
+                
+                el.classList.toggle('is-active');
+                $target.classList.toggle('is-active');
+    
+                });
+            });
+        }
+    });
+    </script></body>
+</html>
