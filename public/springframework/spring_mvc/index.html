@@ -504,11 +504,11 @@ public class UserController {
 }
 </code></pre>
 
-<p>在使用校验注册的时候指定了，该注解的生效分组，如果没有指定的话则全部分组生效。在用@Validated 指定校验的分组，则可以实现不同类型的操作，校验不同的内容。</p>
+<p>在使用校验注解的时候指定了该注解的生效分组，如果没有指定的话则全部分组生效。在用@Validated 指定校验的分组，则可以实现不同类型的操作，校验不同的内容。</p>
 
 <h3 id="国际化">国际化</h3>
 
-<p>在校验环节，我们直接把message放到了代码中。除了调整不方便，每次都需要重新编译和发布版本。还不能支持多语言。Spring Core 本身就有一个MessageSource 的接口，用来实现各种消息的翻译。</p>
+<p>在校验环节，我们直接把message放到了代码中。除了调整不方便，每次都需要重新编译和发布版本。还不能支持多语言。Spring Core 本身就有一个MessageSource 接口，用来实现各种消息的翻译。</p>
 
 <pre><code>@Configuration
 public class WebMvcConfs extends WebMvcConfigurerAdapter {
@@ -535,7 +535,7 @@ public class WebMvcConfs extends WebMvcConfigurerAdapter {
 
 <p>上述代码配置了SpringMVC的 MessageSource实现和对Validator注入 翻译的MessageSource。它会根据Http Header中的Locale 来决定取哪个文件的配置来解析消息。比如locale 是zh_CN那么会取classpath下的i18n/message_zh_CN.properties来查找消息的对应翻译，如果查找不到则使用i18n/message.properties，兜底的文件没有的话则会发生异常，走入异常逻辑处理的环节。</p>
 
-<p>那么要实现一个多语言的网站就比较简单了，只需要在界面上设置一个选择语言的交互界面。选择后设置对应的Locale，后续的请求和返回的内容则可以更加Locale来定制。</p>
+<p>那么要实现一个多语言的网站就比较简单了，只需要在界面上设置一个选择语言的交互界面。选择后设置对应的Locale，后续的请求和返回的内容则可以根据Locale来定制。</p>
 
 <p>Validator 在引入了国际化的内容后，配置会有一些差别。首先我们不需要在配置注解里面写message，而是配置到对应的MessageSource文件里。</p>
 
@@ -558,7 +558,7 @@ NotBlank.user.username=用户名不能为空
 Range.user.age=年龄必须在{min}岁到{max}岁之间
 </code></pre>
 
-<p>在定义i18n文件的时候是可以使用变量的，比如上述的Range注解对应Validate把min和max作为变量传入到校验后的结果中。那么配合国际化的时候我们的自定义注解也是可以做到。</p>
+<p>在定义i18n文件的时候可以使用变量，比如上述的Range注解对应Validate把min和max作为变量传入到校验后的结果中。那么配合国际化的时候我们的自定义注解也是可以做到。</p>
 
 <pre><code>@Conpement
 public class UserValidaror implements ConstraintValidator&lt;UserConstraint, User&gt;  {
@@ -581,7 +581,7 @@ public class UserValidaror implements ConstraintValidator&lt;UserConstraint, Use
 }
 </code></pre>
 
-<h4 id="扩展使用">扩展使用</h4>
+<h4 id="整合使用">整合使用</h4>
 
 <p>除了校验的异常需要进行国际化，服务端使用返回码来提示的业务错误也需要进行国际化消息提醒。那么异常处理可以定义一个ServiceException 统一包装来处理。那么<code>ControllerAdvice</code> 可以增加以下两个处理方法</p>
 
