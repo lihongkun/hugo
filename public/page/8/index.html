@@ -149,6 +149,19 @@
 
 <article class="post box is-radiusless">
     <div class="post-title">
+        <a class="post-title-link" href="/network/java_bio/"><h2 class="is-size-4 has-text-dark">Java BIO</h2></a>
+    </div>
+    <div class="post-meta">
+        <span class="post-time">日期 : 2019-03-04</span>
+    </div>
+    <div class="post-excerpt content">
+        <p>在JDK1.4出来之前,建立网络连接的时候采用BIO模式,下面以EchoServer为例子聊聊Java的阻塞IO.</p>
+    </div>
+    <a href="/network/java_bio/">阅读全文>></a>
+    </article>
+
+<article class="post box is-radiusless">
+    <div class="post-title">
         <a class="post-title-link" href="/network/network_io_model/"><h2 class="is-size-4 has-text-dark">网络IO模型</h2></a>
     </div>
     <div class="post-meta">
@@ -204,19 +217,6 @@
         <p>分布式系统中 , 网络是一个不稳定的存在.一些接口的调用通常存在不稳定或者是延时的问题.除了要做好监控外,这里介绍一下简单的快速定位命令.</p>
     </div>
     <a href="/network/network_delay/">阅读全文>></a>
-    </article>
-
-<article class="post box is-radiusless">
-    <div class="post-title">
-        <a class="post-title-link" href="/concurrent/atomic/"><h2 class="is-size-4 has-text-dark">原子变量</h2></a>
-    </div>
-    <div class="post-meta">
-        <span class="post-time">日期 : 2018-12-17</span>
-    </div>
-    <div class="post-excerpt content">
-        <p>锁机制提供了独占的方法来访问变量,并且对变量的任何修改都会对随后获得这个锁的其他线程可见.但是如果一个线程在休眠或者自旋的时候持有一个锁,那么其他线程便无法执行下去.而非阻塞算法不会受到单个线程失败的影响.对于<strong>细粒度</strong>的操作,非阻塞算法更高效.它需要借助冲突检查机制来判断更新过程中是否存在来自其他线程的干扰,如果存在则操作失败,并且重试.现代处理器都提供了这种读-改-写(Compare-And-Swap)的指令,来实现这种复杂的并发对象.</p>
-    </div>
-    <a href="/concurrent/atomic/">阅读全文>></a>
     </article>
 
 </section>

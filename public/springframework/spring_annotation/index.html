@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html><head>
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+
+    
+    <meta name="author"
+            content=""/>
+
+    
+    <meta name="description" content="Spring Bean 的注解配置功能出现的比较早，但是开始流行却是由于SpringBoot的推动。初期只是提供几个注解简化一些配置，使用context:annotation-config来启用。随着AnnotationApplicationContext的出现，注解逐渐丰富，慢慢形成了一种 Java Config的体系，从而摆脱了XML。
+"/>
+    
+
+    
+
+    
+    <link rel="canonical" href="https://www.lihongkun.com/springframework/spring_annotation/"/>
+
+    
+
+    
+    
+    
+        
+            
+        
+    
+        
+            
+                
+            
+                
+            
+                
+            
+                
+            
+        
+    
+        
+            
+                
+            
+                
+            
+                
+            
+                
+            
+                
+            
+        
+    
+        
+            
+        
+    
+        
+            
+        
+    
+        
+            
+        
+    
+    <title> Spring 注解配置 | 泛泛之辈 </title>
+
+    <link rel="shortcut icon" href="https://www.lihongkun.com/favicon.jpg"/>
+    <link rel="stylesheet" href="https://www.lihongkun.com/css/bulma.min.css"/>
+    <link rel="stylesheet" href="https://www.lihongkun.com/css/style.css"/>
+</head><body><header>
+    <nav class="navbar is-fixed-top is-primary" role="navigation" aria-label="main navigation">
+        <div class="navbar-brand is-size-4">
+            <a class="navbar-item" href="https://www.lihongkun.com/">
+                    泛泛之辈
+            </a>
+            <a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false" data-target="navbar-menu">
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+            </a>
+        </div>
+        <div id="navbar-menu" class="navbar-menu">
+            <div class="navbar-end">
+                
+                    
+                        <a class="navbar-item" href="/">首页</a>
+                    
+                
+                    
+                        <div class="navbar-item has-dropdown is-hoverable">
+                            <a class="navbar-link">基本功</a>
+                            <div class="navbar-dropdown">
+                                
+                                <a class="navbar-item" href="/categories/concurrent/">并发</a>
+                                
+                                <a class="navbar-item" href="/categories/network/">网络</a>
+                                
+                                <a class="navbar-item" href="/categories/security/">Web安全</a>
+                                
+                                <a class="navbar-item" href="/categories/jvm/">Java虚拟机</a>
+                                
+                            </div>
+                        </div>
+                    
+                
+                    
+                        <div class="navbar-item has-dropdown is-hoverable">
+                            <a class="navbar-link">编程框架</a>
+                            <div class="navbar-dropdown">
+                                
+                                <a class="navbar-item" href="/categories/springframework/">Spring</a>
+                                
+                                <a class="navbar-item" href="/categories/springcloud/">SpringCloud</a>
+                                
+                                <a class="navbar-item" href="/categories/log/">日志</a>
+                                
+                                <a class="navbar-item" href="/categories/serialize/">序列化</a>
+                                
+                                <a class="navbar-item" href="/categories/common/">其他</a>
+                                
+                            </div>
+                        </div>
+                    
+                
+                    
+                        <a class="navbar-item" href="/categories/troubleshooting/">问题排查</a>
+                    
+                
+                    
+                        <a class="navbar-item" href="/categories/design/">设计思路</a>
+                    
+                
+                    
+                        <a class="navbar-item" href="/categories/reading/">读书笔记</a>
+                    
+                
+            </div>
+            </div>
+    </nav>
+</header><main>
+            <div class="container">
+                <div class="columns">
+                <div class="column is-four-fifths">
+                    <article class="post box is-radiusless">
+                        <div class="post-title">
+                            <h2 class="is-size-4">Spring 注解配置</h2>
+                        </div>
+                            <div class="post-meta">
+                            <span class="post-time">日期&nbsp;:&nbsp;2020-07-25</span>
+                        </div>
+                        <div class="post-content content">
+                            <p>Spring Bean 的注解配置功能出现的比较早，但是开始流行却是由于SpringBoot的推动。初期只是提供几个注解简化一些配置，使用context:annotation-config来启用。随着AnnotationApplicationContext的出现，注解逐渐丰富，慢慢形成了一种 Java Config的体系，从而摆脱了XML。</p>
+
+<h3 id="优缺点">优缺点</h3>
+
+<p>相对于XML文件，注解型的配置依赖于通过字节码元数据装配组件，而非尖括号的声明。通过在相应的类，方法或属性上使用注解的方式，直接组件类中进行配置，而不是使用xml表述bean的装配关系。</p>
+
+<p>早期比如Eclipse这样的工具，在Bean的包名发生了变化的时候并不能同步更新XML中的配置。需要人工去修改包名，往往繁琐且容易被忘记。Refactor功能在XML配置中使用不方便，而在Java代码中使用却是非常方便。</p>
+
+<p>注解的配置方式大部分情况下是去中心化，使用者很难去掌控全局，一开始就对整体很熟悉。不过这种情况随着<code>@Configuration</code>注解的出现得到一定的改观，原理配置成XML都可以无缝修改成一个类使用<code>@Configuration</code>修饰。</p>
+
+<h3 id="实例化和装配">实例化和装配</h3>
+
+<p>AnnotationApplicationContext 的与 ClassPathXmlApplicationContext最大的不同点就是它的配置都是通过Annotation，那么它是怎么做到的呢？启动的时候直接扫描指定包名下的所有类，看看他们是不是存在指定的注解，然后再把他们解析成Spring 认识的BeanDefinition。</p>
+
+<table>
+<thead>
+<tr>
+<th>注解</th>
+<th>作用</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td>@Component</td>
+<td>泛指组件，Spring容器会扫描该注解，并为其生成一个托管到容器的Bean</td>
+</tr>
+
+<tr>
+<td>@Service</td>
+<td>功能同@Component，更有语义性，表示Service层的组件</td>
+</tr>
+
+<tr>
+<td>@Repository</td>
+<td>功能同@Component，表示Dao层的Bean</td>
+</tr>
+
+<tr>
+<td>@Controller</td>
+<td>功能同@Component，表示Controller层的Bean</td>
+</tr>
+</tbody>
+</table>
+
+<p>上述的注解均是可以定义一个bean，采用自动扫描的方式。在类定义的时候同样把它定义为一个bean。</p>
+
+<pre><code>//xml 方式
+
+// UserService.java
+public class UserService {
+    .....
+}
+
+// appliationContext.xml
+&lt;bean class=&quot;xxxx.UserService&quot; /&gt;
+
+// 等价的 注解配置
+// UserService.java
+@Service
+public class UserService {
+    .....
+}
+</code></pre>
+
+<p>可以看到其实只是多了一个注解并不需要进行XML的配置。那么如果需要进行一些属性的注入呢？</p>
+
+<p>这时候就需要一些装配Bean 的注解了。</p>
+
+<table>
+<thead>
+<tr>
+<th>注解</th>
+<th>作用</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td>@Autowired</td>
+<td>按类型装配Bean，默认情况下必须要求依赖对象必须存在。如果想要按名称装配需要配合@Qualifier注解</td>
+</tr>
+
+<tr>
+<td>@Qualifier</td>
+<td>表示要装配的Bean的名称，配合@Autowired</td>
+</tr>
+
+<tr>
+<td>@Resource</td>
+<td>按名称进行装配，等同于@Autowired + @Qualifier 一起的功能</td>
+</tr>
+</tbody>
+</table>
+
+<p>使用的时候只需要用在属性或者的其中的Setter方法上面，不过Spring目前已经只推荐使用在Setter方法上。</p>
+
+<pre><code>// UserService.java
+@Service
+public class UserService {
+    
+    private UserMapper userMapper;
+    
+    @Autowired
+    public void setUserMapper(UserMapper userMapper){
+        this.userMapper = userMapper;
+    }
+}
+</code></pre>
+
+<h3 id="编程式配置">编程式配置</h3>
+
+<p>在类实现上就地进行配置，用起来非常的方便。但是也会造成Bean定义非常的零散。如果需要有一些流程和顺序上的东西。要想知道全局总览性的视图。就会比较困难。大部分情况下，很多人喜欢使用XML和注解混合使用。如果你比较偏执，那么可以尝试下<code>@Configuration</code>和<code>@Bean</code>来配置出一个具备跟XML一致的流程性的类。</p>
+
+<p>假设，我们有一个业务比较复杂使用责任链的方式进行实现。有十几二十个步骤。</p>
+
+<pre><code>@Component
+@Order(20)
+public class FirstHandler implement IHandler{
+    ....
+}
+
+@Component
+@Order(19)
+public class SecondHandler implement IHandler{
+    ....
+}
+
+
+// 省略其它类
+
+
+@Component
+@Order(1)
+public class TwentiethHandler implement IHandler{
+    ....
+}
+
+@Component
+public class HandlerChain {
+    
+    private List&lt;IHandler&gt; handlerList;
+    
+    @Autowired
+    public void setHandlerList(List&lt;IHandler&gt; handlerList){
+        this.handlerList = handlerList;
+    }
+}
+
+</code></pre>
+
+<p>如上述代码，如果全部使用注解也是可以实现的，但是handlerList的顺序对一个新接触系统的人是非常不友好的，因为没有一个地方可以告诉你，列表的顺序和所有的实现在哪里。我们可以换成<code>@Configuration</code>的方式，你可以认为它就是等同于一个配置文件。这里我们只需要修改HandlerChain的定义</p>
+
+<pre><code>@Configuration
+public class HandlerChainConfiguration{
+    
+    @Autowired
+    priavte FirstHandler firstHandler;
+    
+    @Autowired
+    priavte FirstHandler secondHandler;
+    
+    ...
+    
+    @Autowired
+    priavte FirstHandler twentiethHandler;
+    
+    @Bean
+    public HandlerChain handlerChain(){
+        List&lt;IHandler&gt; handlerList = new ArrayList&lt;&gt;();
+        handlerList.add(firstHandler);
+        handlerList.add(secondHandler);
+        ...
+        handlerList.add(twentiethHandler);
+        HandlerChain handlerChain = new HandlerChain();
+        handlerChain.setHandlerList(handlerList);
+        return handlerChain;
+    }
+}
+</code></pre>
+
+<p>上述代码使用了<code>@Configuration</code>和<code>@Bean</code> 提供了一种可编程式的Bean定义，具备了很强的灵活性，它完全可以替代XML文件的方式。handlerChain的定义过程中所有的handler一览无余。</p>
+
+<h3 id="小结">小结</h3>
+
+<p><code>@Component</code> 等定义bean 的注解和<code>@Autowired</code>等装配bean的注解，相互配合可以解决任何场景下的bean配置。加上<code>@Configuration</code>和<code>@Bean</code> 提供的可编程式的定义，为开发者提供了很大的便利，开发者完全可以脱离XML。有了这些基础再加上Java 的SPI机制，Spring Boot Starter就水到渠成了。</p>
+                        </div>
+                        <div class="columns is-mobile post-meta">
+                            <div class="column is-half-desktop has-text-left is-paddingless"> 
+                                 
+                                更老一篇:<a href="https://www.lihongkun.com/springframework/spring_mvc/"> Spring MVC 你必须关注点</a>
+                                
+                            </div>
+                            <div class="column is-half-desktop has-text-right is-paddingless">
+                                
+                                没有了，已经是最新文章
+                                
+                            </div>
+                            <div class="is-clearfix"></div>
+                        </div>
+                    </article>
+                </div>
+                <div class="column">    <aside>
+        <h2 class="is-size-4">关于我</h2>
+        <div class="content">
+            Working in advertising platform team. Backend on duty,full stack in my own time.
+        </div>
+        <h2 class="is-size-4">GitHub</h2>
+        <div class="content">
+            <a href="https://github.com/lihongkun" target="_blank">https://github.com/lihongkun</a>
+        </div>
+    </aside></div>
+                </div>
+            </div>
+         </main>    <footer class="footer">
+    
+        <div class="copyright has-text-centered">
+            <a href="https://bulma.io">
+                <img src="https://www.lihongkun.com/images/made-with-bulma.png" alt="Made with Bulma" width="128" height="24">
+            </a>
+            <p>© 泛泛之辈 Power by Hugo v0.55.6 - 闽ICP备15009606号</p>
+        </div>
+    </footer>
+    <script type="text/javascript">
+    document.addEventListener('DOMContentLoaded', () => {
+        
+        const $navbarBurgers = Array.prototype.slice.call(document.querySelectorAll('.navbar-burger'), 0);
+        
+        if ($navbarBurgers.length > 0) {
+            
+            $navbarBurgers.forEach( el => {
+                el.addEventListener('click', () => {
+                
+                const target = el.dataset.target;
+                const $target = document.getElementById(target);
+                
+                el.classList.toggle('is-active');
+                $target.classList.toggle('is-active');
+    
+                });
+            });
+        }
+    });
+    </script></body>
+</html>

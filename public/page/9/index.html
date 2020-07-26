@@ -149,6 +149,19 @@
 
 <article class="post box is-radiusless">
     <div class="post-title">
+        <a class="post-title-link" href="/concurrent/atomic/"><h2 class="is-size-4 has-text-dark">原子变量</h2></a>
+    </div>
+    <div class="post-meta">
+        <span class="post-time">日期 : 2018-12-17</span>
+    </div>
+    <div class="post-excerpt content">
+        <p>锁机制提供了独占的方法来访问变量,并且对变量的任何修改都会对随后获得这个锁的其他线程可见.但是如果一个线程在休眠或者自旋的时候持有一个锁,那么其他线程便无法执行下去.而非阻塞算法不会受到单个线程失败的影响.对于<strong>细粒度</strong>的操作,非阻塞算法更高效.它需要借助冲突检查机制来判断更新过程中是否存在来自其他线程的干扰,如果存在则操作失败,并且重试.现代处理器都提供了这种读-改-写(Compare-And-Swap)的指令,来实现这种复杂的并发对象.</p>
+    </div>
+    <a href="/concurrent/atomic/">阅读全文>></a>
+    </article>
+
+<article class="post box is-radiusless">
+    <div class="post-title">
         <a class="post-title-link" href="/concurrent/threadlocal/"><h2 class="is-size-4 has-text-dark">线程封闭与ThreadLocal</h2></a>
     </div>
     <div class="post-meta">
@@ -215,19 +228,6 @@
         <p>Disruptor是英国外汇交易公司LMAX开发的一个高性能队列，研发的初衷是解决内存队列的延迟问题.2010年在QCon演讲后,获得了业界关注. 2011年，Martin Fowler大神专门撰写长文对其进行介绍.由于熟悉程度问题,只能科普介绍一下,介绍之前可以先了解下ArrayBlockingQueue存在的一些问题.</p>
     </div>
     <a href="/concurrent/disruptor/">阅读全文>></a>
-    </article>
-
-<article class="post box is-radiusless">
-    <div class="post-title">
-        <a class="post-title-link" href="/concurrent/blocking_queue/"><h2 class="is-size-4 has-text-dark">阻塞队列</h2></a>
-    </div>
-    <div class="post-meta">
-        <span class="post-time">日期 : 2018-11-05</span>
-    </div>
-    <div class="post-excerpt content">
-        <p>阻塞队列(BlockingQueue)提供了可阻塞的put和take方法,以及支持定时的offer和pull.如果队列已经满了,那么put方法将阻塞到有空间可用;如果队列为空那么take方法将阻塞到有元素可用.</p>
-    </div>
-    <a href="/concurrent/blocking_queue/">阅读全文>></a>
     </article>
 
 </section>

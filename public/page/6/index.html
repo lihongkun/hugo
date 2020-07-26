@@ -149,6 +149,19 @@
 
 <article class="post box is-radiusless">
     <div class="post-title">
+        <a class="post-title-link" href="/troubleshooting/async-profiler/"><h2 class="is-size-4 has-text-dark">async-profiler查找CPU热点</h2></a>
+    </div>
+    <div class="post-meta">
+        <span class="post-time">日期 : 2019-08-10</span>
+    </div>
+    <div class="post-excerpt content">
+        <p>算法新上线的接口，平均耗时增加了20ms。使用jstack一类的脚本出来的堆栈基本上比较平均。很难定位到确切的位置。这种微小耗时监测场景。典型的方式是直接进行CPU热点采样，通常是linux的perf加上perf-map-agent来映射出java的堆栈。这个组合略复杂。我使用的是 async-profiler 。</p>
+    </div>
+    <a href="/troubleshooting/async-profiler/">阅读全文>></a>
+    </article>
+
+<article class="post box is-radiusless">
+    <div class="post-title">
         <a class="post-title-link" href="/security/sso/"><h2 class="is-size-4 has-text-dark">单点登录</h2></a>
     </div>
     <div class="post-meta">
@@ -197,21 +210,6 @@
         <p>G1 (Garbage-First)是一款面向服务器的垃圾收集器,主要针对处理器并且使用大容量堆内存的应用。它尽可能满足GC停顿时间要求的同时，还具备高吞吐量性能特征。</p>
     </div>
     <a href="/jvm/garbage_first_collector/">阅读全文>></a>
-    </article>
-
-<article class="post box is-radiusless">
-    <div class="post-title">
-        <a class="post-title-link" href="/jvm/cms_collector/"><h2 class="is-size-4 has-text-dark">CMS垃圾收集器</h2></a>
-    </div>
-    <div class="post-meta">
-        <span class="post-time">日期 : 2019-06-26</span>
-    </div>
-    <div class="post-excerpt content">
-        <p>并发标记清除垃圾收集器(简称CMS) , 是一款为低延迟而设计的垃圾收集器 , 在应用进程工作的时候利用机器多处理器资源在后台进行垃圾收集动作. 特别适用于有比较多的长期存活对象 , 且机器的处理器大于2.可以使用 -XX:+UseConcMarkSweepGC命令行选项来启用 .</p>
-
-<p>CMS已经不推荐使用 , 业界推荐使用G1来替代它 . 虽然如此很多老的应用依旧运行着此垃圾收集器.</p>
-    </div>
-    <a href="/jvm/cms_collector/">阅读全文>></a>
     </article>
 
 </section>

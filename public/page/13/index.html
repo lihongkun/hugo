@@ -149,6 +149,19 @@
 
 <article class="post box is-radiusless">
     <div class="post-title">
+        <a class="post-title-link" href="/jvm/gclog/"><h2 class="is-size-4 has-text-dark">Java虚拟机监控工具 - GC日志和GCViewer</h2></a>
+    </div>
+    <div class="post-meta">
+        <span class="post-time">日期 : 2018-06-07</span>
+    </div>
+    <div class="post-excerpt content">
+        <p>之前介绍的jstat和jmap只能使用输入命令的方式来进行GC和内存方面的监控.应用程序的GC情况可能是一个需要持续观察的过程,JVM提供了命令行选项来保存这些GC相关的日志.</p>
+    </div>
+    <a href="/jvm/gclog/">阅读全文>></a>
+    </article>
+
+<article class="post box is-radiusless">
+    <div class="post-title">
         <a class="post-title-link" href="/jvm/jmap/"><h2 class="is-size-4 has-text-dark">Java虚拟机监控工具 - jmap</h2></a>
     </div>
     <div class="post-meta">
@@ -197,25 +210,6 @@
         <p>Java虚拟机的内存区域 叫做 运行时数据区 , 这是一张比较典型的内存划分图</p>
     </div>
     <a href="/jvm/jvm_memory_model/">阅读全文>></a>
-    </article>
-
-<article class="post box is-radiusless">
-    <div class="post-title">
-        <a class="post-title-link" href="/jvm/java_intern/"><h2 class="is-size-4 has-text-dark">Java字符串常量调优</h2></a>
-    </div>
-    <div class="post-meta">
-        <span class="post-time">日期 : 2018-03-26</span>
-    </div>
-    <div class="post-excerpt content">
-        <p>Java中的常量池,实际上分为两种形态:静态常量池和运行时常量池.</p>
-
-<p><strong>静态常量池</strong>,即*.class文件中的常量池,class文件中的常量池不仅仅包含字符串(数字)字面量，还包含类、方法的信息，占用class文件绝大部分空间.</p>
-
-<p><strong>运行时常量池</strong>,则是jvm虚拟机在完成类装载操作后,将class文件中的常量池载入到内存中,并保存在方法区中,我们常说的常量池,就是指方法区中的运行时常量池.</p>
-
-<p>运行时常量池相对于Class文件常量池的另外一个重要特征是具备动态性,Java语言并不要求常量一定只有编译期才能产生,也就是并非预置入Class文件中常量池的内容才能进入方法区运行时常量池,运行期间也可能将新的常量放入池中,这种特性被开发人员利用比较多的就是String类的intern()方法.</p>
-    </div>
-    <a href="/jvm/java_intern/">阅读全文>></a>
     </article>
 
 </section>

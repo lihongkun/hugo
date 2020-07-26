@@ -149,6 +149,19 @@
 
 <article class="post box is-radiusless">
     <div class="post-title">
+        <a class="post-title-link" href="/springframework/spring_annotation/"><h2 class="is-size-4 has-text-dark">Spring 注解配置</h2></a>
+    </div>
+    <div class="post-meta">
+        <span class="post-time">日期 : 2020-07-25</span>
+    </div>
+    <div class="post-excerpt content">
+        <p>Spring Bean 的注解配置功能出现的比较早，但是开始流行却是由于SpringBoot的推动。初期只是提供几个注解简化一些配置，使用context:annotation-config来启用。随着AnnotationApplicationContext的出现，注解逐渐丰富，慢慢形成了一种 Java Config的体系，从而摆脱了XML。</p>
+    </div>
+    <a href="/springframework/spring_annotation/">阅读全文>></a>
+    </article>
+
+<article class="post box is-radiusless">
+    <div class="post-title">
         <a class="post-title-link" href="/springframework/spring_mvc/"><h2 class="is-size-4 has-text-dark">Spring MVC 你必须关注点</h2></a>
     </div>
     <div class="post-meta">
@@ -197,19 +210,6 @@
         <p>Spring容器除了提供Bean的生命周期扩展点，还需要提供容器的生命周期扩展点。容器不像bean一样是由开发者定义的。框架代码编写的时候并不知道谁会关心。所以Spring采用的方式是将容器的生命周期通过事件机制发布出来，关心事件的开发者自行订阅。这是一个观察者模式的典型应用。</p>
     </div>
     <a href="/springframework/spring_container_events/">阅读全文>></a>
-    </article>
-
-<article class="post box is-radiusless">
-    <div class="post-title">
-        <a class="post-title-link" href="/springframework/spring_aware/"><h2 class="is-size-4 has-text-dark">Spring Aware机制</h2></a>
-    </div>
-    <div class="post-meta">
-        <span class="post-time">日期 : 2020-06-07</span>
-    </div>
-    <div class="post-excerpt content">
-        <p>在使用spring的过程中比较好的设计是bean不依赖于容器。在一些特殊的情况下需要感知容器的存在，使用容器的提供的资源。Spring IoC容器提供了Aware机制</p>
-    </div>
-    <a href="/springframework/spring_aware/">阅读全文>></a>
     </article>
 
 </section>

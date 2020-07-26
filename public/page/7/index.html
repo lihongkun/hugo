@@ -149,6 +149,21 @@
 
 <article class="post box is-radiusless">
     <div class="post-title">
+        <a class="post-title-link" href="/jvm/cms_collector/"><h2 class="is-size-4 has-text-dark">CMS垃圾收集器</h2></a>
+    </div>
+    <div class="post-meta">
+        <span class="post-time">日期 : 2019-06-26</span>
+    </div>
+    <div class="post-excerpt content">
+        <p>并发标记清除垃圾收集器(简称CMS) , 是一款为低延迟而设计的垃圾收集器 , 在应用进程工作的时候利用机器多处理器资源在后台进行垃圾收集动作. 特别适用于有比较多的长期存活对象 , 且机器的处理器大于2.可以使用 -XX:+UseConcMarkSweepGC命令行选项来启用 .</p>
+
+<p>CMS已经不推荐使用 , 业界推荐使用G1来替代它 . 虽然如此很多老的应用依旧运行着此垃圾收集器.</p>
+    </div>
+    <a href="/jvm/cms_collector/">阅读全文>></a>
+    </article>
+
+<article class="post box is-radiusless">
+    <div class="post-title">
         <a class="post-title-link" href="/jvm/garbage_collector/"><h2 class="is-size-4 has-text-dark">Java垃圾收集器概览</h2></a>
     </div>
     <div class="post-meta">
@@ -197,19 +212,6 @@
         <p>Java NIO 是 IO复用模型在Java平台的实现 , 针对Java BIO在高并发情况下的缺点 1.4之后提供了NIO的实现. 还是以EchoServer为例子.</p>
     </div>
     <a href="/network/java_nio/">阅读全文>></a>
-    </article>
-
-<article class="post box is-radiusless">
-    <div class="post-title">
-        <a class="post-title-link" href="/network/java_bio/"><h2 class="is-size-4 has-text-dark">Java BIO</h2></a>
-    </div>
-    <div class="post-meta">
-        <span class="post-time">日期 : 2019-03-04</span>
-    </div>
-    <div class="post-excerpt content">
-        <p>在JDK1.4出来之前,建立网络连接的时候采用BIO模式,下面以EchoServer为例子聊聊Java的阻塞IO.</p>
-    </div>
-    <a href="/network/java_bio/">阅读全文>></a>
     </article>
 
 </section>
