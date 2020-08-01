@@ -6,15 +6,24 @@
     <description>Recent content in Categories on 泛泛之辈</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-CN</language>
-    <lastBuildDate>Sat, 25 Jul 2020 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Sat, 01 Aug 2020 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="https://www.lihongkun.com/categories/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
+      <title>springboot</title>
+      <link>https://www.lihongkun.com/categories/springboot/</link>
+      <pubDate>Sat, 01 Aug 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.lihongkun.com/categories/springboot/</guid>
+      <description></description>
+    </item>
+    
+    <item>
       <title>springframework</title>
       <link>https://www.lihongkun.com/categories/springframework/</link>
-      <pubDate>Sat, 25 Jul 2020 00:00:00 +0000</pubDate>
+      <pubDate>Sat, 01 Aug 2020 00:00:00 +0000</pubDate>
       
       <guid>https://www.lihongkun.com/categories/springframework/</guid>
       <description></description>
@@ -30,7 +39,7 @@
     </item>
     
     <item>
-      <title>java&#34;</title>
+      <title>java</title>
       <link>https://www.lihongkun.com/categories/java/</link>
       <pubDate>Sun, 03 May 2020 00:00:00 +0000</pubDate>
       

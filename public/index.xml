@@ -6,10 +6,19 @@
     <description>Recent content on 泛泛之辈</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-CN</language>
-    <lastBuildDate>Sat, 25 Jul 2020 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Sat, 01 Aug 2020 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="https://www.lihongkun.com/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Spring Boot 开箱即用</title>
+      <link>https://www.lihongkun.com/springframework/springboot/</link>
+      <pubDate>Sat, 01 Aug 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.lihongkun.com/springframework/springboot/</guid>
+      <description>&lt;p&gt;新建一个工程需要做很多的基础工作，依赖包引入，基础组件的配置。在微服务大行其道的今天，建立一个新工程是一个家常便饭的事情。其中的工作繁琐且容易出错。在Spring Boot 未出现之前，很多脚手架的项目用来解决这类通用的问题。Spring Boot出现之后，大多也都是转移到它身上了。&lt;/p&gt;</description>
+    </item>
     
     <item>
       <title>Spring 注解配置</title>
