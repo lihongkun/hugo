@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html><head>
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+
+    
+    <meta name="author"
+            content=""/>
+
+    
+    <meta name="description" content="官方提供的Spring Boot Starter涵盖面非常广，几乎所有流行的组件和方案都可以找到对应的封装。不过每个系统总会有自己的公共代码，可以自己进行Starter的封装。
+"/>
+    
+
+    
+
+    
+    <link rel="canonical" href="https://www.lihongkun.com/springframework/custom_springboot_starter/"/>
+
+    
+
+    
+    
+    
+        
+            
+        
+    
+        
+            
+                
+            
+                
+            
+                
+            
+                
+            
+        
+    
+        
+            
+                
+            
+                
+            
+                
+            
+                
+            
+                
+            
+        
+    
+        
+            
+        
+    
+        
+            
+        
+    
+        
+            
+        
+    
+    <title> 自定义Spring Boot Starter | 泛泛之辈 </title>
+
+    <link rel="shortcut icon" href="https://www.lihongkun.com/favicon.jpg"/>
+    <link rel="stylesheet" href="https://www.lihongkun.com/css/bulma.min.css"/>
+    <link rel="stylesheet" href="https://www.lihongkun.com/css/style.css"/>
+</head><body><header>
+    <nav class="navbar is-fixed-top is-primary" role="navigation" aria-label="main navigation">
+        <div class="navbar-brand is-size-4">
+            <a class="navbar-item" href="https://www.lihongkun.com/">
+                    泛泛之辈
+            </a>
+            <a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false" data-target="navbar-menu">
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+            </a>
+        </div>
+        <div id="navbar-menu" class="navbar-menu">
+            <div class="navbar-end">
+                
+                    
+                        <a class="navbar-item" href="/">首页</a>
+                    
+                
+                    
+                        <div class="navbar-item has-dropdown is-hoverable">
+                            <a class="navbar-link">基本功</a>
+                            <div class="navbar-dropdown">
+                                
+                                <a class="navbar-item" href="/categories/concurrent/">并发</a>
+                                
+                                <a class="navbar-item" href="/categories/network/">网络</a>
+                                
+                                <a class="navbar-item" href="/categories/security/">Web安全</a>
+                                
+                                <a class="navbar-item" href="/categories/jvm/">Java虚拟机</a>
+                                
+                            </div>
+                        </div>
+                    
+                
+                    
+                        <div class="navbar-item has-dropdown is-hoverable">
+                            <a class="navbar-link">编程框架</a>
+                            <div class="navbar-dropdown">
+                                
+                                <a class="navbar-item" href="/categories/springframework/">Spring</a>
+                                
+                                <a class="navbar-item" href="/categories/springcloud/">SpringCloud</a>
+                                
+                                <a class="navbar-item" href="/categories/log/">日志</a>
+                                
+                                <a class="navbar-item" href="/categories/serialize/">序列化</a>
+                                
+                                <a class="navbar-item" href="/categories/common/">其他</a>
+                                
+                            </div>
+                        </div>
+                    
+                
+                    
+                        <a class="navbar-item" href="/categories/troubleshooting/">问题排查</a>
+                    
+                
+                    
+                        <a class="navbar-item" href="/categories/design/">设计思路</a>
+                    
+                
+                    
+                        <a class="navbar-item" href="/categories/reading/">读书笔记</a>
+                    
+                
+            </div>
+            </div>
+    </nav>
+</header><main>
+            <div class="container">
+                <div class="columns">
+                <div class="column is-four-fifths">
+                    <article class="post box is-radiusless">
+                        <div class="post-title">
+                            <h2 class="is-size-4">自定义Spring Boot Starter</h2>
+                        </div>
+                            <div class="post-meta">
+                            <span class="post-time">日期&nbsp;:&nbsp;2020-08-02</span>
+                        </div>
+                        <div class="post-content content">
+                            <p>官方提供的Spring Boot Starter涵盖面非常广，几乎所有流行的组件和方案都可以找到对应的封装。不过每个系统总会有自己的公共代码，可以自己进行Starter的封装。</p>
+
+<p>下面以一个例子进行说明，我们需要一个HelloService的功能，但是又不想自己进行很多复杂的声明或者配置（实际应用场景中，远比HelloService的自动配置复杂得多）</p>
+
+<pre><code>package com.lihongkun.labs.spring.boot.hello;
+
+public class HelloService {
+
+    private String msg;
+
+    public void sayHello(){
+        System.out.println(&quot;hello &quot; + msg);
+    }
+
+    public void setMsg(String msg) {
+        this.msg = msg;
+    }
+}
+</code></pre>
+
+<h4 id="工程结构">工程结构</h4>
+
+<p>创建一个Spring Boot Starter的工程，目录结构如下图，包含一个父工程，一个自动配置工程和Starter工程</p>
+
+<p><img src="project_directory.jpg" alt="" /></p>
+
+<h4 id="父工程">父工程</h4>
+
+<p>父工程只有一个pom文件，定义了Spring Boot 的版本依赖、编译的目标版本以及本项目的子模块。</p>
+
+<pre><code>&lt;groupId&gt;com.lihongkun.labs.spring.boot&lt;/groupId&gt;
+&lt;artifactId&gt;hello-spring-boot-parent&lt;/artifactId&gt;
+&lt;version&gt;0.0.1-SNAPSHOT&lt;/version&gt;
+
+&lt;modules&gt;
+    &lt;module&gt;hello-spring-boot-autoconfigure&lt;/module&gt;
+    &lt;module&gt;hello-spring-boot-starter&lt;/module&gt;
+&lt;/modules&gt;
+&lt;packaging&gt;pom&lt;/packaging&gt;
+
+&lt;dependencyManagement&gt;
+    &lt;dependencies&gt;
+        &lt;dependency&gt;
+            &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+            &lt;artifactId&gt;spring-boot-dependencies&lt;/artifactId&gt;
+            &lt;version&gt;2.3.2.RELEASE&lt;/version&gt;
+            &lt;type&gt;pom&lt;/type&gt;
+            &lt;scope&gt;import&lt;/scope&gt;
+        &lt;/dependency&gt;
+    &lt;/dependencies&gt;
+&lt;/dependencyManagement&gt;
+
+&lt;build&gt;
+    &lt;plugins&gt;
+        &lt;plugin&gt;
+            &lt;groupId&gt;org.apache.maven.plugins&lt;/groupId&gt;
+            &lt;artifactId&gt;maven-compiler-plugin&lt;/artifactId&gt;
+            &lt;version&gt;3.8.0&lt;/version&gt;
+            &lt;configuration&gt;
+                &lt;release&gt;11&lt;/release&gt;
+            &lt;/configuration&gt;
+        &lt;/plugin&gt;
+    &lt;/plugins&gt;
+&lt;/build&gt;
+</code></pre>
+
+<h4 id="自动配置">自动配置</h4>
+
+<p>接着创建autoconfigure工程，它会引入比较多的依赖，非必要的依赖使用optional的方式来引入。</p>
+
+<pre><code>&lt;parent&gt;
+    &lt;artifactId&gt;hello-spring-boot-parent&lt;/artifactId&gt;
+    &lt;groupId&gt;com.lihongkun.labs.spring.boot&lt;/groupId&gt;
+    &lt;version&gt;0.0.1-SNAPSHOT&lt;/version&gt;
+&lt;/parent&gt;
+&lt;modelVersion&gt;4.0.0&lt;/modelVersion&gt;
+
+&lt;artifactId&gt;hello-spring-boot-autoconfigure&lt;/artifactId&gt;
+
+&lt;dependencies&gt;
+    &lt;dependency&gt;
+        &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+        &lt;artifactId&gt;spring-boot-autoconfigure&lt;/artifactId&gt;
+    &lt;/dependency&gt;
+    &lt;!--
+        如果是实现 autoconfiguration 功能的依赖包一定要使用&lt;optional&gt;true&lt;/optional&gt;
+        因为你会在本工程里面定义多个不同功能的 autoconfiguration，引入方可能只使用了一个。
+        如
+        &lt;dependency&gt;
+            &lt;groupId&gt;x.y.z&lt;/groupId&gt;
+            &lt;artifactId&gt;hey&lt;/artifactId&gt;
+            &lt;version&gt;0.0.1-SNAPSHOT&lt;version&gt;
+            &lt;optional&gt;true&lt;/optional&gt;
+        &lt;/dependency&gt;
+        &lt;dependency&gt;
+            &lt;groupId&gt;x.y.z&lt;/groupId&gt;
+            &lt;artifactId&gt;hello&lt;/artifactId&gt;
+            &lt;version&gt;0.0.1-SNAPSHOT&lt;version&gt;
+            &lt;optional&gt;true&lt;/optional&gt;
+        &lt;/dependency&gt;
+     --&gt;
+&lt;/dependencies&gt;
+</code></pre>
+
+<p>当我们的AutoConfiguration需要依赖一些外部配置的时候，比如数据库的配置或者当前的HelloService它需要一个msg，那么我们就可以创建一个Configuration的Properties对象，为其定义一个前缀。当被启用的时候，容器托管的配置即自动创建并填充到其ConfigurationProperties对象中。</p>
+
+<pre><code>package com.lihongkun.labs.spring.boot.hello;
+
+import org.springframework.boot.context.properties.ConfigurationProperties;
+
+@ConfigurationProperties(prefix = HelloProperties.HELLO_PREFIX)
+public class HelloProperties {
+
+    public static final String HELLO_PREFIX = &quot;hello&quot;;
+
+    private String msg;
+
+    public String getMsg() {
+        return msg;
+    }
+
+    public void setMsg(String msg) {
+        this.msg = msg;
+    }
+}
+</code></pre>
+
+<p>不同的功能分在不同的AutoConfiguration实现，此处我们实现一个HelloAutoConfiguration，主要用来声明一个HelloService的Bean，这个Bean是条件创建的，也就是你引入后。如果觉得需要自己自定义，可以进行覆盖。HelloAutoConfiguration使用一个注解修饰<code>EnableConfigurationProperties</code>，这个注解的意思即当本类被实例化的时候则启用HelloProperties，创建一个HelloProperties的bean并填充配置值到其中。</p>
+
+<pre><code>package com.lihongkun.labs.spring.boot.hello;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
+@Configuration
+@EnableConfigurationProperties(HelloProperties.class)
+public class HelloAutoConfiguration {
+
+    @Autowired
+    private HelloProperties helloProperties;
+
+    @Bean
+    @ConditionalOnMissingBean
+    public HelloService helloService() {
+        HelloService helloService = new HelloService();
+        helloService.setMsg(helloProperties.getMsg());
+        return helloService;
+    }
+}
+</code></pre>
+
+<p>准备就绪后，还需要一个重要的步骤。META-INF/spring.factories把HelloAutoConfiguration配置进去。格式如下</p>
+
+<pre><code>org.springframework.boot.autoconfigure.EnableAutoConfiguration=com.lihongkun.labs.spring.boot.hello.HelloAutoConfiguration
+</code></pre>
+
+<h4 id="定义starter">定义Starter</h4>
+
+<p>这是一个简单的pom工程，主要用来引入本Starter所需要的依赖，因为autoconfigure工程的optional依赖需要在这里正式引入。</p>
+
+<pre><code>&lt;parent&gt;
+    &lt;artifactId&gt;hello-spring-boot-parent&lt;/artifactId&gt;
+    &lt;groupId&gt;com.lihongkun.labs.spring.boot&lt;/groupId&gt;
+    &lt;version&gt;0.0.1-SNAPSHOT&lt;/version&gt;
+&lt;/parent&gt;
+&lt;modelVersion&gt;4.0.0&lt;/modelVersion&gt;
+
+&lt;artifactId&gt;hello-spring-boot-starter&lt;/artifactId&gt;
+&lt;packaging&gt;pom&lt;/packaging&gt;
+
+&lt;dependencies&gt;
+    &lt;dependency&gt;
+        &lt;artifactId&gt;hello-spring-boot-autoconfigure&lt;/artifactId&gt;
+        &lt;groupId&gt;com.lihongkun.labs.spring.boot&lt;/groupId&gt;
+        &lt;version&gt;0.0.1-SNAPSHOT&lt;/version&gt;
+    &lt;/dependency&gt;
+    &lt;!--
+        本Starter依赖的包，在 autoconfigure 中 引入方式 optional，故此处需要再引入
+        &lt;dependency&gt;
+            &lt;groupId&gt;x.y.z&lt;/groupId&gt;
+            &lt;artifactId&gt;hello&lt;/artifactId&gt;
+        &lt;/dependency&gt;
+    --&gt;
+&lt;/dependencies&gt;
+</code></pre>
+
+<h4 id="使用">使用</h4>
+
+<p>自定义工程本地install或者deploy到仓库中就可以直接进行使用了。</p>
+
+<pre><code>&lt;groupId&gt;com.lihongkun.labs&lt;/groupId&gt;
+&lt;artifactId&gt;hello&lt;/artifactId&gt;
+&lt;version&gt;1.0-SNAPSHOT&lt;/version&gt;
+
+&lt;dependencies&gt;
+    &lt;dependency&gt;
+        &lt;groupId&gt;com.lihongkun.labs.spring.boot&lt;/groupId&gt;
+        &lt;artifactId&gt;hello-spring-boot-starter&lt;/artifactId&gt;
+        &lt;version&gt;0.0.1-SNAPSHOT&lt;/version&gt;
+    &lt;/dependency&gt;
+&lt;/dependencies&gt;
+
+&lt;build&gt;
+    &lt;plugins&gt;
+        &lt;plugin&gt;
+            &lt;groupId&gt;org.apache.maven.plugins&lt;/groupId&gt;
+            &lt;artifactId&gt;maven-compiler-plugin&lt;/artifactId&gt;
+            &lt;version&gt;3.8.0&lt;/version&gt;
+            &lt;configuration&gt;
+                &lt;release&gt;11&lt;/release&gt;
+            &lt;/configuration&gt;
+        &lt;/plugin&gt;
+    &lt;/plugins&gt;
+&lt;/build&gt;
+
+package com.lihongkun.labs;
+
+// Application.java
+import com.lihongkun.labs.spring.boot.hello.HelloService;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.ApplicationContext;
+
+@SpringBootApplication
+public class Application {
+    public static void main(String[] args) {
+        ApplicationContext context = SpringApplication.run(Application.class,args);
+        HelloService helloService = context.getBean(HelloService.class);
+        helloService.sayHello();
+    }
+}
+
+//application.properties
+hello.msg=spring boot stater
+
+// 运行结果
+hello spring boot stater
+</code></pre>
+
+<h4 id="小结">小结</h4>
+
+<p>官方推荐自定义的Starter的<strong>命名方式</strong>是[custom]-spring-boot-starter，把功能寓意的名字放在前面。</p>
+
+<p>工程结构官方也是有推荐的方式，一般公共的功能和自动化配置均放在一个autoconfigure项目中，此项目中除了定义自动化配置的一些AutoConfiguration外，在引入对应依赖的时候均使用optional的方式。原因是这么多功能并不知道使用者需要使用哪一个。</p>
+
+<p>接着定义各个功能的Starter，这类项目中没有java源代码，而是指定功能的依赖，也就是上面用optional所引入的依赖，Spring Boot 使用了很多 ConditionalOn 注解来实现条件加载。比如<code>ConditionalOnClass</code>表示你的classpath下有某个类的字节码才进行自动配置。一旦你引入了某功能的Starter则autoconfigure的AutoConfiguration自动生效。</p>
+                        </div>
+                        <div class="columns is-mobile post-meta">
+                            <div class="column is-half-desktop has-text-left is-paddingless"> 
+                                 
+                                更老一篇:<a href="https://www.lihongkun.com/springframework/springboot/"> Spring Boot 开箱即用</a>
+                                
+                            </div>
+                            <div class="column is-half-desktop has-text-right is-paddingless">
+                                
+                                没有了，已经是最新文章
+                                
+                            </div>
+                            <div class="is-clearfix"></div>
+                        </div>
+                    </article>
+                </div>
+                <div class="column">    <aside>
+        <h2 class="is-size-4">关于我</h2>
+        <div class="content">
+            Working in advertising platform team. Backend on duty,full stack in my own time.
+        </div>
+        <h2 class="is-size-4">GitHub</h2>
+        <div class="content">
+            <a href="https://github.com/lihongkun" target="_blank">https://github.com/lihongkun</a>
+        </div>
+    </aside></div>
+                </div>
+            </div>
+         </main>    <footer class="footer">
+    
+        <div class="copyright has-text-centered">
+            <a href="https://bulma.io">
+                <img src="https://www.lihongkun.com/images/made-with-bulma.png" alt="Made with Bulma" width="128" height="24">
+            </a>
+            <p>© 泛泛之辈 Power by Hugo v0.55.6 - 闽ICP备15009606号</p>
+        </div>
+    </footer>
+    <script type="text/javascript">
+    document.addEventListener('DOMContentLoaded', () => {
+        
+        const $navbarBurgers = Array.prototype.slice.call(document.querySelectorAll('.navbar-burger'), 0);
+        
+        if ($navbarBurgers.length > 0) {
+            
+            $navbarBurgers.forEach( el => {
+                el.addEventListener('click', () => {
+                
+                const target = el.dataset.target;
+                const $target = document.getElementById(target);
+                
+                el.classList.toggle('is-active');
+                $target.classList.toggle('is-active');
+    
+                });
+            });
+        }
+    });
+    </script></body>
+</html>

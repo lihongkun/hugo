@@ -149,6 +149,19 @@
 
 <article class="post box is-radiusless">
     <div class="post-title">
+        <a class="post-title-link" href="/design/online_debug/"><h2 class="is-size-4 has-text-dark">高并发系统的在线诊断日志</h2></a>
+    </div>
+    <div class="post-meta">
+        <span class="post-time">日期 : 2020-04-01</span>
+    </div>
+    <div class="post-excerpt content">
+        <p>线上日志是工程师诊断业务问题的主要依据。在并发量比较小的情况下，关键日志都是全量打印。在QPS到达十万甚至百万量级的服务里面，打印全量业务日志是不现实的。那么在这种情况下，我们如何去跟踪和重现偶发性的业务问题 ？</p>
+    </div>
+    <a href="/design/online_debug/">阅读全文>></a>
+    </article>
+
+<article class="post box is-radiusless">
+    <div class="post-title">
         <a class="post-title-link" href="/common/logback/"><h2 class="is-size-4 has-text-dark">Logback日志框架</h2></a>
     </div>
     <div class="post-meta">
@@ -197,19 +210,6 @@
         <p>序列化和反序列化在线上系统中是一个绕不开的话题，通常作为RPC框架中的一部分而被很多人所忽略。然而它经常成为系统设计或者性能影响因素的一个重要环节。业界有许许多多的序列化库，我们应该如何进行选型，下面我们来简单探讨一下</p>
     </div>
     <a href="/common/serialization/">阅读全文>></a>
-    </article>
-
-<article class="post box is-radiusless">
-    <div class="post-title">
-        <a class="post-title-link" href="/common/serializable_and_hession/"><h2 class="is-size-4 has-text-dark">Serializable和Hession</h2></a>
-    </div>
-    <div class="post-meta">
-        <span class="post-time">日期 : 2019-12-07</span>
-    </div>
-    <div class="post-excerpt content">
-        <p>Serializable是Java提供的原生序列化方式，它提供了配套的ObjectOutputStream和ObjectIutputStream来处理Java对象的序列化读写，解析效率性能比较高，但是消耗的存储却捉襟见肘。很多框架中仅仅作为一个基础实现，但是基本无人使用。比如 Dubbo 框架中并不是使用它作为默认的序列化方式，而是使用hession。下面看看这两种序列化方式的优劣。</p>
-    </div>
-    <a href="/common/serializable_and_hession/">阅读全文>></a>
     </article>
 
 </section>
@@ -540,6 +540,27 @@
         
 
         
+
+        
+
+      
+
+      
+      
+
+    
+
+      
+
+        
+
+        
+
+        
+
+        
+
+        
           
             <span class="space">...</span>
           
@@ -574,7 +595,7 @@
 
       
       
-          <a href="/page/15/" class="page-number">15</a>
+          <a href="/page/16/" class="page-number">16</a>
       
 
         

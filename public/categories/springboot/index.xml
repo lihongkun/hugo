@@ -6,10 +6,19 @@
     <description>Recent content in springboot on 泛泛之辈</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-CN</language>
-    <lastBuildDate>Sat, 01 Aug 2020 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Sun, 02 Aug 2020 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="https://www.lihongkun.com/categories/springboot/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>自定义Spring Boot Starter</title>
+      <link>https://www.lihongkun.com/springframework/custom_springboot_starter/</link>
+      <pubDate>Sun, 02 Aug 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.lihongkun.com/springframework/custom_springboot_starter/</guid>
+      <description>&lt;p&gt;官方提供的Spring Boot Starter涵盖面非常广，几乎所有流行的组件和方案都可以找到对应的封装。不过每个系统总会有自己的公共代码，可以自己进行Starter的封装。&lt;/p&gt;</description>
+    </item>
     
     <item>
       <title>Spring Boot 开箱即用</title>
