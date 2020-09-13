@@ -149,6 +149,31 @@
 
 <article class="post box is-radiusless">
     <div class="post-title">
+        <a class="post-title-link" href="/concurrent/threadpool_implements/"><h2 class="is-size-4 has-text-dark">线程池实现</h2></a>
+    </div>
+    <div class="post-meta">
+        <span class="post-time">日期 : 2018-11-26</span>
+    </div>
+    <div class="post-excerpt content">
+        <h3 id="线程池状态和数量">线程池状态和数量</h3>
+
+<p>ThreadPoolExecutor拥有如下状态 , 它控制着线程是否接收新任务以及当前在队列中或者执行中的任务如何结束.</p>
+
+<p><strong>RUNNING</strong>:  接收新的任务,新建或者放入任务队列</p>
+
+<p><strong>SHUTDOWN</strong>: 不接收新的任务,但是会执行任务队列的中任务</p>
+
+<p><strong>STOP</strong>:     不接收新的任务,不会执行任务队列中的任务,并且停止在执行中的任务</p>
+
+<p><strong>TIDYING</strong>:  任务执行结束,workerCountOf返回 0 ,线程池状态设置为此状态,并执行钩子函数.</p>
+
+<p><strong>TERMINATED</strong>: terminated() 结束</p>
+    </div>
+    <a href="/concurrent/threadpool_implements/">阅读全文>></a>
+    </article>
+
+<article class="post box is-radiusless">
+    <div class="post-title">
         <a class="post-title-link" href="/concurrent/threadpool/"><h2 class="is-size-4 has-text-dark">任务执行与线程池</h2></a>
     </div>
     <div class="post-meta">
@@ -197,19 +222,6 @@
         <p>一般的容器如ArrayList,HashSet和HashMap都不是线程安全的.容器在Java中的地位不言而喻,那么它必然也存在线程安全的版本.线程安全的容器从其并发特性上可以简单分为两类:同步容器和并发容器.</p>
     </div>
     <a href="/concurrent/synchronized_container_and_concurrent_container/">阅读全文>></a>
-    </article>
-
-<article class="post box is-radiusless">
-    <div class="post-title">
-        <a class="post-title-link" href="/concurrent/cyclic_barrier/"><h2 class="is-size-4 has-text-dark">同步工具类 - 栅栏</h2></a>
-    </div>
-    <div class="post-meta">
-        <span class="post-time">日期 : 2018-10-15</span>
-    </div>
-    <div class="post-excerpt content">
-        <p>栅栏类似闭锁,它能阻塞一组线程直到到达某个事件发生.栅栏与闭锁的关键区别在于,所有的线程必须同时到达栅栏位置,才能继续执行.闭锁用于等待事件,而栅栏用于等待其他线程.</p>
-    </div>
-    <a href="/concurrent/cyclic_barrier/">阅读全文>></a>
     </article>
 
 </section>

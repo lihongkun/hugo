@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>linux on 泛泛之辈</title>
+    <link>https://www.lihongkun.com/categories/linux/</link>
+    <description>Recent content in linux on 泛泛之辈</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-CN</language>
+    <lastBuildDate>Sun, 06 Sep 2020 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="https://www.lihongkun.com/categories/linux/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>SHELL命令分组统计</title>
+      <link>https://www.lihongkun.com/linux/awk_group_by/</link>
+      <pubDate>Sun, 06 Sep 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.lihongkun.com/linux/awk_group_by/</guid>
+      <description>&lt;blockquote&gt;
+&lt;p&gt;从一个访问日志中，找出访问最多的IP所有访问的URL列表。&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;这是一个真实的面试题，目的在考察SEHLL基础的使用。对于这个日志所需要关注的信息只有IP和URL。&lt;/p&gt;</description>
+    </item>
+    
+  </channel>
+</rss>

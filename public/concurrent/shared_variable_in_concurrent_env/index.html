@@ -157,37 +157,37 @@
 <p>所谓共享变量，即一个类的静态域或者实例域。先看一个线程不安全的例子。</p>
 
 <pre><code>public static void main(String[] args) {
-	
-	final Counter counter = new Counter();
-	
-	ExecutorService es = Executors.newFixedThreadPool(5);
-	for(int i=0;i&lt;5;i++){
-		es.execute(new Runnable() {
-			@Override
-			public void run() {
-				for(int i=0;i&lt;10000;i++)
-					counter.incr();
-			}
-		});
-	}
-	
-	es.shutdown();
-	while(true){
-		if(es.isTerminated())
-			break;
-	}
-	
-	System.out.println(&quot;final cnt : &quot; + counter.cnt);
-	
+    
+    final Counter counter = new Counter();
+    
+    ExecutorService es = Executors.newFixedThreadPool(5);
+    for(int i=0;i&lt;5;i++){
+        es.execute(new Runnable() {
+            @Override
+            public void run() {
+                for(int i=0;i&lt;10000;i++)
+                    counter.incr();
+            }
+        });
+    }
+    
+    es.shutdown();
+    while(true){
+        if(es.isTerminated())
+            break;
+    }
+    
+    System.out.println(&quot;final cnt : &quot; + counter.cnt);
+    
 }
 
 private static class Counter{
-	
-	public int cnt = 0;
-	
-	public void incr(){
-		cnt++;
-	}
+    
+    public int cnt = 0;
+    
+    public void incr(){
+        cnt++;
+    }
 }
 </code></pre>
 
@@ -201,16 +201,16 @@ private static class Counter{
 
 <pre><code>// 修改后的方式
 private static class Counter{
-		
-	private Object lock = new Object();
-	
-	public int cnt = 0;
-	
-	public void incr(){
-		synchronized (lock) {
-			cnt++;
-		}
-	}
+        
+    private Object lock = new Object();
+    
+    public int cnt = 0;
+    
+    public void incr(){
+        synchronized (lock) {
+            cnt++;
+        }
+    }
 }
 </code></pre>
 
@@ -219,23 +219,23 @@ private static class Counter{
 <p>你也可以使用读写锁，当然这里只是很简单的用法。ReentrantLock可以使用在更高级的场景。在这个简单的自增例子中也是很简单粗暴，基本上体现不出它的优势。</p>
 
 <pre><code>private static class Counter{
-		
-	ReentrantLock lock = new ReentrantLock();
-	
-	public int cnt = 0;
-	
-	public void incr(){
-		lock.lock();
-		try{
-			cnt++;
-		}
-		catch (Exception ex) {
-			// TODO: handle exception
-		}
-		finally {
-			lock.unlock();
-		}
-	}
+        
+    ReentrantLock lock = new ReentrantLock();
+    
+    public int cnt = 0;
+    
+    public void incr(){
+        lock.lock();
+        try{
+            cnt++;
+        }
+        catch (Exception ex) {
+            // TODO: handle exception
+        }
+        finally {
+            lock.unlock();
+        }
+    }
 }
 </code></pre>
 
@@ -244,11 +244,11 @@ private static class Counter{
 <p>JDK 1.5 开始提供了 原子类型，可修改为</p>
 
 <pre><code>private static class Counter{
-		
+        
     public AtomicInteger cnt = new AtomicInteger(0);
     
     public void incr(){
-    	cnt.incrementAndGet();
+        cnt.incrementAndGet();
     }
 }
 </code></pre>
@@ -260,12 +260,12 @@ private static class Counter{
 <p>volatile的语义是被它修饰的变量如果发生变更能立刻被其他线程所见。但是它并不适合自增的场景。</p>
 
 <pre><code>private static class Counter{
-	
-	public volatile int cnt = 0;
-	
-	public void incr(){
-		cnt++;
-	}
+    
+    public volatile int cnt = 0;
+    
+    public void incr(){
+        cnt++;
+    }
 }
 </code></pre>
 
