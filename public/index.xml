@@ -6,10 +6,19 @@
     <description>Recent content on 泛泛之辈</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-CN</language>
-    <lastBuildDate>Sun, 06 Sep 2020 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Sun, 20 Sep 2020 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="https://www.lihongkun.com/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Spring Boot Actuators</title>
+      <link>https://www.lihongkun.com/springframework/springboot_actuators/</link>
+      <pubDate>Sun, 20 Sep 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.lihongkun.com/springframework/springboot_actuators/</guid>
+      <description>&lt;p&gt;Spring Boot 提供了开箱即用的应用监控功能，对于大厂来说可能比较鸡肋，但是对于一些没有基础建设团队的中小公司是非常好用的。&lt;/p&gt;</description>
+    </item>
     
     <item>
       <title>SHELL命令分组统计</title>

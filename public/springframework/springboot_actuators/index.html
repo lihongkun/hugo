@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html><head>
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+
+    
+    <meta name="author"
+            content=""/>
+
+    
+    <meta name="description" content="Spring Boot 提供了开箱即用的应用监控功能，对于大厂来说可能比较鸡肋，但是对于一些没有基础建设团队的中小公司是非常好用的。
+"/>
+    
+
+    
+
+    
+    <link rel="canonical" href="https://www.lihongkun.com/springframework/springboot_actuators/"/>
+
+    
+
+    
+    
+    
+        
+            
+        
+    
+        
+            
+                
+            
+                
+            
+                
+            
+                
+            
+        
+    
+        
+            
+                
+            
+                
+            
+                
+            
+                
+            
+                
+            
+        
+    
+        
+            
+        
+    
+        
+            
+        
+    
+        
+            
+        
+    
+    <title> Spring Boot Actuators | 泛泛之辈 </title>
+
+    <link rel="shortcut icon" href="https://www.lihongkun.com/favicon.jpg"/>
+    <link rel="stylesheet" href="https://www.lihongkun.com/css/bulma.min.css"/>
+    <link rel="stylesheet" href="https://www.lihongkun.com/css/style.css"/>
+</head><body><header>
+    <nav class="navbar is-fixed-top is-primary" role="navigation" aria-label="main navigation">
+        <div class="navbar-brand is-size-4">
+            <a class="navbar-item" href="https://www.lihongkun.com/">
+                    泛泛之辈
+            </a>
+            <a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false" data-target="navbar-menu">
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+            </a>
+        </div>
+        <div id="navbar-menu" class="navbar-menu">
+            <div class="navbar-end">
+                
+                    
+                        <a class="navbar-item" href="/">首页</a>
+                    
+                
+                    
+                        <div class="navbar-item has-dropdown is-hoverable">
+                            <a class="navbar-link">基本功</a>
+                            <div class="navbar-dropdown">
+                                
+                                <a class="navbar-item" href="/categories/concurrent/">并发</a>
+                                
+                                <a class="navbar-item" href="/categories/network/">网络</a>
+                                
+                                <a class="navbar-item" href="/categories/security/">Web安全</a>
+                                
+                                <a class="navbar-item" href="/categories/jvm/">Java虚拟机</a>
+                                
+                            </div>
+                        </div>
+                    
+                
+                    
+                        <div class="navbar-item has-dropdown is-hoverable">
+                            <a class="navbar-link">编程框架</a>
+                            <div class="navbar-dropdown">
+                                
+                                <a class="navbar-item" href="/categories/springframework/">Spring</a>
+                                
+                                <a class="navbar-item" href="/categories/springcloud/">SpringCloud</a>
+                                
+                                <a class="navbar-item" href="/categories/log/">日志</a>
+                                
+                                <a class="navbar-item" href="/categories/serialize/">序列化</a>
+                                
+                                <a class="navbar-item" href="/categories/common/">其他</a>
+                                
+                            </div>
+                        </div>
+                    
+                
+                    
+                        <a class="navbar-item" href="/categories/troubleshooting/">问题排查</a>
+                    
+                
+                    
+                        <a class="navbar-item" href="/categories/design/">设计思路</a>
+                    
+                
+                    
+                        <a class="navbar-item" href="/categories/reading/">读书笔记</a>
+                    
+                
+            </div>
+            </div>
+    </nav>
+</header><main>
+            <div class="container">
+                <div class="columns">
+                <div class="column is-four-fifths">
+                    <article class="post box is-radiusless">
+                        <div class="post-title">
+                            <h2 class="is-size-4">Spring Boot Actuators</h2>
+                        </div>
+                            <div class="post-meta">
+                            <span class="post-time">日期&nbsp;:&nbsp;2020-09-20</span>
+                        </div>
+                        <div class="post-content content">
+                            <p>Spring Boot 提供了开箱即用的应用监控功能，对于大厂来说可能比较鸡肋，但是对于一些没有基础建设团队的中小公司是非常好用的。</p>
+
+<p>使用的时候直接引入对应的包 ，主要是 spring-boot-starter-actuator</p>
+
+<pre><code>&lt;dependencies&gt;
+    &lt;dependency&gt;
+        &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+        &lt;artifactId&gt;spring-boot-starter-actuator&lt;/artifactId&gt;
+    &lt;/dependency&gt;
+    &lt;dependency&gt;
+        &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+        &lt;artifactId&gt;spring-boot-starter-web&lt;/artifactId&gt;
+    &lt;/dependency&gt;
+&lt;/dependencies&gt;
+
+&lt;dependencyManagement&gt;
+    &lt;dependencies&gt;
+        &lt;dependency&gt;
+            &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+            &lt;artifactId&gt;spring-boot-dependencies&lt;/artifactId&gt;
+            &lt;version&gt;2.1.3.RELEASE&lt;/version&gt;
+            &lt;type&gt;pom&lt;/type&gt;
+            &lt;scope&gt;import&lt;/scope&gt;
+        &lt;/dependency&gt;
+    &lt;/dependencies&gt;
+&lt;/dependencyManagement&gt;
+</code></pre>
+
+<p>启动应用程序后，可以使用对应的URI去访问指定的监控内容。</p>
+
+<pre><code>http://domain/actuator
+
+{
+    &quot;_links&quot;:{
+        &quot;self&quot;:{
+            &quot;href&quot;:&quot;http://localhost:8080/actuator&quot;,
+            &quot;templated&quot;:false
+        },
+        &quot;health-component-instance&quot;:{
+            &quot;href&quot;:&quot;http://localhost:8080/actuator/health/{component}/{instance}&quot;,
+            &quot;templated&quot;:true
+        },
+        &quot;health&quot;:{
+            &quot;href&quot;:&quot;http://localhost:8080/actuator/health&quot;,
+            &quot;templated&quot;:false
+        },
+        &quot;health-component&quot;:{
+            &quot;href&quot;:&quot;http://localhost:8080/actuator/health/{component}&quot;,
+            &quot;templated&quot;:true
+        },
+        &quot;info&quot;:{
+            &quot;href&quot;:&quot;http://localhost:8080/actuator/info&quot;,
+            &quot;templated&quot;:false
+        }
+    }
+}
+</code></pre>
+
+<p>因为里面的内容有应用的敏感信息默认开启的endpoint是health和info，如果需要开启更多的内容，进行配置。</p>
+
+<pre><code>// application.properties
+management.endpoints.web.exposure.include=*
+</code></pre>
+
+<p>上面我们配置开启了所有的功能，可以继续从/actuator看出开启的endpoint</p>
+
+<pre><code>{
+    &quot;_links&quot;:{
+        &quot;self&quot;:{
+            &quot;href&quot;:&quot;http://localhost:8080/actuator&quot;,
+            &quot;templated&quot;:false
+        },
+        &quot;auditevents&quot;:{
+            &quot;href&quot;:&quot;http://localhost:8080/actuator/auditevents&quot;,
+            &quot;templated&quot;:false
+        },
+        &quot;beans&quot;:{
+            &quot;href&quot;:&quot;http://localhost:8080/actuator/beans&quot;,
+            &quot;templated&quot;:false
+        },
+        &quot;caches-cache&quot;:{
+            &quot;href&quot;:&quot;http://localhost:8080/actuator/caches/{cache}&quot;,
+            &quot;templated&quot;:true
+        },
+        &quot;caches&quot;:{
+            &quot;href&quot;:&quot;http://localhost:8080/actuator/caches&quot;,
+            &quot;templated&quot;:false
+        },
+        &quot;health-component-instance&quot;:{
+            &quot;href&quot;:&quot;http://localhost:8080/actuator/health/{component}/{instance}&quot;,
+            &quot;templated&quot;:true
+        },
+        &quot;health-component&quot;:{
+            &quot;href&quot;:&quot;http://localhost:8080/actuator/health/{component}&quot;,
+            &quot;templated&quot;:true
+        },
+        &quot;health&quot;:{
+            &quot;href&quot;:&quot;http://localhost:8080/actuator/health&quot;,
+            &quot;templated&quot;:false
+        },
+        &quot;conditions&quot;:{
+            &quot;href&quot;:&quot;http://localhost:8080/actuator/conditions&quot;,
+            &quot;templated&quot;:false
+        },
+        &quot;configprops&quot;:{
+            &quot;href&quot;:&quot;http://localhost:8080/actuator/configprops&quot;,
+            &quot;templated&quot;:false
+        },
+        &quot;env&quot;:{
+            &quot;href&quot;:&quot;http://localhost:8080/actuator/env&quot;,
+            &quot;templated&quot;:false
+        },
+        &quot;env-toMatch&quot;:{
+            &quot;href&quot;:&quot;http://localhost:8080/actuator/env/{toMatch}&quot;,
+            &quot;templated&quot;:true
+        },
+        &quot;info&quot;:{
+            &quot;href&quot;:&quot;http://localhost:8080/actuator/info&quot;,
+            &quot;templated&quot;:false
+        },
+        &quot;loggers&quot;:{
+            &quot;href&quot;:&quot;http://localhost:8080/actuator/loggers&quot;,
+            &quot;templated&quot;:false
+        },
+        &quot;loggers-name&quot;:{
+            &quot;href&quot;:&quot;http://localhost:8080/actuator/loggers/{name}&quot;,
+            &quot;templated&quot;:true
+        },
+        &quot;heapdump&quot;:{
+            &quot;href&quot;:&quot;http://localhost:8080/actuator/heapdump&quot;,
+            &quot;templated&quot;:false
+        },
+        &quot;threaddump&quot;:{
+            &quot;href&quot;:&quot;http://localhost:8080/actuator/threaddump&quot;,
+            &quot;templated&quot;:false
+        },
+        &quot;metrics-requiredMetricName&quot;:{
+            &quot;href&quot;:&quot;http://localhost:8080/actuator/metrics/{requiredMetricName}&quot;,
+            &quot;templated&quot;:true
+        },
+        &quot;metrics&quot;:{
+            &quot;href&quot;:&quot;http://localhost:8080/actuator/metrics&quot;,
+            &quot;templated&quot;:false
+        },
+        &quot;scheduledtasks&quot;:{
+            &quot;href&quot;:&quot;http://localhost:8080/actuator/scheduledtasks&quot;,
+            &quot;templated&quot;:false
+        },
+        &quot;httptrace&quot;:{
+            &quot;href&quot;:&quot;http://localhost:8080/actuator/httptrace&quot;,
+            &quot;templated&quot;:false
+        },
+        &quot;mappings&quot;:{
+            &quot;href&quot;:&quot;http://localhost:8080/actuator/mappings&quot;,
+            &quot;templated&quot;:false
+        }
+    }
+}
+</code></pre>
+
+<p>从上面可以找出不少比较有用的信息线程栈或者堆信息，在线上需要使用启动应用的用户来进行导出，一般是运维同学才有权限，但是这种日常的操作使用管理后台的功能来导出是非常方便的。</p>
+
+<table>
+<thead>
+<tr>
+<th>Endpoint</th>
+<th>功能</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td>/actuator/mappings</td>
+<td>@RequestMapping 定义的HTTP Endpoint的信息</td>
+</tr>
+
+<tr>
+<td>/actuator/threaddump</td>
+<td>当前的线程栈信息</td>
+</tr>
+
+<tr>
+<td>/actuator/heapdump</td>
+<td>当前堆信息</td>
+</tr>
+
+<tr>
+<td>/actuator/beans</td>
+<td>应用实例化的bean的信息</td>
+</tr>
+
+<tr>
+<td>/actuator/caches</td>
+<td>应用的cache相关信息，使用到了Spring CacheManager的组件</td>
+</tr>
+
+<tr>
+<td>/actuator/conditions</td>
+<td>SpringBoot 各类@OnCondition 注解的执行情况</td>
+</tr>
+</tbody>
+</table>
+
+<p>上面几个工具更加倾向于问题的定位，而Spring Boot 2.x后加入的 /actuator/metrics 则是使用了 micrometer进行相关的指标采集，很多开源的监控软件，比如普罗米修斯，可以很容易将其作为数据源对指标进行摄入。</p>
+
+<pre><code>{
+    &quot;names&quot;:[
+        &quot;jvm.threads.states&quot;,
+        &quot;jvm.gc.pause&quot;,
+        &quot;http.server.requests&quot;,
+        &quot;jvm.memory.used&quot;,
+        &quot;jvm.gc.memory.promoted&quot;,
+        &quot;jvm.memory.max&quot;,
+        &quot;jvm.gc.max.data.size&quot;,
+        &quot;jvm.memory.committed&quot;,
+        &quot;system.cpu.count&quot;,
+        &quot;logback.events&quot;,
+        &quot;tomcat.global.sent&quot;,
+        &quot;jvm.buffer.memory.used&quot;,
+        &quot;tomcat.sessions.created&quot;,
+        &quot;jvm.threads.daemon&quot;,
+        &quot;system.cpu.usage&quot;,
+        &quot;jvm.gc.memory.allocated&quot;,
+        &quot;tomcat.global.request.max&quot;,
+        &quot;tomcat.global.request&quot;,
+        &quot;tomcat.sessions.expired&quot;,
+        &quot;jvm.threads.live&quot;,
+        &quot;jvm.threads.peak&quot;,
+        &quot;tomcat.global.received&quot;,
+        &quot;process.uptime&quot;,
+        &quot;tomcat.sessions.rejected&quot;,
+        &quot;process.cpu.usage&quot;,
+        &quot;tomcat.threads.config.max&quot;,
+        &quot;jvm.classes.loaded&quot;,
+        &quot;jvm.classes.unloaded&quot;,
+        &quot;tomcat.global.error&quot;,
+        &quot;tomcat.sessions.active.current&quot;,
+        &quot;tomcat.sessions.alive.max&quot;,
+        &quot;jvm.gc.live.data.size&quot;,
+        &quot;tomcat.threads.current&quot;,
+        &quot;jvm.buffer.count&quot;,
+        &quot;jvm.buffer.total.capacity&quot;,
+        &quot;tomcat.sessions.active.max&quot;,
+        &quot;tomcat.threads.busy&quot;,
+        &quot;process.start.time&quot;
+    ]
+}
+</code></pre>
+
+<p>/actuator/metrics 所采集的指标如上所示，可以根据上面的单个进行采集。比如其中的/actuator/metrics/jvm.memory.used 表示JVM的内存的使用情况。访问后返回的结果是</p>
+
+<pre><code>{
+    &quot;name&quot;:&quot;jvm.memory.used&quot;,
+    &quot;description&quot;:&quot;The amount of used memory&quot;,
+    &quot;baseUnit&quot;:&quot;bytes&quot;,
+    &quot;measurements&quot;:[
+        {
+            &quot;statistic&quot;:&quot;VALUE&quot;,
+            &quot;value&quot;:95404360
+        }
+    ],
+    &quot;availableTags&quot;:[
+        {
+            &quot;tag&quot;:&quot;area&quot;,
+            &quot;values&quot;:[
+                &quot;heap&quot;,
+                &quot;nonheap&quot;
+            ]
+        },
+        {
+            &quot;tag&quot;:&quot;id&quot;,
+            &quot;values&quot;:[
+                &quot;CodeHeap 'profiled nmethods'&quot;,
+                &quot;G1 Old Gen&quot;,
+                &quot;CodeHeap 'non-profiled nmethods'&quot;,
+                &quot;G1 Survivor Space&quot;,
+                &quot;Compressed Class Space&quot;,
+                &quot;Metaspace&quot;,
+                &quot;G1 Eden Space&quot;,
+                &quot;CodeHeap 'non-nmethods'&quot;
+            ]
+        }
+    ]
+}
+</code></pre>
+
+<p>有了这些基础的功能，做一个集中式的监控系统就更加方便了。事实上，开源社区贡献的 spring-boot-admin 就是在此为基础上做了一个 管理平台。可以比较方便地使用上述功能。</p>
+                        </div>
+                        <div class="columns is-mobile post-meta">
+                            <div class="column is-half-desktop has-text-left is-paddingless"> 
+                                 
+                                更老一篇:<a href="https://www.lihongkun.com/springframework/custom_springboot_starter/"> 自定义Spring Boot Starter</a>
+                                
+                            </div>
+                            <div class="column is-half-desktop has-text-right is-paddingless">
+                                
+                                没有了，已经是最新文章
+                                
+                            </div>
+                            <div class="is-clearfix"></div>
+                        </div>
+                    </article>
+                </div>
+                <div class="column">    <aside>
+        <h2 class="is-size-4">关于我</h2>
+        <div class="content">
+            Working in advertising platform team. Backend on duty,full stack in my own time.
+        </div>
+        <h2 class="is-size-4">GitHub</h2>
+        <div class="content">
+            <a href="https://github.com/lihongkun" target="_blank">https://github.com/lihongkun</a>
+        </div>
+    </aside></div>
+                </div>
+            </div>
+         </main>    <footer class="footer">
+    
+        <div class="copyright has-text-centered">
+            <a href="https://bulma.io">
+                <img src="https://www.lihongkun.com/images/made-with-bulma.png" alt="Made with Bulma" width="128" height="24">
+            </a>
+            <p>© 泛泛之辈 Power by Hugo v0.55.6 - 闽ICP备15009606号</p>
+        </div>
+    </footer>
+    <script type="text/javascript">
+    document.addEventListener('DOMContentLoaded', () => {
+        
+        const $navbarBurgers = Array.prototype.slice.call(document.querySelectorAll('.navbar-burger'), 0);
+        
+        if ($navbarBurgers.length > 0) {
+            
+            $navbarBurgers.forEach( el => {
+                el.addEventListener('click', () => {
+                
+                const target = el.dataset.target;
+                const $target = document.getElementById(target);
+                
+                el.classList.toggle('is-active');
+                $target.classList.toggle('is-active');
+    
+                });
+            });
+        }
+    });
+    </script></body>
+</html>

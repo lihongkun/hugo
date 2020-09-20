@@ -149,6 +149,19 @@
 
 <article class="post box is-radiusless">
     <div class="post-title">
+        <a class="post-title-link" href="/jvm/garbage_collector/"><h2 class="is-size-4 has-text-dark">Java垃圾收集器概览</h2></a>
+    </div>
+    <div class="post-meta">
+        <span class="post-time">日期 : 2019-06-18</span>
+    </div>
+    <div class="post-excerpt content">
+        <p>经过多年的发展Java的垃圾收集器也在不断地进步 , 截止目前存在五种垃圾收集器, 分别适用在不同的场景 . 不同版本的JDK默认的垃圾收集器和所支持的垃圾收集器可能会不一致</p>
+    </div>
+    <a href="/jvm/garbage_collector/">阅读全文>></a>
+    </article>
+
+<article class="post box is-radiusless">
+    <div class="post-title">
         <a class="post-title-link" href="/reading/orthogonality/"><h2 class="is-size-4 has-text-dark">正交性</h2></a>
     </div>
     <div class="post-meta">
@@ -197,26 +210,6 @@
         <p>在JDK1.4出来之前,建立网络连接的时候采用BIO模式,下面以EchoServer为例子聊聊Java的阻塞IO.</p>
     </div>
     <a href="/network/java_bio/">阅读全文>></a>
-    </article>
-
-<article class="post box is-radiusless">
-    <div class="post-title">
-        <a class="post-title-link" href="/network/network_io_model/"><h2 class="is-size-4 has-text-dark">网络IO模型</h2></a>
-    </div>
-    <div class="post-meta">
-        <span class="post-time">日期 : 2019-02-25</span>
-    </div>
-    <div class="post-excerpt content">
-        <p>一次网络IO 的调用涉及到用户进程和系统内核对象 , 以读为例.</p>
-
-<ol>
-<li>等待网络上的数据分组到达,并复制到内核的缓冲区</li>
-<li>内核缓冲区数据复制到用户进程中,也就是调用网络IO进程的缓冲区.</li>
-</ol>
-
-<p>常见的IO模型有五种, 不同的IO模型在这两个阶段的处理上各不相同.</p>
-    </div>
-    <a href="/network/network_io_model/">阅读全文>></a>
     </article>
 
 </section>
