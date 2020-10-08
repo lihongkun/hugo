@@ -9,17 +9,18 @@
             content=""/>
 
     
+    <meta name="description" content="在WEB领域里面，随着前后端分离，后端的HTTP接口便需要去维护一份大而全的Rest API，一个比较靠谱的文档工具是必不可少的。
+"/>
+    
+
+    
+
+    
+    <link rel="canonical" href="https://www.lihongkun.com/springframework/springboot_openapi/"/>
 
     
 
     
-    <link rel="canonical" href="https://www.lihongkun.com/categories/springframework/"/>
-
-    
-    <link rel="alternate" type="application/rss&#43;xml" href="https://www.lihongkun.com/categories/springframework/index.xml">
-    
-
-    
     
     
         
@@ -41,9 +42,6 @@
         
             
                 
-                    
-
-                
             
                 
             
@@ -67,7 +65,7 @@
             
         
     
-    <title> Spring  |  泛泛之辈  </title>
+    <title> Spring Boot使用OpenAPI规范 | 泛泛之辈 </title>
 
     <link rel="shortcut icon" href="https://www.lihongkun.com/favicon.jpg"/>
     <link rel="stylesheet" href="https://www.lihongkun.com/css/bulma.min.css"/>
@@ -145,152 +143,139 @@
 </header><main>
             <div class="container">
                 <div class="columns">
-                <div class="column is-four-fifths"><section class="posts">
+                <div class="column is-four-fifths">
+                    <article class="post box is-radiusless">
+                        <div class="post-title">
+                            <h2 class="is-size-4">Spring Boot使用OpenAPI规范</h2>
+                        </div>
+                            <div class="post-meta">
+                            <span class="post-time">日期&nbsp;:&nbsp;2020-10-08</span>
+                        </div>
+                        <div class="post-content content">
+                            <p>在WEB领域里面，随着前后端分离，后端的HTTP接口便需要去维护一份大而全的Rest API，一个比较靠谱的文档工具是必不可少的。</p>
 
-<article class="post box is-radiusless">
-    <div class="post-title">
-        <a class="post-title-link" href="/springframework/springboot_openapi/"><h2 class="is-size-4 has-text-dark">Spring Boot使用OpenAPI规范</h2></a>
-    </div>
-    <div class="post-meta">
-        <span class="post-time">日期 : 2020-10-08</span>
-    </div>
-    <div class="post-excerpt content">
-        <p>在WEB领域里面，随着前后端分离，后端的HTTP接口便需要去维护一份大而全的Rest API，一个比较靠谱的文档工具是必不可少的。</p>
-    </div>
-    <a href="/springframework/springboot_openapi/">阅读全文>></a>
-    </article>
+<p>迭代中的系统，随着时间的推移，以前提供出去的接口，很快就会发生变化。同时去维护代码和接口文档，意味着工作量的增加，或者种种其他原因，导致接口和文档的不同步是家常便饭的事情。</p>
 
-<article class="post box is-radiusless">
-    <div class="post-title">
-        <a class="post-title-link" href="/springframework/springboot_actuators/"><h2 class="is-size-4 has-text-dark">Spring Boot Actuators</h2></a>
-    </div>
-    <div class="post-meta">
-        <span class="post-time">日期 : 2020-09-20</span>
-    </div>
-    <div class="post-excerpt content">
-        <p>Spring Boot 提供了开箱即用的应用监控功能，对于大厂来说可能比较鸡肋，但是对于一些没有基础建设团队的中小公司是非常好用的。</p>
-    </div>
-    <a href="/springframework/springboot_actuators/">阅读全文>></a>
-    </article>
+<p>那么如果文档是由代码注释或者类似的方式生成，便可以在一定程度上避免这样的事情。常规的方案就是使用OpenAPI规范，它的前身即大名鼎鼎的Swagger。</p>
 
-<article class="post box is-radiusless">
-    <div class="post-title">
-        <a class="post-title-link" href="/springframework/custom_springboot_starter/"><h2 class="is-size-4 has-text-dark">自定义Spring Boot Starter</h2></a>
-    </div>
-    <div class="post-meta">
-        <span class="post-time">日期 : 2020-08-02</span>
-    </div>
-    <div class="post-excerpt content">
-        <p>官方提供的Spring Boot Starter涵盖面非常广，几乎所有流行的组件和方案都可以找到对应的封装。不过每个系统总会有自己的公共代码，可以自己进行Starter的封装。</p>
-    </div>
-    <a href="/springframework/custom_springboot_starter/">阅读全文>></a>
-    </article>
+<h4 id="如何使用">如何使用</h4>
 
-<article class="post box is-radiusless">
-    <div class="post-title">
-        <a class="post-title-link" href="/springframework/springboot/"><h2 class="is-size-4 has-text-dark">Spring Boot 开箱即用</h2></a>
-    </div>
-    <div class="post-meta">
-        <span class="post-time">日期 : 2020-08-01</span>
-    </div>
-    <div class="post-excerpt content">
-        <p>新建一个工程需要做很多的基础工作，依赖包引入，基础组件的配置。在微服务大行其道的今天，建立一个新工程是一个家常便饭的事情。其中的工作繁琐且容易出错。在Spring Boot 未出现之前，很多脚手架的项目用来解决这类通用的问题。Spring Boot出现之后，大多也都是转移到它身上了。</p>
-    </div>
-    <a href="/springframework/springboot/">阅读全文>></a>
-    </article>
+<p>首先引入依赖</p>
 
-<article class="post box is-radiusless">
-    <div class="post-title">
-        <a class="post-title-link" href="/springframework/spring_annotation/"><h2 class="is-size-4 has-text-dark">Spring 注解配置</h2></a>
-    </div>
-    <div class="post-meta">
-        <span class="post-time">日期 : 2020-07-25</span>
-    </div>
-    <div class="post-excerpt content">
-        <p>Spring Bean 的注解配置功能出现的比较早，但是开始流行却是由于SpringBoot的推动。初期只是提供几个注解简化一些配置，使用context:annotation-config来启用。随着AnnotationApplicationContext的出现，注解逐渐丰富，慢慢形成了一种 Java Config的体系，从而摆脱了XML。</p>
-    </div>
-    <a href="/springframework/spring_annotation/">阅读全文>></a>
-    </article>
+<pre><code>&lt;dependencies&gt;
+    &lt;dependency&gt;
+        &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+        &lt;artifactId&gt;spring-boot-starter-web&lt;/artifactId&gt;
+    &lt;/dependency&gt;
+    &lt;dependency&gt;
+        &lt;groupId&gt;org.springdoc&lt;/groupId&gt;
+        &lt;artifactId&gt;springdoc-openapi-ui&lt;/artifactId&gt;
+        &lt;version&gt;1.4.7&lt;/version&gt;
+    &lt;/dependency&gt;
+&lt;/dependencies&gt;
 
-</section>
+&lt;dependencyManagement&gt;
+    &lt;dependencies&gt;
+        &lt;dependency&gt;
+            &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+            &lt;artifactId&gt;spring-boot-dependencies&lt;/artifactId&gt;
+            &lt;version&gt;2.1.3.RELEASE&lt;/version&gt;
+            &lt;type&gt;pom&lt;/type&gt;
+            &lt;scope&gt;import&lt;/scope&gt;
+        &lt;/dependency&gt;
+    &lt;/dependencies&gt;
+&lt;/dependencyManagement&gt;
+</code></pre>
 
+<p>启动后访问地址 <em>ip:port/swagger-ui/index.html</em> , 可以看到一个Swagge UI的界面，即可正常进行使用了，默认打开示例。</p>
 
+<p><img src="swagger-ui.jpg" alt="" /></p>
 
+<h4 id="注解">注解</h4>
 
+<p>OpenAPI 是Swagger v3 ，所使用的注解跟原来的有所区别。主要的一些注解如以下表格</p>
 
+<table>
+<thead>
+<tr>
+<th>OpenAPI</th>
+<th>swagger</th>
+<th>作用</th>
+</tr>
+</thead>
 
+<tbody>
+<tr>
+<td>@Tag</td>
+<td>@Api</td>
+<td>标签，表示请求类的作用</td>
+</tr>
 
+<tr>
+<td>@Operation</td>
+<td>@ApiOperation</td>
+<td>描述请求方法</td>
+</tr>
 
+<tr>
+<td>@Parameter</td>
+<td>@ApiParam</td>
+<td>描述接口参数</td>
+</tr>
 
+<tr>
+<td>@Schema</td>
+<td>@ApiModel</td>
+<td>描述模型</td>
+</tr>
 
+<tr>
+<td>@ApiResponse</td>
+<td>@ApiResponse</td>
+<td>描述返回的结果，包含返回码，信息等</td>
+</tr>
+</tbody>
+</table>
 
+<h4 id="交互式文档">交互式文档</h4>
 
+<p><em>ip:port/swagger-ui/index.html</em>  开启的时候使用的是默认示例。当我们给自己的接口写上加上OpenAPI的注解后，可以在Swagger界面的Explore框里面填入/v3/api-docs/点击explore按钮来查看。</p>
 
+<p><img src="api-docs.jpg" alt="" /></p>
 
-<nav class="page-nav">
-    
+<p>点开其中一个方法，有具体的描述，方法的用处，参数和返回等上述注解中所定义的内容。</p>
 
-    
+<p><img src="try-it-out.jpg" alt="" /></p>
 
-      
+<p>点击右上角的【try it out】按钮，则可以出现一个模拟请求的交互界面。</p>
 
-        
+<p><img src="try-it-out-result.jpg" alt="" /></p>
 
-      
+<p>填入对应的参数，然后点击【Execute】按钮即可发起请求，然后在Responses看到对应的结果。同时也有Curl和Request URL给出，可以比较方便地复制到其他地方使用。</p>
 
-      
-      
-          <a href="/categories/springframework/" class="page-number current">1</a>
-      
+<p>这种交互性的文档对于开发者来说比较有用，可以不用再自己去装一个postman来做模拟请求。</p>
 
-    
+<p>对于有条件的团队，有自己的文档平台，那么可以通过  <em>ip:port//v3/api-docs/</em> 来获取文档的内容，Swagger也只是提供了一个交互界面来呈现文档。</p>
 
-      
+<h4 id="结语">结语</h4>
 
-        
-
-      
-
-      
-      
-          <a href="/categories/springframework/page/2/" class="page-number">2</a>
-      
-
-    
-
-      
-
-        
-
-      
-
-      
-      
-          <a href="/categories/springframework/page/3/" class="page-number">3</a>
-      
-
-    
-
-      
-
-        
-
-      
-
-      
-      
-          <a href="/categories/springframework/page/4/" class="page-number">4</a>
-      
-
-        
-
-
-    
-      <a href="/categories/springframework/page/2/" class="extend next">下一页</a>
-    
-
-</nav>
-</div>
+<p>OpenAPI规范，定义了一套文档标准，并提供了默认实现以及方便使用的交互性文档界面。但是注解对应用的侵入性比较大。</p>
+                        </div>
+                        <div class="columns is-mobile post-meta">
+                            <div class="column is-half-desktop has-text-left is-paddingless"> 
+                                 
+                                更老一篇:<a href="https://www.lihongkun.com/springframework/springboot_actuators/"> Spring Boot Actuators</a>
+                                
+                            </div>
+                            <div class="column is-half-desktop has-text-right is-paddingless">
+                                
+                                没有了，已经是最新文章
+                                
+                            </div>
+                            <div class="is-clearfix"></div>
+                        </div>
+                    </article>
+                </div>
                 <div class="column">    <aside>
         <h2 class="is-size-4">关于我</h2>
         <div class="content">

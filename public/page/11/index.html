@@ -149,6 +149,19 @@
 
 <article class="post box is-radiusless">
     <div class="post-title">
+        <a class="post-title-link" href="/concurrent/blocking_queue/"><h2 class="is-size-4 has-text-dark">阻塞队列</h2></a>
+    </div>
+    <div class="post-meta">
+        <span class="post-time">日期 : 2018-11-05</span>
+    </div>
+    <div class="post-excerpt content">
+        <p>阻塞队列(BlockingQueue)提供了可阻塞的put和take方法,以及支持定时的offer和pull.如果队列已经满了,那么put方法将阻塞到有空间可用;如果队列为空那么take方法将阻塞到有元素可用.</p>
+    </div>
+    <a href="/concurrent/blocking_queue/">阅读全文>></a>
+    </article>
+
+<article class="post box is-radiusless">
+    <div class="post-title">
         <a class="post-title-link" href="/concurrent/synchronized_container_and_concurrent_container/"><h2 class="is-size-4 has-text-dark">同步容器和并发容器</h2></a>
     </div>
     <div class="post-meta">
@@ -197,19 +210,6 @@
         <p>很多时候使用dubbo,gRPC等关注度主要在内部的服务化 , 反而容易忽略了用微服务的思想去设计对外的HTTP接口,导致HTTP接入业务层的边界服务重复且混乱不堪. 最近有一次比较大的重构 , 聊聊一些思路.</p>
     </div>
     <a href="/design/an_open_api_design_evolution/">阅读全文>></a>
-    </article>
-
-<article class="post box is-radiusless">
-    <div class="post-title">
-        <a class="post-title-link" href="/concurrent/abstract_queued_synchronizer/"><h2 class="is-size-4 has-text-dark">AbstractQueuedSynchronizer</h2></a>
-    </div>
-    <div class="post-meta">
-        <span class="post-time">日期 : 2018-09-10</span>
-    </div>
-    <div class="post-excerpt content">
-        <p>AbstractQueuedSynchronizer是JDK并发包里面很多同步类的基础框架.在简单了解了自旋锁和CLH锁之后再来了解下JDK里面的实现.</p>
-    </div>
-    <a href="/concurrent/abstract_queued_synchronizer/">阅读全文>></a>
     </article>
 
 </section>
