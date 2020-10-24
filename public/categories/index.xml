@@ -6,10 +6,37 @@
     <description>Recent content in Categories on 泛泛之辈</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-CN</language>
-    <lastBuildDate>Thu, 08 Oct 2020 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Sun, 11 Oct 2020 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="https://www.lihongkun.com/categories/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>mockito</title>
+      <link>https://www.lihongkun.com/categories/mockito/</link>
+      <pubDate>Sun, 11 Oct 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.lihongkun.com/categories/mockito/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>springframework</title>
+      <link>https://www.lihongkun.com/categories/springframework/</link>
+      <pubDate>Sun, 11 Oct 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.lihongkun.com/categories/springframework/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>unit test</title>
+      <link>https://www.lihongkun.com/categories/unit-test/</link>
+      <pubDate>Sun, 11 Oct 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.lihongkun.com/categories/unit-test/</guid>
+      <description></description>
+    </item>
     
     <item>
       <title>OpenAPI</title>
@@ -17,15 +44,6 @@
       <pubDate>Thu, 08 Oct 2020 00:00:00 +0000</pubDate>
       
       <guid>https://www.lihongkun.com/categories/openapi/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>springframework</title>
-      <link>https://www.lihongkun.com/categories/springframework/</link>
-      <pubDate>Thu, 08 Oct 2020 00:00:00 +0000</pubDate>
-      
-      <guid>https://www.lihongkun.com/categories/springframework/</guid>
       <description></description>
     </item>
     
@@ -75,7 +93,7 @@
     </item>
     
     <item>
-      <title>java</title>
+      <title>java&#34;</title>
       <link>https://www.lihongkun.com/categories/java/</link>
       <pubDate>Sun, 03 May 2020 00:00:00 +0000</pubDate>
       

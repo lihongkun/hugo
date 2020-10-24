@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html><head>
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+
+    
+    <meta name="author"
+            content=""/>
+
+    
+    <meta name="description" content="单元测试对于一个开发来说是一个基本素养。Java这方面的工业标准是使用JUnit。在使用了Spring框架及其衍生的相关框架后，会有不同程度的变化。
+"/>
+    
+
+    
+
+    
+    <link rel="canonical" href="https://www.lihongkun.com/springframework/spring_unit_test/"/>
+
+    
+
+    
+    
+    
+        
+            
+        
+    
+        
+            
+                
+            
+                
+            
+                
+            
+                
+            
+        
+    
+        
+            
+                
+            
+                
+            
+                
+            
+                
+            
+                
+            
+        
+    
+        
+            
+        
+    
+        
+            
+        
+    
+        
+            
+        
+    
+    <title> Spring 单元测试 | 泛泛之辈 </title>
+
+    <link rel="shortcut icon" href="https://www.lihongkun.com/favicon.jpg"/>
+    <link rel="stylesheet" href="https://www.lihongkun.com/css/bulma.min.css"/>
+    <link rel="stylesheet" href="https://www.lihongkun.com/css/style.css"/>
+</head><body><header>
+    <nav class="navbar is-fixed-top is-primary" role="navigation" aria-label="main navigation">
+        <div class="navbar-brand is-size-4">
+            <a class="navbar-item" href="https://www.lihongkun.com/">
+                    泛泛之辈
+            </a>
+            <a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false" data-target="navbar-menu">
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+            </a>
+        </div>
+        <div id="navbar-menu" class="navbar-menu">
+            <div class="navbar-end">
+                
+                    
+                        <a class="navbar-item" href="/">首页</a>
+                    
+                
+                    
+                        <div class="navbar-item has-dropdown is-hoverable">
+                            <a class="navbar-link">基本功</a>
+                            <div class="navbar-dropdown">
+                                
+                                <a class="navbar-item" href="/categories/concurrent/">并发</a>
+                                
+                                <a class="navbar-item" href="/categories/network/">网络</a>
+                                
+                                <a class="navbar-item" href="/categories/security/">Web安全</a>
+                                
+                                <a class="navbar-item" href="/categories/jvm/">Java虚拟机</a>
+                                
+                            </div>
+                        </div>
+                    
+                
+                    
+                        <div class="navbar-item has-dropdown is-hoverable">
+                            <a class="navbar-link">编程框架</a>
+                            <div class="navbar-dropdown">
+                                
+                                <a class="navbar-item" href="/categories/springframework/">Spring</a>
+                                
+                                <a class="navbar-item" href="/categories/springcloud/">SpringCloud</a>
+                                
+                                <a class="navbar-item" href="/categories/log/">日志</a>
+                                
+                                <a class="navbar-item" href="/categories/serialize/">序列化</a>
+                                
+                                <a class="navbar-item" href="/categories/common/">其他</a>
+                                
+                            </div>
+                        </div>
+                    
+                
+                    
+                        <a class="navbar-item" href="/categories/troubleshooting/">问题排查</a>
+                    
+                
+                    
+                        <a class="navbar-item" href="/categories/design/">设计思路</a>
+                    
+                
+                    
+                        <a class="navbar-item" href="/categories/reading/">读书笔记</a>
+                    
+                
+            </div>
+            </div>
+    </nav>
+</header><main>
+            <div class="container">
+                <div class="columns">
+                <div class="column is-four-fifths">
+                    <article class="post box is-radiusless">
+                        <div class="post-title">
+                            <h2 class="is-size-4">Spring 单元测试</h2>
+                        </div>
+                            <div class="post-meta">
+                            <span class="post-time">日期&nbsp;:&nbsp;2020-10-11</span>
+                        </div>
+                        <div class="post-content content">
+                            <p>单元测试对于一个开发来说是一个基本素养。Java这方面的工业标准是使用JUnit。在使用了Spring框架及其衍生的相关框架后，会有不同程度的变化。</p>
+
+<p>最基础的用法即使用Spring容器的相关功能，即使这样也需要使用到Spring单元测试相关的支持。</p>
+
+<pre><code>&lt;dependencies&gt;
+    &lt;dependency&gt;
+        &lt;groupId&gt;junit&lt;/groupId&gt;
+        &lt;artifactId&gt;junit&lt;/artifactId&gt;
+        &lt;version&gt;4.13&lt;/version&gt;
+        &lt;scope&gt;test&lt;/scope&gt;
+    &lt;/dependency&gt;
+    &lt;dependency&gt;
+        &lt;groupId&gt;org.springframework&lt;/groupId&gt;
+        &lt;artifactId&gt;spring-test&lt;/artifactId&gt;
+        &lt;scope&gt;test&lt;/scope&gt;
+    &lt;/dependency&gt;
+&lt;/dependencies&gt;
+
+&lt;dependencyManagement&gt;
+    &lt;dependencies&gt;
+        &lt;dependency&gt;
+            &lt;groupId&gt;org.springframework&lt;/groupId&gt;
+            &lt;artifactId&gt;spring-framework-bom&lt;/artifactId&gt;
+            &lt;version&gt;5.2.6.RELEASE&lt;/version&gt;
+            &lt;type&gt;pom&lt;/type&gt;
+            &lt;scope&gt;import&lt;/scope&gt;
+        &lt;/dependency&gt;
+    &lt;/dependencies&gt;
+&lt;/dependencyManagement&gt;
+</code></pre>
+
+<p>首先需要引入junit和Spring-test包。然后编写单元测试类。</p>
+
+<pre><code>@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(locations = {&quot;classpath:lifecycle.xml&quot;})
+public class LifeCycleTest {
+
+    @Autowired
+    private ApplicationContext applicationContext;
+
+    @Test
+    public void test(){
+        applicationContext.getBean(&quot;lifeCycleBean&quot;);
+    }
+}
+</code></pre>
+
+<p>使用RunWith注解去指定单元测试使用SpringJUnit4ClassRunner来启动。ContextConfiguration注解指定了ApplicationContext的bean定义文件。其他的操作跟 JUnit 没什么区别了，实现单元测试方法，然后方法加上Test注解即可每个方法进行测试用例的执行。</p>
+
+<h4 id="spring-boot-单元测试">Spring Boot 单元测试</h4>
+
+<p>越来越多的应用并不会直接裸用Spring进行开发，而是使用Spring Boot。对于单元测试，它也对其进行了一些简化。</p>
+
+<pre><code>&lt;dependencies&gt;
+    &lt;dependency&gt;
+        &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+        &lt;artifactId&gt;spring-boot-starter-web&lt;/artifactId&gt;
+    &lt;/dependency&gt;
+    &lt;dependency&gt;
+        &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+        &lt;artifactId&gt;spring-boot-starter-test&lt;/artifactId&gt;
+        &lt;scope&gt;test&lt;/scope&gt;
+    &lt;/dependency&gt;
+    &lt;dependency&gt;
+        &lt;groupId&gt;junit&lt;/groupId&gt;
+        &lt;artifactId&gt;junit&lt;/artifactId&gt;
+        &lt;version&gt;4.13&lt;/version&gt;
+        &lt;scope&gt;test&lt;/scope&gt;
+    &lt;/dependency&gt;
+&lt;/dependencies&gt;
+</code></pre>
+
+<p>同样需要引入对应的依赖，分别是junit 和 spring-boot-starter-test ，这里要对Controller进行测试需要引入依赖和编写对应的代码。</p>
+
+<pre><code>//HelloController.java
+
+@RestController
+public class HelloController {
+
+    @RequestMapping(&quot;/hello&quot;)
+    public String hello(){
+        return &quot;hello mvc mock&quot;;
+    }
+}
+
+//Application.java
+@SpringBootApplication
+public class Application {
+    public static void main(String[] args) {
+        SpringApplication.run(Application.class,args);
+    }
+}
+</code></pre>
+
+<p>需要单元测试的代码如上，这是一个MVC的应用，需要使用到MvcMock。</p>
+
+<pre><code>@RunWith(SpringRunner.class)
+@SpringBootTest
+public class HelloControllerTest {
+
+    @Autowired
+    private WebApplicationContext context;
+
+    private MockMvc mockMvc;
+
+    @Before
+    public void init() {
+        mockMvc = MockMvcBuilders.webAppContextSetup(context).build();
+    }
+
+    @Test
+    public void testHello() throws Exception {
+        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.get(&quot;/hello&quot;).content(&quot;&quot;))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andDo(MockMvcResultHandlers.print())
+                .andReturn();
+        System.out.println(mvcResult.getResponse().getContentAsString());
+    }
+}
+</code></pre>
+
+<p><code>SpringBootTest</code> 注解会直接找到对应的Spring Boot 启动类，在单元测试的时候进行启动。而MockMvc是直接通过网络对启动的应用程序进行模拟请求。MockMvcRequestBuilders可以很方便地进行参数或者HTTP协议相关的配置。</p>
+
+<p>对于MvcMock可能会是否有必要学习和使用的疑问，比如在实际的生产过程中使用的OpenAPI，或者自己手动整理的CURL往往能够更加通用。但是单元测试是跟随着编译过程的，能够提早发现问题。他们在软件开发的不同生命周期中。</p>
+
+<h4 id="mockito">Mockito</h4>
+
+<p>很多应用并不是独立存在的，它需要跟外部进行交互。这样的应用单元测试如果要完完整整跑下来，则需要数据库、第三方接口。这些都是不确定的因素，比如第三方接口并不一定会如你的预期，或者数据库的脏数据等等。都可能导致你的单元测试崩溃。</p>
+
+<p>最好的方式就是让你的单元测试程序跟外部依赖解耦。这时候就需要Mock了，在单元测试中如果遇到外部依赖，则给自己返回恰当的值。</p>
+
+<p>引入依赖包</p>
+
+<pre><code>&lt;dependency&gt;
+    &lt;groupId&gt;org.mockito&lt;/groupId&gt;
+    &lt;artifactId&gt;mockito-core&lt;/artifactId&gt;
+    &lt;version&gt;3.5.15&lt;/version&gt;
+    &lt;scope&gt;test&lt;/scope&gt;
+&lt;/dependency&gt;
+</code></pre>
+
+<p>编写的测试代码如下</p>
+
+<pre><code>@RunWith(JUnit4.class)
+public class MockitoTest {
+
+    @Test
+    public void test(){
+        //You can mock concrete classes, not just interfaces
+        LinkedList mockedList = mock(LinkedList.class);
+
+        //stubbing
+        when(mockedList.get(0)).thenReturn(&quot;first&quot;);
+        when(mockedList.get(1)).thenThrow(new RuntimeException());
+
+        //following prints &quot;first&quot;
+        System.out.println(mockedList.get(0));
+
+        //following prints &quot;null&quot; because get(999) was not stubbed
+        System.out.println(mockedList.get(999));
+
+        //following throws runtime exception
+        System.out.println(mockedList.get(1));
+    }
+}
+</code></pre>
+
+<p>mock 用来包装一个返回，这里可以是一个接口的方法调用或者其他。上述是模拟返回一个LinkedList，并对其返回进行定义，然后进行测试。运行结果如下</p>
+
+<pre><code>first
+null
+
+java.lang.RuntimeException
+    ....
+</code></pre>
+
+<p>when&hellip;thenReturn  和 when&hellip;thenThrow 分别定义的mockList的行为，执行结果与定义的一致。</p>
+
+<p>官方文档 <a href="http://www.javadoc.io/doc/org.mockito/mockito-core/2.8.47/org/mockito/Mockito.html">http://www.javadoc.io/doc/org.mockito/mockito-core/2.8.47/org/mockito/Mockito.html</a></p>
+                        </div>
+                        <div class="columns is-mobile post-meta">
+                            <div class="column is-half-desktop has-text-left is-paddingless"> 
+                                 
+                                更老一篇:<a href="https://www.lihongkun.com/springframework/springboot_openapi/"> Spring Boot使用OpenAPI规范</a>
+                                
+                            </div>
+                            <div class="column is-half-desktop has-text-right is-paddingless">
+                                
+                                没有了，已经是最新文章
+                                
+                            </div>
+                            <div class="is-clearfix"></div>
+                        </div>
+                    </article>
+                </div>
+                <div class="column">    <aside>
+        <h2 class="is-size-4">关于我</h2>
+        <div class="content">
+            Working in advertising platform team. Backend on duty,full stack in my own time.
+        </div>
+        <h2 class="is-size-4">GitHub</h2>
+        <div class="content">
+            <a href="https://github.com/lihongkun" target="_blank">https://github.com/lihongkun</a>
+        </div>
+    </aside></div>
+                </div>
+            </div>
+         </main>    <footer class="footer">
+    
+        <div class="copyright has-text-centered">
+            <a href="https://bulma.io">
+                <img src="https://www.lihongkun.com/images/made-with-bulma.png" alt="Made with Bulma" width="128" height="24">
+            </a>
+            <p>© 泛泛之辈 Power by Hugo v0.55.6 - 闽ICP备15009606号</p>
+        </div>
+    </footer>
+    <script type="text/javascript">
+    document.addEventListener('DOMContentLoaded', () => {
+        
+        const $navbarBurgers = Array.prototype.slice.call(document.querySelectorAll('.navbar-burger'), 0);
+        
+        if ($navbarBurgers.length > 0) {
+            
+            $navbarBurgers.forEach( el => {
+                el.addEventListener('click', () => {
+                
+                const target = el.dataset.target;
+                const $target = document.getElementById(target);
+                
+                el.classList.toggle('is-active');
+                $target.classList.toggle('is-active');
+    
+                });
+            });
+        }
+    });
+    </script></body>
+</html>
