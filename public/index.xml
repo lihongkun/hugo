@@ -6,10 +6,19 @@
     <description>Recent content on 泛泛之辈</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-CN</language>
-    <lastBuildDate>Sun, 11 Oct 2020 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Sat, 31 Oct 2020 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="https://www.lihongkun.com/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>流量复制工具</title>
+      <link>https://www.lihongkun.com/design/traffic_replica/</link>
+      <pubDate>Sat, 31 Oct 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.lihongkun.com/design/traffic_replica/</guid>
+      <description>&lt;p&gt;近日，一个进行了大半年的大型项目重构接近尾声。这种重构无异于飞机在天上直接换引擎。慢慢进行灰度是必然的。但是灰度之前，有更好的方式提前发现问题，那就是流量复制，使用线上真实的流量对即将上线的应用进行测试。&lt;/p&gt;</description>
+    </item>
     
     <item>
       <title>Spring 单元测试</title>

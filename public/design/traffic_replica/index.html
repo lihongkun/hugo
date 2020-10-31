@@ -9,17 +9,18 @@
             content=""/>
 
     
+    <meta name="description" content="近日，一个进行了大半年的大型项目重构接近尾声。这种重构无异于飞机在天上直接换引擎。慢慢进行灰度是必然的。但是灰度之前，有更好的方式提前发现问题，那就是流量复制，使用线上真实的流量对即将上线的应用进行测试。
+"/>
+    
+
+    
+
+    
+    <link rel="canonical" href="https://www.lihongkun.com/design/traffic_replica/"/>
 
     
 
     
-    <link rel="canonical" href="https://www.lihongkun.com/categories/"/>
-
-    
-    <link rel="alternate" type="application/rss&#43;xml" href="https://www.lihongkun.com/categories/index.xml">
-    
-
-    
     
     
         
@@ -64,7 +65,7 @@
             
         
     
-    <title> Categories | 泛泛之辈 </title>
+    <title> 流量复制工具 | 泛泛之辈 </title>
 
     <link rel="shortcut icon" href="https://www.lihongkun.com/favicon.jpg"/>
     <link rel="stylesheet" href="https://www.lihongkun.com/css/bulma.min.css"/>
@@ -142,167 +143,80 @@
 </header><main>
             <div class="container">
                 <div class="columns">
-                <div class="column is-four-fifths"><section class="posts">
+                <div class="column is-four-fifths">
+                    <article class="post box is-radiusless">
+                        <div class="post-title">
+                            <h2 class="is-size-4">流量复制工具</h2>
+                        </div>
+                            <div class="post-meta">
+                            <span class="post-time">日期&nbsp;:&nbsp;2020-10-31</span>
+                        </div>
+                        <div class="post-content content">
+                            <p>近日，一个进行了大半年的大型项目重构接近尾声。这种重构无异于飞机在天上直接换引擎。慢慢进行灰度是必然的。但是灰度之前，有更好的方式提前发现问题，那就是流量复制，使用线上真实的流量对即将上线的应用进行测试。</p>
 
-<article class="post box is-radiusless">
-    <div class="post-title">
-        <a class="post-title-link" href="/categories/swagger/"><h2 class="is-size-4 has-text-dark">swagger</h2></a>
-    </div>
-    <div class="post-meta">
-        <span class="post-time">日期 : 2020-10-08</span>
-    </div>
-    <div class="post-excerpt content">
-        
-    </div>
-    <a href="/categories/swagger/">阅读全文>></a>
-    </article>
+<p>流量复制通常可以使用在以下场景</p>
 
-<article class="post box is-radiusless">
-    <div class="post-title">
-        <a class="post-title-link" href="/categories/springboot/"><h2 class="is-size-4 has-text-dark">springboot</h2></a>
-    </div>
-    <div class="post-meta">
-        <span class="post-time">日期 : 2020-09-20</span>
-    </div>
-    <div class="post-excerpt content">
-        
-    </div>
-    <a href="/categories/springboot/">阅读全文>></a>
-    </article>
+<p>1、预发布环境需要真实流量做功能的回归与验证；对于一些可用性和业务容错性要求比较高的应用，会使用真实流量进行测试。</p>
 
-<article class="post box is-radiusless">
-    <div class="post-title">
-        <a class="post-title-link" href="/categories/linux/"><h2 class="is-size-4 has-text-dark">linux</h2></a>
-    </div>
-    <div class="post-meta">
-        <span class="post-time">日期 : 2020-09-06</span>
-    </div>
-    <div class="post-excerpt content">
-        
-    </div>
-    <a href="/categories/linux/">阅读全文>></a>
-    </article>
+<p>2、压力测试 。例如需要验证网络带宽流量阈值，系统全链路的承受能力。当系统链路和数据都比较复杂的时候。测试环境有时候非常难以模拟。或者需要进行线上几倍流量的压力测试时，流量复制会相对科学一点。</p>
 
-<article class="post box is-radiusless">
-    <div class="post-title">
-        <a class="post-title-link" href="/categories/shell/"><h2 class="is-size-4 has-text-dark">shell</h2></a>
-    </div>
-    <div class="post-meta">
-        <span class="post-time">日期 : 2020-09-06</span>
-    </div>
-    <div class="post-excerpt content">
-        
-    </div>
-    <a href="/categories/shell/">阅读全文>></a>
-    </article>
+<p><strong>TCPCopy</strong></p>
 
-<article class="post box is-radiusless">
-    <div class="post-title">
-        <a class="post-title-link" href="/categories/java/"><h2 class="is-size-4 has-text-dark">java&#34;</h2></a>
-    </div>
-    <div class="post-meta">
-        <span class="post-time">日期 : 2020-05-03</span>
-    </div>
-    <div class="post-excerpt content">
-        
-    </div>
-    <a href="/categories/java/">阅读全文>></a>
-    </article>
+<p>这是一个比较老牌的工具，也是最广为人知的一个工具。不过很多公司没有实践的机会，再加上其使用比较繁琐，基本上用的好的也不多。</p>
 
-</section>
+<p>github 地址是 <a href="https://github.com/session-replay-tools/tcpcopy/">https://github.com/session-replay-tools/tcpcopy/</a> 可以到上面直接下载一个编译好的包进行使用。</p>
 
+<p><img src="tcpcopy.gif" alt="" /></p>
 
+<p>如图所示，TCPCopy由两部分组成：TCPCopy和intercept。TCPCopy在线上服务器上运行并捕获在线请求，intercept运行在辅助服务器上并执行一些辅助工作，例如将响应信息传递给TCPCopy。测试应用程序则在目标服务器上运行。也就是使用上其实还需要一个辅助服务器。</p>
 
+<p>虽然它的功能非常强大，从网络层直接进行复制，可以无视应用层的协议。但是大部分的应用确实用不到这么高级的功能。比如90%场景下确实是使用HTTP协议，杀鸡用牛刀也是需要成本的。</p>
 
+<h4 id="goreplay">GoReplay</h4>
 
+<p>官网地址 <a href="https://goreplay.org/">https://goreplay.org/</a> 特点是简单易用，支持HTTP。</p>
 
+<p><img src="goreplay.png" alt="" /></p>
 
+<p>直接在目标服务器上部署，然后敲下命令，即可进行流量复制。无需理解复杂的概念。同样支持在线直接转发。存储到文件进行重放，N倍重放。</p>
 
+<pre><code>sudo ./gor --input-raw :8000 --output-http=&quot;http://localhost:8001&quot;
+sudo ./gor --input-raw :8000 --output-file=requests.gor
+</code></pre>
 
+<p><strong>jvm-sandbox</strong></p>
 
+<p>java语言的世界里面也有一些比较特殊的协议，使用TCPCopy可以解决问题。这里提出另外的思路就是使用阿里巴巴的 jvm-sandbox <a href="https://github.com/alibaba/jvm-sandbox">https://github.com/alibaba/jvm-sandbox</a> 需要代码的编写，可适用于一些比较定制化的场景。</p>
 
+<p>沙箱有两种启动方式</p>
 
+<p>1、使用jvm的attach机制，线上随时可进行attach</p>
 
+<p>2、java agent启动，需要在命令行增加参数，故需要重启。</p>
 
-<nav class="page-nav">
-    
-    <a href="/categories/" class="extend prev">上一页</a>
-    
+<p>流量复制的场景下基本就是选择attach了。提供的脚本非常简单易用，直接在安装目录下敲入命令即可。</p>
 
-    
+<pre><code># 假设目标JVM进程号为'2343'
+./sandbox.sh -p 2343
+</code></pre>
 
-      
-
-        
-
-      
-
-      
-      
-          <a href="/categories/" class="page-number">1</a>
-      
-
-    
-
-      
-
-        
-
-      
-
-      
-      
-          <a href="/categories/page/2/" class="page-number current">2</a>
-      
-
-    
-
-      
-
-        
-
-      
-
-      
-      
-          <a href="/categories/page/3/" class="page-number">3</a>
-      
-
-    
-
-      
-
-        
-
-      
-
-      
-      
-          <a href="/categories/page/4/" class="page-number">4</a>
-      
-
-    
-
-      
-
-        
-
-      
-
-      
-      
-          <a href="/categories/page/5/" class="page-number">5</a>
-      
-
-        
-
-
-    
-      <a href="/categories/page/3/" class="extend next">下一页</a>
-    
-
-</nav>
-</div>
+<p>其他的就是编写AOP相关代码然后编译成 jar 包放入到安装目录。官网的例子非常详细，有兴趣可以了解了解。</p>
+                        </div>
+                        <div class="columns is-mobile post-meta">
+                            <div class="column is-half-desktop has-text-left is-paddingless"> 
+                                 
+                                更老一篇:<a href="https://www.lihongkun.com/design/mvc/"> MVC模式在服务端的过去、现状和未来</a>
+                                
+                            </div>
+                            <div class="column is-half-desktop has-text-right is-paddingless">
+                                
+                                没有了，已经是最新文章
+                                
+                            </div>
+                            <div class="is-clearfix"></div>
+                        </div>
+                    </article>
+                </div>
                 <div class="column">    <aside>
         <h2 class="is-size-4">关于我</h2>
         <div class="content">
